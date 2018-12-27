@@ -1,0 +1,9 @@
+{
+    "robotSocketUrl": "ws://192.168.21.198:9322",
+    "nginxUrl": "http://192.168.21.109:3000",
+    "chatlogUrl": "http://192.168.21.198:8080",
+    "adviceUrl": "http://192.168.21.109:3001",
+    "nginxUrlUser": "http://192.168.21.109:3001",
+    "robotHttpUrl": "http://192.168.21.198:5000",
+    "serviceUrl": "http://192.168.21.198:8013"
+  }
