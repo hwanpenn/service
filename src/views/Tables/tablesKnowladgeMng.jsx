@@ -745,7 +745,18 @@ class tablesKnowladgeMng extends React.Component {
             key: 'articleTitle',
             fixed: 'left',
             width: '35%',
-            render: text => <a >{text}</a>,
+            render: text =><Popover content={(
+                <div style={{width:270}}>
+                    <p>{text}</p>
+                </div>
+            )}>
+             <span style={{overflow: 'hidden',
+                 textOverflow: 'ellipsis',
+                 whiteSpace: 'nowrap',
+                 display: 'inline-block',
+                 width: '100%'
+             }}>{text}</span>
+            </Popover>,
         }, {
             title: '文章内容',
             dataIndex: 'articleContent',
