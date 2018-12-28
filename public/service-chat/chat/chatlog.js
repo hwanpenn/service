@@ -1,5 +1,5 @@
 var chatlogUrl = "http://192.168.21.198:8080"
-var nginxUrl = "http://192.168.21.150:3000"
+var nginxUrl = "http://192.168.21.115:3000"
 // var iframeConfig = {fromUserId: "502911085762838528", toUserId: "12345", fromUserName: "客服", toUserName: "用户", channel: "1112"}
 // var iframeConfig = parent.sendParams()
 var iframeConfig = parseQueryString(window.location.href)

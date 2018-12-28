@@ -83,7 +83,7 @@ function CustomInput({ ...props }) {
       <Input
       type={labelText==='密码'?'password':''}
           // onChange={()=>{alert("6")}}
-          onChange={(e)=>{window.sessionStorage.setItem(''+labelText==='密码'?'password':'username'+'',e.target.value)}}
+          onChange={(e)=>{window.sessionStorage.setItem(''+labelText==='密码'?'password':(''+labelText === '用户名'?'username':'checked')+'',e.target.value)}}
         classes={{
           input: inputClasses,
           root: marginTop,
