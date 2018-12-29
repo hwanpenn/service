@@ -25,6 +25,7 @@ import avatarAdmin from "assets/img/faces/avatar.jpg";
 import { Button, Modal, Form, Input, Radio } from 'antd';
 import { message } from 'antd';
 import {connect} from "react-redux";
+import axios from "../../Utils/axios";
 message.config({
     duration: 1,
 });
@@ -173,18 +174,26 @@ class Sidebar extends React.Component {
             this.props.updatePasswordDataAdmin(values)
             form.resetFields();
             this.setState({ visible: false });
+            this.handleLogout()
           }else{
             message.info('两次密码输入不一样');
           }
         }
-      
-        // console.log('Received values of form: ', values);
-        
       });
     }
   
     saveFormRef = (formRef) => {
       this.formRef = formRef;
+    }
+    handleClick = (event) =>{
+        axios.defaults.headers.common['Authorization'] = window.sessionStorage.getItem('token');
+        axios.post('/cs/api/logout'
+        ).then((response) => {
+                console.log(response)
+            }
+        ) .catch(function (error) {
+            console.log(error);
+        });
     }
   render() {
     const {
@@ -302,6 +311,7 @@ class Sidebar extends React.Component {
                     </span>
                     <ListItemText
                       primary={rtlActive ? "إعدادات" : "退出登录"}
+                      onClick={() =>{this.handleClick()}}
                       disableTypography={true}
                       className={collapseItemText}
                     />
