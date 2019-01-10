@@ -187,7 +187,7 @@ class Sidebar extends React.Component {
     }
     handleClick = (event) =>{
         axios.defaults.headers.common['Authorization'] = window.sessionStorage.getItem('token');
-        axios.post('/cs/api/logout'
+        axios.post('/cs/api/exit'
         ).then((response) => {
                 console.log(response)
             }

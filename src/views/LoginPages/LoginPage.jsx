@@ -80,14 +80,7 @@ class LoginPage extends React.Component {
     // guid = () => {
     //     return (this.S4()+this.S4()+"-"+this.S4()+"-"+this.S4()+"-"+this.S4()+"-"+this.S4()+this.S4()+this.S4());
     // }
-    //   RsaEncrypt(value,publicKey){
-    //       //对AES加密用到的key加密
-    //       // var randomStr = value;//this.randomWord(false,16);
-    //       let encrypt = new RSA.JSEncrypt();
-    //       encrypt.setPublicKey('-----BEGIN PUBLIC KEY-----'+'\n' + publicKey + '\n'+'-----END PUBLIC KEY-----');
-    //       let encrypted = encrypt.encrypt(password);
-    //       return encrypted;
-    //   }
+
     handleClick = (event) =>{
 
         const thisTemp = this;
@@ -96,16 +89,15 @@ class LoginPage extends React.Component {
         const password = window.sessionStorage.getItem('password');
         console.log(password)
         const checked = window.sessionStorage.getItem('checked');
-        const aa = window.sessionStorage.getItem('checked');
         const check = window.sessionStorage.getItem('check');
-        console.log(aa)
-        console.log(check)
         const {JSEncrypt} = require('jsencrypt')
         // const JSEncrypt=JSEncryptExports.JSEncrypt;
         let encrypt = new JSEncrypt();
-        encrypt.setPublicKey('-----BEGIN PUBLIC KEY-----'+'\n' + publicKey + '\n'+'-----END PUBLIC KEY-----');
+        encrypt.setPublicKey(publicKey);
+        // encrypt.setPublicKey('-----BEGIN PUBLIC KEY-----'+'\n' + publicKey + '\n'+'-----END PUBLIC KEY-----');
         let encrypted = encrypt.encrypt(password);
-        // console.log(encrypted+"豆子")
+        console.log(password)
+        console.log(encrypted)
 
         if(checked !== check ){
             message.info("验证码有误请重新输入");
@@ -115,7 +107,7 @@ class LoginPage extends React.Component {
             axios.post('/cs/api/login',
                 {
                     username: username,
-                    password: password,
+                    password: encrypted,
                 }
             ).then( (response) => {
                 // console.log(response)async await

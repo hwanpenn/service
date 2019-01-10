@@ -35,6 +35,7 @@ ReactDOM.render(
         <App />
         {/* <App history={hist}/> */}
     </Provider>
-    , document.getElementById('root'));
+    , document.getElementById('root')
+);
 registerServiceWorker();
 
