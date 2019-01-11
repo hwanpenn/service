@@ -58,15 +58,15 @@ class tablesCompany extends React.Component {
         this.setState({ recordSelect:record });
     }
     showModifyModal = (record) => {
-        if(record.citysName!==undefined){
-            const city = record.citysName
-            // record.citysName=["河北省","石家庄市"]
-            const index = city.indexOf("省")
-            const provinceName = city.substr(0,index+1)
-            const cityName = city.substr(index+1,city.length)
-            let citysName = [provinceName,cityName]
-            record.citysName=citysName
-        }
+        // if(record.citysName!==undefined){
+        //     const city = record.citysName
+        //     // record.citysName=["河北省","石家庄市"]
+        //     const index = city.indexOf("省")
+        //     const provinceName = city.substr(0,index+1)
+        //     const cityName = city.substr(index+1,city.length)
+        //     let citysName = [provinceName,cityName]
+        //     record.citysName=citysName
+        // }
         this.setState({ visibleModify: true,recordAction:record });
     }
     showModalCreate = () => {
@@ -85,7 +85,7 @@ class tablesCompany extends React.Component {
                 return;
             }
             values.id=this.state.recordAction.id
-            values.citysName=values.citysName[0]+values.citysName[1]+''
+            // values.citysName=values.citysName[0]+values.citysName[1]+''
             this.props.updateDataCompany(values);
             form.resetFields();
             this.setState({ visibleModify: false });
@@ -97,7 +97,7 @@ class tablesCompany extends React.Component {
             if (err) {
                 return;
             }
-            values.citysName=values.citysName[0]+values.citysName[1]+''
+            // values.citysName=values.citysName[0]+values.citysName[1]+''
             this.props.createDataCompany(values)
             form.resetFields();
             this.setState({ visible: false });
@@ -135,14 +135,7 @@ class tablesCompany extends React.Component {
             // fixed: 'left',
             width: '40%',
             render: text => <a >{text}</a>,
-        }, 
-        // {
-        //     title: '企业分类id',
-        //     dataIndex: 'categoryId',
-        //     key: 'categoryId',
-        //     // align: 'center'
-        //     width: 300
-        // }, 
+        },
         {
             title: '操作',
             key: 'action',
@@ -172,9 +165,9 @@ class tablesCompany extends React.Component {
                         categoryId: value,
                     });
                 }
-                onCityChange = (value) => {
-                    console.log(value);
-                }
+                // onCityChange = (value) => {
+                //     console.log(value);
+                // }
                 handleBlur = () => {
                 console.log('blur');
                 }
@@ -200,13 +193,13 @@ class tablesCompany extends React.Component {
                                         <Input />
                                     )}
                                 </FormItem>
-                                <FormItem label="所在城市">
-                                    {getFieldDecorator('citysName', {
-                                        rules: [{ required: false, message: '请输入新增企业所在城市!' }],
-                                    })(
-                                        <Cascader fieldNames={{ label: 'citysName', value: 'citysName', children: 'citys' }} options={cityOptions} onChange={this.onCityChange} placeholder="请选择" />
-                                    )}
-                                </FormItem>
+                                {/*<FormItem label="所在城市">*/}
+                                    {/*{getFieldDecorator('citysName', {*/}
+                                        {/*rules: [{ required: false, message: '请输入新增企业所在城市!' }],*/}
+                                    {/*})(*/}
+                                        {/*<Cascader fieldNames={{ label: 'citysName', value: 'citysName', children: 'citys' }} options={cityOptions} onChange={this.onCityChange} placeholder="请选择" />*/}
+                                    {/*)}*/}
+                                {/*</FormItem>*/}
                                 <FormItem label="企业分类">
                                     {getFieldDecorator('categoryId', {
                                         rules: [{ required: true, message: '请选择企业分类!' }],
@@ -265,14 +258,14 @@ class tablesCompany extends React.Component {
                                         <Input />
                                     )}
                                 </FormItem>
-                                <FormItem label="所在城市">
-                                    {getFieldDecorator('citysName', {
-                                        initialValue:  thisTemp.state.recordAction.citysName ,
-                                        rules: [{ required: false, message: '请输入新增企业所在城市!' }],
-                                    })(
-                                        <Cascader fieldNames={{ label: 'citysName', value: 'citysName', children: 'citys' }} options={cityOptions} onChange={this.onCityChange} placeholder="请选择" />
-                                    )}
-                                </FormItem>
+                                {/*<FormItem label="所在城市">*/}
+                                    {/*{getFieldDecorator('citysName', {*/}
+                                        {/*initialValue:  thisTemp.state.recordAction.citysName ,*/}
+                                        {/*rules: [{ required: false, message: '请输入新增企业所在城市!' }],*/}
+                                    {/*})(*/}
+                                        {/*<Cascader fieldNames={{ label: 'citysName', value: 'citysName', children: 'citys' }} options={cityOptions} onChange={this.onCityChange} placeholder="请选择" />*/}
+                                    {/*)}*/}
+                                {/*</FormItem>*/}
                                 <FormItem label="企业分类">
                                     {getFieldDecorator('categoryId', {
                                         initialValue:  thisTemp.state.recordAction.categoryId ,

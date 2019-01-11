@@ -472,13 +472,13 @@ class tablesML extends React.Component {
                     <Card>
                         <CardHeader color="rose" icon>
                             <Grid container spacing={24}>
-                                <Grid item xs={2}>
+                                <Grid item xs={1}>
                                     <CardIcon color="rose">
                                         <Assignment />
                                     </CardIcon>
                                     <h4 className={classes.cardIconTitle}> </h4>
                                 </Grid>
-                                <Grid style={{textAlign:'right',marginTop:10}} item xs={10}>
+                                <Grid style={{textAlign:'right',marginTop:10}} item xs={11}>
                                 <Select style={{ width: 200,borderStyle:'solid',
                                             borderWidth:0,paddingRight:10 }}
                                             showSearch
