@@ -129,14 +129,37 @@ class tablesSecretKey extends React.Component {
             key: 'chineseName',
             // fixed: 'left',
             width: 100,
-            render: text => <a >{text===undefined||text===null?'空':text}</a>,
+            render: text =>
+                <Popover content={(
+                    <div style={{width:170,wordWrap:'break-word'}}>
+                        <p style={{wordWrap:'break-word'}}>{text===undefined||text===null?'空':text}</p>
+                    </div>
+                )}>
+             <span style={{overflow: 'hidden',
+                 textOverflow: 'ellipsis',
+                 whiteSpace: 'nowrap',
+                 display: 'inline-block',
+                 width: 140
+             }}>{text===undefined||text===null?'空':text}</span>
+                </Popover>,
         },{
             title: '企业id',
             dataIndex: 'systemName',
             key: 'systemName',
             // fixed: 'left',
             width: 100,
-            render: text => <a >{text}</a>,
+            render: text =><Popover content={(
+                <div style={{width:170,wordWrap:'break-word'}}>
+                    <p style={{wordWrap:'break-word'}}>{text}</p>
+                </div>
+            )}>
+             <span style={{overflow: 'hidden',
+                 textOverflow: 'ellipsis',
+                 whiteSpace: 'nowrap',
+                 display: 'inline-block',
+                 width: 140
+             }}>{text}</span>
+            </Popover>,
         }, {
             title: '公钥',
             dataIndex: 'publicKey',

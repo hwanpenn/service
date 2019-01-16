@@ -754,7 +754,7 @@ class tablesKnowladgeMng extends React.Component {
                  textOverflow: 'ellipsis',
                  whiteSpace: 'nowrap',
                  display: 'inline-block',
-                 width: '100%'
+                 width: 150
              }}>{text}</span>
             </Popover>,
         }, {
