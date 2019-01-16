@@ -453,7 +453,11 @@ layui.use('layim', function(layim){
     ,avatar: nginxUrl+'/service-chat/chat/picture/xiaoyue.png'
     ,id: 1111
   });
-  layim.setChatMin();
+    var url = window.location.href;
+    // alert(url.indexOf("platform") )
+    if(url.indexOf("platform") <0){
+        layim.setChatMin();
+    }
 
   var $ = layui.jquery;
   $('.layim-chat-main').children("ul").children("li").remove();

@@ -34,11 +34,20 @@ class tablesCompany extends React.Component {
         };
     }
     componentWillMount(){
+        // this.getIdTableData('',1,10);
         this.getTableData('',1,10);
         this.getOtherData('',1,10);
     }
     componentDidMount(){
     }
+    // getIdTableData = (id,start,size) => {
+    //     const params = {
+    //         id:id,
+    //         pageNo:start,
+    //         pageSize:size,
+    //     };
+    //     this.props.getDataCompany(params);
+    // }
     getTableData = (tenantName,start,size) => {
         const params = {
             tenantName:tenantName,
@@ -309,6 +318,12 @@ class tablesCompany extends React.Component {
                                         style={{ width: 200,borderStyle:'solid',
                                             borderWidth:0,paddingRight:10 }}
                                     />
+                                    {/*<Search*/}
+                                        {/*placeholder="id搜索"*/}
+                                        {/*onSearch={value => this.getIdTableData(value,1,10)}*/}
+                                        {/*style={{ width: 200,borderStyle:'solid',*/}
+                                            {/*borderWidth:0,paddingRight:10 }}*/}
+                                    {/*/>*/}
                                     <Button onClick={this.showModalCreate} style={{ height: 30,marginRight:10 }} size={'small'}>增加</Button>
                                 </Grid>
                             </Grid>
