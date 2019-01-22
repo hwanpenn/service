@@ -51,6 +51,7 @@ export function getOtherDialog(params,obj) {
 }
 
 export function getDataDialog(params) {
+    console.log(params,"豆子")
     return {
         types: [GET_REQUEST_Dialog, GET_SUCCESS_Dialog, GET_FAIL_Dialog],
         promise: client => client.get('/cs/api/robot/queryDialogData',{params: params}),

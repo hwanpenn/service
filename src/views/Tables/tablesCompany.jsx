@@ -31,6 +31,7 @@ class tablesCompany extends React.Component {
             recordAction:{},
             recordSelect:{},
             defaultSelectValue:'',
+            current:1
         };
     }
     componentWillMount(){
@@ -49,6 +50,9 @@ class tablesCompany extends React.Component {
     //     this.props.getDataCompany(params);
     // }
     getTableData = (tenantName,start,size) => {
+        this.setState({
+            currrent:start
+        })
         const params = {
             tenantName:tenantName,
             pageNo:start,
@@ -107,7 +111,7 @@ class tablesCompany extends React.Component {
                 return;
             }
             // values.citysName=values.citysName[0]+values.citysName[1]+''
-            this.props.createDataCompany(values)
+            this.props.createDataCompany(values,this)
             form.resetFields();
             this.setState({ visible: false });
         });
@@ -122,7 +126,7 @@ class tablesCompany extends React.Component {
         const params = {
             id:record.id,
         }
-        this.props.deleteDataCompany(params)
+        this.props.deleteDataCompany(params,this)
     }
     render() {
         let thisTemp = this
@@ -313,13 +317,13 @@ class tablesCompany extends React.Component {
                                 </Grid>
                                 <Grid style={{textAlign:'right',marginTop:10}} item xs={6}>
                                     <Search
-                                        placeholder="名称搜索"
+                                        placeholder="企业用户名称搜索"
                                         onSearch={value => this.getTableData(value,1,10)}
                                         style={{ width: 200,borderStyle:'solid',
                                             borderWidth:0,paddingRight:10 }}
                                     />
                                     {/*<Search*/}
-                                        {/*placeholder="id搜索"*/}
+                                        {/*placeholder="企业id搜索"*/}
                                         {/*onSearch={value => this.getIdTableData(value,1,10)}*/}
                                         {/*style={{ width: 200,borderStyle:'solid',*/}
                                             {/*borderWidth:0,paddingRight:10 }}*/}
@@ -335,7 +339,7 @@ class tablesCompany extends React.Component {
                                     // onMouseEnter: () => {},  
                                     };
                                 }} key={"tablesCompany"} pagination={false} columns={columns} dataSource={this.props.tablesCompany.tableDataCompany} scroll={{x: 600, y: 360}} />
-                            <Pagination defaultCurrent={1} defaultPageSize={10} total={this.props.tablesCompany.tableCountCompany} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10)}/>
+                            <Pagination current={this.state.current} defaultPageSize={10} total={this.props.tablesCompany.tableCountCompany} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10)}/>
                         </CardBody>
                     </Card>
                 </GridItem>
@@ -368,11 +372,11 @@ const mapDispatchToProps = (dispatch) => {
         updateDataCompany: (params) => {
             dispatch(updateDataCompany(params))
         },
-        deleteDataCompany: (params) => {
-            dispatch(deleteDataCompany(params))
+        deleteDataCompany: (params,obj) => {
+            dispatch(deleteDataCompany(params,obj))
         },
-        createDataCompany: (params) => {
-            dispatch(createDataCompany(params))
+        createDataCompany: (params,obj) => {
+            dispatch(createDataCompany(params,obj))
         },
         getOtherCompany: (params) => {
             dispatch(getOtherCompany(params))

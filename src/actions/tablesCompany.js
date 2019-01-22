@@ -1,4 +1,5 @@
 import { message } from 'antd';
+import {last, total} from "./tablesArticleMng";
 message.config({
     duration: 1,
 });
@@ -20,6 +21,9 @@ export const GET_REQUEST_Company_OTHER = "GET_REQUEST_Company_OTHER";
 export const GET_SUCCESS_Company_OTHER = "GET_SUCCESS_Company_OTHER";
 export const GET_FAIL_Company_OTHER = "GET_FAIL_Company_OTHER";
 
+let lastPage
+let dataTotal
+
 export function getOtherCompany(params) {
     return {
         types: [GET_REQUEST_Company_OTHER, GET_SUCCESS_Company_OTHER, GET_FAIL_Company_OTHER],
@@ -36,20 +40,25 @@ export function getDataCompany(params) {
         types: [GET_REQUEST_Company, GET_SUCCESS_Company, GET_FAIL_Company],
         promise: client => client.get('/cs/api/organization/queryTenant',{params: params}),
         afterSuccess:(dispatch,getState,response)=>{
+            lastPage = parseInt(response.data.total/10)+1
+            dataTotal = response.data.total
             /*请求成功后执行的函数*/
         },
         // otherData:otherData
     }
 }
-export function createDataCompany(params) {
+export function createDataCompany(params,obj) {
     return {
         types: [CREATE_REQUEST_Company, CREATE_SUCCESS_Company, CREATE_FAIL_Company],
         promise: client => client.post('/cs/api/organization/addTenant',params),
         afterSuccess:(dispatch,getState,response)=>{
             if(response.data.code===0){
                 message.info(response.data.msg);
+                obj.setState({
+                    current:lastPage
+                })
                 const params = {
-                    pageNo:1,
+                    pageNo:lastPage,
                     pageSize:10,
                 };
                 dispatch(getDataCompany(params));
@@ -77,15 +86,26 @@ export function updateDataCompany(params) {
         },
     }
 }
-export function deleteDataCompany(params) {
+export function deleteDataCompany(params,obj) {
     return {
         types: [DELETE_REQUEST_Company, DELETE_SUCCESS_Company, DELETE_FAIL_Company],
         promise: client => client.post('/cs/api/organization/deleteTenant',params),
         afterSuccess:(dispatch,getState,response)=>{
             if(response.data.code===0){
                 message.info(response.data.msg);
+                if(dataTotal % 10 === 1){
+                    lastPage -= 1
+                    obj.setState({
+                        current:lastPage
+                    })
+                    const params = {
+                        pageNo:lastPage,
+                        pageSize:10,
+                    };
+                    dispatch(getDataCompany(params));
+                }
                 const params = {
-                    pageNo:1,
+                    pageNo:obj.state.current,
                     pageSize:10,
                 };
                 dispatch(getDataCompany(params));

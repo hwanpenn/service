@@ -48,12 +48,15 @@ export function getDataSecretKey(params) {
         // otherData:otherData
     }
 }
-export function createDataSecretKey(params) {
+export function createDataSecretKey(params,obj) {
     return {
         types: [CREATE_REQUEST_SecretKey, CREATE_SUCCESS_SecretKey, CREATE_FAIL_SecretKey],
         promise: client => client.post('/cs/api/sys/addSecretKey',params),
         afterSuccess:(dispatch,getState,response)=>{
             if(response.data.code===0){
+                obj.setState({
+                    current:1
+                })
                 message.info(response.data.msg);
                 const params = {
                     pageNo:1,
@@ -87,7 +90,7 @@ export function updateDataSecretKey(params,obj) {
         },
     }
 }
-export function deleteDataSecretKey(params) {
+export function deleteDataSecretKey(params,obj) {
     return {
         types: [DELETE_REQUEST_SecretKey, DELETE_SUCCESS_SecretKey, DELETE_FAIL_SecretKey],
         promise: client => client.post('/cs/api/sys/deleteSecretKey',params),
@@ -95,7 +98,7 @@ export function deleteDataSecretKey(params) {
             if(response.data.code===0){
                 message.info(response.data.msg);
                 const params = {
-                    pageNo:1,
+                    pageNo:obj.state.current,
                     pageSize:10,
                 };
                 dispatch(getDataSecretKey(params));

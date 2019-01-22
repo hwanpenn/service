@@ -29,6 +29,7 @@ class tablesRobotMng extends React.Component {
             recordAction:{},
             recordSelect:{},
             defaultSelectValue:'',
+            current:1
         };
     }
     componentWillMount(){
@@ -38,6 +39,9 @@ class tablesRobotMng extends React.Component {
     componentDidMount(){
     }
     getTableData = (robotName,start,size) => {
+        this.setState({
+            current:start
+        })
         const params = {
             robotName:robotName,
             pageNo:start,
@@ -87,7 +91,7 @@ class tablesRobotMng extends React.Component {
             if (err) {
                 return;
             }
-            this.props.createDataRobotMng(values)
+            this.props.createDataRobotMng(values,this)
             form.resetFields();
             this.setState({ visible: false });
         });
@@ -102,7 +106,7 @@ class tablesRobotMng extends React.Component {
         const params = {
             robotId:record.robotId,
         }
-        this.props.deleteDataRobotMng(params)
+        this.props.deleteDataRobotMng(params,this)
     }
     activeConfirm = (record) => {
         const params = {
@@ -266,7 +270,7 @@ class tablesRobotMng extends React.Component {
                                     // onMouseEnter: () => {},  
                                     };
                                 }} key={"tablesRobotMng"} pagination={false} columns={columns} dataSource={this.props.tablesRobotMng.tableDataRobotMng} scroll={{  y: 360}} />
-                            <Pagination defaultCurrent={1} defaultPageSize={10} total={this.props.tablesRobotMng.tableCountRobotMng} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10)}/>
+                            <Pagination current={this.state.current} defaultPageSize={10} total={this.props.tablesRobotMng.tableCountRobotMng} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10)}/>
                         </CardBody>
                     </Card>
                 </GridItem>
@@ -299,11 +303,11 @@ const mapDispatchToProps = (dispatch) => {
         updateDataRobotMng: (params) => {
             dispatch(updateDataRobotMng(params))
         },
-        deleteDataRobotMng: (params) => {
-            dispatch(deleteDataRobotMng(params))
+        deleteDataRobotMng: (params,obj) => {
+            dispatch(deleteDataRobotMng(params,obj))
         },
-        createDataRobotMng: (params) => {
-            dispatch(createDataRobotMng(params))
+        createDataRobotMng: (params,obj) => {
+            dispatch(createDataRobotMng(params,obj))
         },
         getOtherRobotMng: (params) => {
             dispatch(getOtherRobotMng(params))

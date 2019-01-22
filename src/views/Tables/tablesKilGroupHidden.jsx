@@ -31,7 +31,8 @@ class tablesKillGroupHidden extends React.Component {
             recordDetail:{},
             recordSelect:{},
             defaultSelectValue:'',
-            cuSkGroupId:''
+            cuSkGroupId:'',
+            current:1
         };
     }
     parseQueryString = (url)=> {
@@ -61,6 +62,7 @@ class tablesKillGroupHidden extends React.Component {
         // this.setState({ page:obj.page });
         // console.log('componentWillMount')
         this.getTableData('',1,10,obj.cuSkGroupId);
+        // console.log(obj.cuSkGroupId,"组名")
         // this.getOtherData('',1,10);
     }
     componentDidMount(){
@@ -69,13 +71,16 @@ class tablesKillGroupHidden extends React.Component {
     //     alert('刷新')
     // }
     getTableData = (articleTitle,start,size,cuSkGroupId) => {
+        this.setState({
+            current:start
+        })
         const params = {
             // articleTitle:articleTitle,
             pageNo:start,
             pageSize:size,
             cuSkGroupId:cuSkGroupId
         };
-        console.log('getDataKillGroupHidden')
+        console.log(cuSkGroupId,"组名")
         this.props.getDataKillGroupHidden(params);
     }
     getOtherData = (username,start,size) => {
@@ -145,7 +150,7 @@ class tablesKillGroupHidden extends React.Component {
             userId:record.user.id,
             cuSkGroupId:this.state.cuSkGroupId,
         }
-        this.props.deleteDataKillGroupHidden(params)
+        this.props.deleteDataKillGroupHidden(params,this)
     }
     activeConfirm = (record) => {
         const params = {
@@ -285,7 +290,7 @@ class tablesKillGroupHidden extends React.Component {
                                     // onMouseEnter: () => {},  
                                     };
                                 }} key={"tablesKillGroupHidden"} pagination={false} columns={columns} dataSource={this.props.tablesKillGroupHidden.tableDataKillGroupHidden} scroll={{  y: 360}} />
-                            <Pagination defaultCurrent={1} defaultPageSize={10} total={this.props.tablesKillGroupHidden.tableCountKillGroupHidden} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10)}/>
+                            <Pagination current={this.state.current} defaultPageSize={10} total={this.props.tablesKillGroupHidden.tableCountKillGroupHidden} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10,this.state.cuSkGroupId)}/>
                         </CardBody>
                     </Card>
                 </GridItem>
@@ -324,8 +329,8 @@ const mapDispatchToProps = (dispatch) => {
         updateDataKillGroupHidden: (params,obj) => {
             dispatch(updateDataKillGroupHidden(params,obj))
         },
-        deleteDataKillGroupHidden: (params) => {
-            dispatch(deleteDataKillGroupHidden(params))
+        deleteDataKillGroupHidden: (params,obj) => {
+            dispatch(deleteDataKillGroupHidden(params,obj))
         },
         createDataKillGroupHidden: (params) => {
             dispatch(createDataKillGroupHidden(params))

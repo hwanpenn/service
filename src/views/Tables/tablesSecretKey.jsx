@@ -31,7 +31,8 @@ class tablesSecretKey extends React.Component {
             recordDetail:{},
             recordSelect:{},
             defaultSelectValue:'',
-            page:1
+            page:1,
+            current:1
         };
     }
     componentWillMount(){
@@ -43,8 +44,19 @@ class tablesSecretKey extends React.Component {
     // componentWillUpdate(){
     //     alert('刷新')
     // }
+    // chineseNameGetTableData = (chineseName,start,size) => {
+    //     this.setState({ page:start });
+    //     const params = {
+    //         systemName:chineseName,
+    //         pageNo:start,
+    //         pageSize:size,
+    //     };
+    //     this.props.getDataSecretKey(params);
+    // }
     getTableData = (systemName,start,size) => {
-        this.setState({ page:start });
+        this.setState({
+            current:start
+        })
         const params = {
             systemName:systemName,
             pageNo:start,
@@ -85,7 +97,7 @@ class tablesSecretKey extends React.Component {
             }
             // console.log(values)
             values.id=this.state.recordAction.id
-            this.props.updateDataSecretKey(values,this);
+            this.props.updateDataSecretKey(values);
             // form.resetFields();
             // this.setState({ visibleModify: false });
         });
@@ -96,7 +108,7 @@ class tablesSecretKey extends React.Component {
             if (err) {
                 return;
             }
-            this.props.createDataSecretKey(values)
+            this.props.createDataSecretKey(values,this)
             form.resetFields();
             this.setState({ visible: false });
         });
@@ -111,7 +123,7 @@ class tablesSecretKey extends React.Component {
         const params = {
             id:record.id,
         }
-        this.props.deleteDataSecretKey(params)
+        this.props.deleteDataSecretKey(params,this)
     }
     activeConfirm = (record) => {
         const params = {
@@ -205,6 +217,7 @@ class tablesSecretKey extends React.Component {
             render: text => <span >{text===1?'已启用':'未启用'}</span>,
         }, {
             title: '操作',
+            // fixed:'right',
             key: 'action',
             width: 100,
             // fixed: 'right',
@@ -215,10 +228,11 @@ class tablesSecretKey extends React.Component {
                     <Popconfirm cancelText="取消" okText="确定" title="确定操作?" onConfirm={() => this.activeConfirm(record)}>
                         {record.status===1?<a>禁用</a>:<a>启用</a>}
                     </Popconfirm>
-                    {/* <Divider type="vertical" />
-                    <Popconfirm cancelText="取消" okText="确定" title="确定删除?" onConfirm={() => this.deleteConfirm(record)}>
-                        <a>删除</a>
-                    </Popconfirm> */}
+                    {/*<Divider type="vertical" />*/}
+                    {/*<Popconfirm cancelText="取消" okText="确定" title="确定删除?" onConfirm={() => this.deleteConfirm(record)}>*/}
+                        {/*<a>删除</a>*/}
+                    {/*</Popconfirm>*/}
+
                     {/* <Divider type="vertical" />
                         <a onClick={() => this.showDetailModal(record)}>查看详情</a> */}
                 </span>
@@ -341,11 +355,17 @@ class tablesSecretKey extends React.Component {
                                 </Grid>
                                 <Grid style={{textAlign:'right',marginTop:10}} item xs={6}>
                                     <Search
-                                        placeholder="名称搜索"
+                                        placeholder="企业id搜索"
                                         onSearch={value => this.getTableData(value,1,10)}
                                         style={{ width: 200,borderStyle:'solid',
                                             borderWidth:0,paddingRight:10 }}
                                     />
+                                    {/*<Search*/}
+                                        {/*placeholder="中文别名搜索"*/}
+                                        {/*onSearch={value => this.chineseNameGetTableData(value,1,10)}*/}
+                                        {/*style={{ width: 200,borderStyle:'solid',*/}
+                                            {/*borderWidth:0,paddingRight:10 }}*/}
+                                    {/*/>*/}
                                     <Button onClick={this.showModalCreate} style={{ height: 30,marginRight:10 }} size={'small'}>增加</Button>
                                 </Grid>
                             </Grid>
@@ -357,7 +377,7 @@ class tablesSecretKey extends React.Component {
                                     // onMouseEnter: () => {},  
                                     };
                                 }} key={"tablesSecretKey"} pagination={false} columns={columns} dataSource={this.props.tablesSecretKey.tableDataSecretKey} scroll={{ x: 500 , y: 360}} />
-                            <Pagination defaultCurrent={1} defaultPageSize={10} total={this.props.tablesSecretKey.tableCountSecretKey} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10)}/>
+                            <Pagination current={this.state.current} defaultPageSize={10} total={this.props.tablesSecretKey.tableCountSecretKey} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10)}/>
                         </CardBody>
                     </Card>
                 </GridItem>
@@ -393,14 +413,14 @@ const mapDispatchToProps = (dispatch) => {
         getDataSecretKey: (params) => {
             dispatch(getDataSecretKey(params))
         },
-        updateDataSecretKey: (params,obj) => {
-            dispatch(updateDataSecretKey(params,obj))
+        updateDataSecretKey: (params) => {
+            dispatch(updateDataSecretKey(params))
         },
-        deleteDataSecretKey: (params) => {
-            dispatch(deleteDataSecretKey(params))
+        deleteDataSecretKey: (params,obj) => {
+            dispatch(deleteDataSecretKey(params,obj))
         },
-        createDataSecretKey: (params) => {
-            dispatch(createDataSecretKey(params))
+        createDataSecretKey: (params,obj) => {
+            dispatch(createDataSecretKey(params,obj))
         },
         getOtherSecretKey: (thisObj) => {
             dispatch(getOtherSecretKey(thisObj))

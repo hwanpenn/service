@@ -9,7 +9,7 @@ import CardBody from "components/Card/CardBody.jsx";
 import CardIcon from "components/Card/CardIcon.jsx";
 import CardHeader from "components/Card/CardHeader.jsx";
 import extendedTablesStyle from "assets/jss/material-dashboard-pro-react/views/extendedTablesStyle.jsx";
-import {getOtherArticleMng,getDataArticleMng,updateDataArticleMng,deleteDataArticleMng,createDataArticleMng } from "actions/tablesArticleMng";
+import {getOtherArticleMng,getDataArticleMng,updateDataArticleMng,deleteDataArticleMng,createDataArticleMng,last } from "actions/tablesArticleMng";
 import {getOtherKnowladgeMng,getDataKnowladgeMng,updateDataKnowladgeMng,deleteDataKnowladgeMng,createDataKnowladgeMng } from "actions/tablesKnowladgeMng";
 import {connect} from "react-redux";
 import {Table, Divider,Button } from 'antd';
@@ -50,7 +50,8 @@ class tablesKnowladgeMng extends React.Component {
             categoryId:'',
             page:1,
             selectedKeys:['layer1-0-layer2-0'],
-            category: 'bigCategory'
+            category: 'bigCategory',
+            current:1
         };
     }
     rootSubmenuKeys = ['sub1', 'sub2', 'sub4'];
@@ -90,14 +91,16 @@ class tablesKnowladgeMng extends React.Component {
         this.props.getDataKnowladgeMng(params,this);
     }
     getTableDataArticleMng = (articleTitle,start,size,categoryId) => {
-        // console.log('查询categoryId'+categoryId)
+            this.setState({
+                current:start
+            })
         const params = {
             categoryId:categoryId,
             articleTitle:articleTitle,
             pageNo:start,
             pageSize:size,
         };
-        this.props.getDataArticleMng(params);
+        this.props.getDataArticleMng(params,this);
     }
     getOtherData = (username,start,size) => {
         const params = {
@@ -177,7 +180,7 @@ class tablesKnowladgeMng extends React.Component {
             id:record.articleId,
             categoryId:record.categoryId,
         }
-        this.props.deleteDataArticleMng(params)
+        this.props.deleteDataArticleMng(params,this)
     }
     activeConfirmArticleData = (record) => {
         const params = {
@@ -221,7 +224,7 @@ class tablesKnowladgeMng extends React.Component {
             //     values.categoryParentId=this.state.categoryIdModify
             // }
             values.categoryId=this.state.recordSelect.categoryId
-            this.props.updateDataKnowladgeMng(values);
+            this.props.updateDataKnowladgeMng(values,this);
             form.resetFields();
             this.setState({ visibleModify: false });
         });
@@ -258,15 +261,18 @@ class tablesKnowladgeMng extends React.Component {
         });
     }
     handleCreateArticleData = () => {
+
         const form = this.formRefDataCreateArticleData.props.form;
         form.validateFields((err, values) => {
+            console.log(values)
             if (err) {
                 return;
             }
             // values.categoryId=this.state.categoryId
             values.categoryId=this.state.recordSelect.categoryId
-            // console.log('开始调用getDataArticleMng')
-            this.props.createDataArticleMng(values)
+            console.log('开始调用getDataArticleMng')
+            this.props.createDataArticleMng(values,this)
+            //清空表单的值
             form.resetFields();
             this.setState({ visibleArticleData: false });
         });
@@ -287,7 +293,7 @@ class tablesKnowladgeMng extends React.Component {
         const params = {
             id:record.categoryId,
         }
-        this.props.deleteDataKnowladgeMng(params)
+        this.props.deleteDataKnowladgeMng(params,this)
     }
     onOpenChange = (openKeys) => {
         // console.log(openKeys)
@@ -761,6 +767,7 @@ class tablesKnowladgeMng extends React.Component {
             title: '文章内容',
             dataIndex: 'articleContent',
             key: 'articleContent',
+            // fixed: 'left',
             // align: 'center'
             width: '35%',
             render: text => <Popover content={(
@@ -783,7 +790,7 @@ class tablesKnowladgeMng extends React.Component {
         //     // align: 'center'
         //     width: 170,
         //     render: text => <span >{'已激活'}</span>,
-        // }, 
+        // },
         {
             title: '操作',
             key: 'action',
@@ -823,8 +830,8 @@ class tablesKnowladgeMng extends React.Component {
         if (showTable) {
         table = <Table style={{marginTop:50}} onRow={(record,index, ) => {
             return {
-            onClick: (e) => {this.onRowSelect(record,index, e)},       
-            // onMouseEnter: () => {},  
+            onClick: (e) => {this.onRowSelect(record,index, e)},
+            // onMouseEnter: () => {},
             };
         }} key={"tablesArticleMng"} pagination={false} columns={columnsArticleMng} dataSource={thisTemp.props.tablesArticleMng.tableDataArticleMng} scroll={{  y: 360}} />
         pagination = <Pagination defaultCurrent={1} defaultPageSize={10} total={thisTemp.props.tablesArticleMng.tableCountArticleMng} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableDataArticleMng('',page,10)}/>
@@ -960,7 +967,7 @@ class tablesKnowladgeMng extends React.Component {
                                     // onMouseEnter: () => {},  
                                     };
                                 }} key={"tablesArticleMng"} pagination={false} columns={columns} dataSource={this.props.tablesArticleMng.tableDataArticleMng} scroll={{  y: 360}} />
-                            <Pagination defaultCurrent={1} defaultPageSize={10} total={this.props.tablesArticleMng.tableCountArticleMng} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableDataArticleMng('',page,10,this.state.categoryId)}/>
+                            <Pagination current={this.state.current} defaultPageSize={10} total={this.props.tablesArticleMng.tableCountArticleMng} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableDataArticleMng('',page,10,this.state.categoryId)}/>
                         </CardBody>
                     </Card>
                 </GridItem>
@@ -1025,8 +1032,8 @@ const mapDispatchToProps = (dispatch) => {
         updateDataKnowladgeMng: (params) => {
             dispatch(updateDataKnowladgeMng(params))
         },
-        deleteDataKnowladgeMng: (params) => {
-            dispatch(deleteDataKnowladgeMng(params))
+        deleteDataKnowladgeMng: (params,obj) => {
+            dispatch(deleteDataKnowladgeMng(params,obj))
         },
         createDataKnowladgeMng: (params) => {
             dispatch(createDataKnowladgeMng(params))
@@ -1037,17 +1044,14 @@ const mapDispatchToProps = (dispatch) => {
         getDataArticleMng: (params) => {
             dispatch(getDataArticleMng(params))
         },
-        updateDataArticleMng: (params) => {
-            dispatch(updateDataArticleMng(params))
+        updateDataArticleMng: (params,obj) => {
+            dispatch(updateDataArticleMng(params,obj))
         },
-        deleteDataArticleMng: (params) => {
-            dispatch(deleteDataArticleMng(params))
+        deleteDataArticleMng: (params,obj) => {
+            dispatch(deleteDataArticleMng(params,obj))
         },
-        // activeDataArticleMng: (params) => {
-        //     dispatch(activeDataArticleMng(params))
-        // },
-        createDataArticleMng: (params) => {
-            dispatch(createDataArticleMng(params))
+        createDataArticleMng: (params,obj) => {
+            dispatch(createDataArticleMng(params,obj))
         },
         getOtherArticleMng: (params) => {
             dispatch(getOtherArticleMng(params))

@@ -49,7 +49,7 @@
   },
   "proxy": {
     "/cs/api/*": {
-      "target": "http://192.168.21.198:8013",
+      "target": "http://192.168.2.198:8013",
       "changeOrigin": true
     }
   }

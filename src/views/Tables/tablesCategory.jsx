@@ -29,6 +29,7 @@ class tablesCategory extends React.Component {
             recordAction:{},
             recordSelect:{},
             defaultSelectValue:'',
+            current:1
         };
     }
     componentWillMount(){
@@ -38,6 +39,9 @@ class tablesCategory extends React.Component {
     componentDidMount(){
     }
     getTableData = (categoryName,start,size) => {
+        this.setState({
+            current:start
+        })
         const params = {
             categoryName:categoryName,
             pageNo:start,
@@ -87,7 +91,7 @@ class tablesCategory extends React.Component {
             if (err) {
                 return;
             }
-            this.props.createDataCategory(values)
+            this.props.createDataCategory(values,this)
             form.resetFields();
             this.setState({ visible: false });
         });
@@ -102,7 +106,7 @@ class tablesCategory extends React.Component {
         const params = {
             id:record.id,
         }
-        this.props.deleteDataCategory(params)
+        this.props.deleteDataCategory(params,this)
     }
     render() {
         let thisTemp = this
@@ -220,7 +224,7 @@ class tablesCategory extends React.Component {
                                     // onMouseEnter: () => {},  
                                     };
                                 }} key={"tablesCategory"} pagination={false} columns={columns} dataSource={this.props.tablesCategory.tableDataCategory} scroll={{x: 200, y: 360}} />
-                            <Pagination defaultCurrent={1} defaultPageSize={10} total={this.props.tablesCategory.tableCountCategory} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10)}/>
+                            <Pagination current={this.state.current} defaultPageSize={10} total={this.props.tablesCategory.tableCountCategory} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10)}/>
                             </CardBody>
                     </Card>
                 </GridItem>
@@ -253,11 +257,11 @@ const mapDispatchToProps = (dispatch) => {
         updateDataCategory: (params) => {
             dispatch(updateDataCategory(params))
         },
-        deleteDataCategory: (params) => {
-            dispatch(deleteDataCategory(params))
+        deleteDataCategory: (params,obj) => {
+            dispatch(deleteDataCategory(params,obj))
         },
-        createDataCategory: (params) => {
-            dispatch(createDataCategory(params))
+        createDataCategory: (params,obj) => {
+            dispatch(createDataCategory(params,obj))
         },
         getOtherCategory: (params) => {
             dispatch(getOtherCategory(params))

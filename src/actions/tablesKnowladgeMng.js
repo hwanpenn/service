@@ -82,7 +82,7 @@ export function getDataKnowladgeMng(params,obj) {
                                 })
                                 const params = {
                                     categoryId:response.data.rows[0].children[0].categoryId,
-                                    pageNo:1,
+                                    pageNo:obj.state.current,
                                     pageSize:10,
                                 };
                                 dispatch(getDataArticleMng(params));
@@ -100,7 +100,7 @@ export function getDataKnowladgeMng(params,obj) {
         // otherData:otherData
     }
 }
-export function createDataKnowladgeMng(params) {
+export function createDataKnowladgeMng(params,obj) {
     return {
         types: [CREATE_REQUEST_KnowladgeMng, CREATE_SUCCESS_KnowladgeMng, CREATE_FAIL_KnowladgeMng],
         promise: client => client.post('/cs/api/knowledgeBase/addArticleCategory',params),
@@ -108,7 +108,7 @@ export function createDataKnowladgeMng(params) {
             if(response.data.code===0){
                 message.info(response.data.msg);
                 const params = {
-                    pageNo:1,
+                    pageNo:obj.state.current,
                     pageSize:10,
                 };
                 dispatch(getDataKnowladgeMng(params));
@@ -118,7 +118,7 @@ export function createDataKnowladgeMng(params) {
         },
     }
 }
-export function updateDataKnowladgeMng(params) {
+export function updateDataKnowladgeMng(params,obj) {
     return {
         types: [UPDATE_REQUEST_KnowladgeMng, UPDATE_SUCCESS_KnowladgeMng, UPDATE_FAIL_KnowladgeMng],
         promise: client => client.post('/cs/api/knowledgeBase/updateArticleCategory',params),
@@ -126,7 +126,7 @@ export function updateDataKnowladgeMng(params) {
             if(response.data.code===0){
                 message.info(response.data.msg);
                 const params = {
-                    pageNo:1,
+                    pageNo:obj.state.current,
                     pageSize:10,
                 };
                 dispatch(getDataKnowladgeMng(params));
@@ -136,7 +136,7 @@ export function updateDataKnowladgeMng(params) {
         },
     }
 }
-export function deleteDataKnowladgeMng(params) {
+export function deleteDataKnowladgeMng(params,obj) {
     return {
         types: [DELETE_REQUEST_KnowladgeMng, DELETE_SUCCESS_KnowladgeMng, DELETE_FAIL_KnowladgeMng],
         promise: client => client.post('/cs/api/knowledgeBase/deleteArticleCategory',params),
@@ -144,7 +144,7 @@ export function deleteDataKnowladgeMng(params) {
             if(response.data.code===0){
                 message.info(response.data.msg);
                 const params = {
-                    pageNo:1,
+                    pageNo:obj.state.current,
                     pageSize:10,
                 };
                 dispatch(getDataKnowladgeMng(params));

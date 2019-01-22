@@ -1,4 +1,5 @@
 import { message } from 'antd';
+import {last} from "./tablesArticleMng";
 message.config({
     duration: 1,
 });
@@ -23,6 +24,8 @@ export const GET_FAIL_MyCompany_OTHER = "GET_FAIL_MyCompany_OTHER";
 export const GET_REQUEST_KillGroup_OTHER = "GET_REQUEST_MyCompany_OTHER";
 export const GET_SUCCESS_KillGroup_OTHER = "GET_SUCCESS_MyCompany_OTHER";
 export const GET_FAIL_KillGroup_OTHER = "GET_FAIL_MyCompany_OTHER";
+export  let lastPage
+export  let dataTotal
 
 export function addKillGroup(params) {
     return {
@@ -67,20 +70,27 @@ export function getDataMyCompany(params) {
         types: [GET_REQUEST_MyCompany, GET_SUCCESS_MyCompany, GET_FAIL_MyCompany],
         promise: client => client.get('/cs/api/organization/queryUser',{params: params}),
         afterSuccess:(dispatch,getState,response)=>{
+            lastPage = parseInt(response.data.total/10)+1
+            dataTotal = response.data.total
+            // console.log(response)
+            // console.log(response.data.total)
             /*请求成功后执行的函数*/
         },
         // otherData:otherData
     }
 }
-export function createDataMyCompany(params) {
+export function createDataMyCompany(params,obj) {
     return {
         types: [CREATE_REQUEST_MyCompany, CREATE_SUCCESS_MyCompany, CREATE_FAIL_MyCompany],
         promise: client => client.post('/cs/api/organization/addUser',params),
         afterSuccess:(dispatch,getState,response)=>{
             if(response.data.code===0){
                 message.info(response.data.msg);
+                obj.setState({
+                    current:lastPage
+                })
                 const params = {
-                    pageNo:1,
+                    pageNo:lastPage,
                     pageSize:10,
                 };
                 dispatch(getDataMyCompany(params));
@@ -90,7 +100,7 @@ export function createDataMyCompany(params) {
         },
     }
 }
-export function updateDataMyCompany(params) {
+export function updateDataMyCompany(params,obj) {
     return {
         types: [UPDATE_REQUEST_MyCompany, UPDATE_SUCCESS_MyCompany, UPDATE_FAIL_MyCompany],
         promise: client => client.post('/cs/api/organization/updateUser',params),
@@ -98,7 +108,7 @@ export function updateDataMyCompany(params) {
             if(response.data.code===0){
                 message.info(response.data.msg);
                 const params = {
-                    pageNo:1,
+                    pageNo:obj.state.current,
                     pageSize:10,
                 };
                 dispatch(getDataMyCompany(params));
@@ -108,18 +118,32 @@ export function updateDataMyCompany(params) {
         },
     }
 }
-export function deleteDataMyCompany(params) {
+export function deleteDataMyCompany(params,obj) {
     return {
         types: [DELETE_REQUEST_MyCompany, DELETE_SUCCESS_MyCompany, DELETE_FAIL_MyCompany],
         promise: client => client.post('/cs/api/organization/deleteUser',params),
         afterSuccess:(dispatch,getState,response)=>{
+            console.log(dataTotal % 10,"走这儿")
             if(response.data.code===0){
                 message.info(response.data.msg);
-                const params = {
-                    pageNo:1,
-                    pageSize:10,
-                };
-                dispatch(getDataMyCompany(params));
+                if(dataTotal % 10 ===1){
+                    lastPage -= 1
+                    obj.setState({
+                        current:lastPage
+                    })
+                    const params = {
+                        pageNo:lastPage,
+                        pageSize:10,
+                    };
+                    dispatch(getDataMyCompany(params));
+                }else{
+                    const params = {
+                        pageNo:obj.state.current,
+                        pageSize:10,
+                    };
+                    dispatch(getDataMyCompany(params));
+                }
+
             }else {
                 message.info(response.data.msg);
             }

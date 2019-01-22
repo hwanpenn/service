@@ -37,7 +37,8 @@ class tablesMyCompany extends React.Component {
             recordSelect:{},
             defaultSelectValue:'',
             selectedRowKeys:[],
-            selectedRows:''
+            selectedRows:'',
+            current:1
         };
     }
     componentWillMount(){
@@ -47,6 +48,9 @@ class tablesMyCompany extends React.Component {
     componentDidMount(){
     }
     getTableData = (caption,start,size) => {
+        this.setState({
+            current:start
+        })
         const params = {
             caption:caption,
             pageNo:start,
@@ -95,7 +99,7 @@ class tablesMyCompany extends React.Component {
                 return;
             }
             values.id=this.state.recordAction.id
-            this.props.updateDataMyCompany(values);
+            this.props.updateDataMyCompany(values,this);
             form.resetFields();
             this.setState({ visibleModify: false });
         });
@@ -118,7 +122,7 @@ class tablesMyCompany extends React.Component {
             if (err) {
                 return;
             }
-            this.props.createDataMyCompany(values)
+            this.props.createDataMyCompany(values,this)
             form.resetFields();
             this.setState({ visible: false });
         });
@@ -136,7 +140,7 @@ class tablesMyCompany extends React.Component {
         const params = {
             id:record.id,
         }
-        this.props.deleteDataMyCompany(params)
+        this.props.deleteDataMyCompany(params,this)
     }
     resetConfirm = (record) => {
         const params = {
@@ -399,7 +403,7 @@ class tablesMyCompany extends React.Component {
                                     // onMouseEnter: () => {},  
                                     };
                                 }} key={"tablesMyCompany"} pagination={false} columns={columns} dataSource={this.props.tablesMyCompany.tableDataMyCompany} scroll={{x: 600, y: 360}} />
-                            <Pagination defaultCurrent={1} defaultPageSize={10} total={this.props.tablesMyCompany.tableCountMyCompany} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10)}/>
+                            <Pagination current ={this.state.current} defaultPageSize={10} total={this.props.tablesMyCompany.tableCountMyCompany} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10)}/>
                         </CardBody>
                     </Card>
                 </GridItem>
@@ -436,14 +440,14 @@ const mapDispatchToProps = (dispatch) => {
         getDataMyCompany: (params) => {
             dispatch(getDataMyCompany(params))
         },
-        updateDataMyCompany: (params) => {
-            dispatch(updateDataMyCompany(params))
+        updateDataMyCompany: (params,obj) => {
+            dispatch(updateDataMyCompany(params,obj))
         },
-        deleteDataMyCompany: (params) => {
-            dispatch(deleteDataMyCompany(params))
+        deleteDataMyCompany: (params,obj) => {
+            dispatch(deleteDataMyCompany(params,obj))
         },
-        createDataMyCompany: (params) => {
-            dispatch(createDataMyCompany(params))
+        createDataMyCompany: (params,obj) => {
+            dispatch(createDataMyCompany(params,obj))
         },
         getOtherMyCompany: (params) => {
             dispatch(getOtherMyCompany(params))

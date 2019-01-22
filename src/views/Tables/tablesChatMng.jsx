@@ -44,6 +44,7 @@ class tablesChatMng extends React.Component {
             timeValueEnd: '',
             timeValueStartModify: '',
             timeValueEndModify: '',
+            current:1
         };
     }
     componentWillMount(){
@@ -55,6 +56,9 @@ class tablesChatMng extends React.Component {
     componentDidMount(){
     }
     getTableData = (windowName,start,size) => {
+        this.setState({
+            current:start
+        })
         const params = {
             windowName:windowName,
             pageNo:start,
@@ -142,7 +146,7 @@ class tablesChatMng extends React.Component {
                 }
                 values.startTime=this.formRefDataCreate.state.timeValueStart
                 values.endTime=this.formRefDataCreate.state.timeValueEnd
-                this.props.createDataChatMng(values)
+                this.props.createDataChatMng(values,this)
                 form.resetFields();
                 this.setState({ visible: false });
             });
@@ -167,7 +171,7 @@ class tablesChatMng extends React.Component {
         const params = {
             windowId:record.windowId,
         }
-        this.props.deleteDataChatMng(params)
+        this.props.deleteDataChatMng(params,this)
     }
     handleChangeRobotId = (value) => {
         this.setState({ robotId: value });
@@ -682,7 +686,7 @@ class tablesChatMng extends React.Component {
                                     // onMouseEnter: () => {},  
                                     };
                                 }} key={"tablesChatMng"} pagination={false} columns={columns} dataSource={this.props.tablesChatMng.tableDataChatMng} scroll={{ x: 2250 , y: 360}} />
-                            <Pagination defaultCurrent={1} defaultPageSize={10} total={this.props.tablesChatMng.tableCountChatMng} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10)}/>
+                            <Pagination current={this.state.current} defaultPageSize={10} total={this.props.tablesChatMng.tableCountChatMng} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10)}/>
                         </CardBody>
                     </Card>
                 </GridItem>
@@ -715,14 +719,14 @@ const mapDispatchToProps = (dispatch) => {
         updateDataChatMng: (params) => {
             dispatch(updateDataChatMng(params))
         },
-        deleteDataChatMng: (params) => {
-            dispatch(deleteDataChatMng(params))
+        deleteDataChatMng: (params,obj) => {
+            dispatch(deleteDataChatMng(params,obj))
         },
         activeDataChatMng: (params) => {
             dispatch(activeDataChatMng(params))
         },
-        createDataChatMng: (params) => {
-            dispatch(createDataChatMng(params))
+        createDataChatMng: (params,obj) => {
+            dispatch(createDataChatMng(params,obj))
         },
         getOtherChatMng: (params) => {
             dispatch(getOtherChatMng(params))

@@ -1,9 +1,9 @@
 //转人工服务地址
-var robotSocketUrl = "ws://192.168.21.198:9322"
-var nginxUrl = "http://192.168.21.123:3000"
+var robotSocketUrl = "ws://192.168.2.198:9322"
+var nginxUrl = "http://192.168.2.105:3000"
 //客服系统后台服务地址
-var serviceUrl = "http://192.168.21.198:8013"
-var chatlogUrl = "http://192.168.21.123:3001"
+var serviceUrl = "http://192.168.2.198:8013"
+var chatlogUrl = "http://192.168.2.105:3001"
 // robotSocketUrl='ws://'+window.location.host.split(":")[0]+':9322';
 //加密
 function encryptData(data, publicKey){            

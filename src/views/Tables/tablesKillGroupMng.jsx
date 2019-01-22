@@ -69,7 +69,7 @@ class tablesKillGroupMng extends React.Component {
             pageNo:start,
             pageSize:size,
         };
-        this.props.getDataKillGroupMng(params);
+        this.props.getDataKillGroupMng(params,this);
     }
     getOtherData = (username,start,size) => {
         const params = {
@@ -120,7 +120,7 @@ class tablesKillGroupMng extends React.Component {
             if (err) {
                 return;
             }
-            this.props.createDataKillGroupMng(values)
+            this.props.createDataKillGroupMng(values,this)
             form.resetFields();
             this.setState({ visible: false });
         });
@@ -135,7 +135,7 @@ class tablesKillGroupMng extends React.Component {
         const params = {
             cuSkGroupId:record.cuSkGroupId,
         }
-        this.props.deleteDataKillGroupMng(params)
+        this.props.deleteDataKillGroupMng(params,this)
     }
     activeConfirm = (record) => {
         const params = {
@@ -288,7 +288,7 @@ class tablesKillGroupMng extends React.Component {
                                     // onMouseEnter: () => {},  
                                     };
                                 }} key={"tablesKillGroupMng"} pagination={false} columns={columns} dataSource={this.props.tablesKillGroupMng.tableDataKillGroupMng} scroll={{ x: 500 , y: 360}} />
-                            <Pagination defaultCurrent={this.state.page} defaultPageSize={10} total={this.props.tablesKillGroupMng.tableCountKillGroupMng} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10)}/>
+                            <Pagination current={this.state.page} defaultPageSize={10} total={this.props.tablesKillGroupMng.tableCountKillGroupMng} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10)}/>
                         </CardBody>
                     </Card>
                 </GridItem>
@@ -321,17 +321,17 @@ const mapStateToProps = (state) => {
 }
 const mapDispatchToProps = (dispatch) => {
     return{
-        getDataKillGroupMng: (params) => {
-            dispatch(getDataKillGroupMng(params))
+        getDataKillGroupMng: (params,obj) => {
+            dispatch(getDataKillGroupMng(params,obj))
         },
         updateDataKillGroupMng: (params,obj) => {
             dispatch(updateDataKillGroupMng(params,obj))
         },
-        deleteDataKillGroupMng: (params) => {
-            dispatch(deleteDataKillGroupMng(params))
+        deleteDataKillGroupMng: (params,obj) => {
+            dispatch(deleteDataKillGroupMng(params,obj))
         },
-        createDataKillGroupMng: (params) => {
-            dispatch(createDataKillGroupMng(params))
+        createDataKillGroupMng: (params,obj) => {
+            dispatch(createDataKillGroupMng(params,obj))
         },
         getOtherKillGroupMng: (params) => {
             dispatch(getOtherKillGroupMng(params))

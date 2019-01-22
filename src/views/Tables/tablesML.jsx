@@ -40,7 +40,8 @@ class tablesML extends React.Component {
             selectedRows:'',
             learnIds:[],
             defaultRobotId:'',
-            value: undefined
+            value: undefined,
+            current:1
         };
     }
     componentWillMount(){
@@ -57,6 +58,7 @@ class tablesML extends React.Component {
     this.setState({ value });
     }
     getTableDataKnowladgeMng = (categoryName,start,size) => {
+
         const params = {
             categoryName:categoryName,
             pageNo:start,
@@ -65,6 +67,10 @@ class tablesML extends React.Component {
         this.props.getDataKnowladgeMng(params,this);
     }
     getTableData = (standardQuesiton,start,size,robotId) => {
+
+        this.setState({
+            current:start
+        })
         const params = {
             // robotId:robotId,
             pageNo:start,
@@ -74,6 +80,16 @@ class tablesML extends React.Component {
         };
         this.props.getDataML(params,this);
     }
+    // answerGetTableData = (answer,start,size,robotId) => {
+    //     const params = {
+    //         // robotId:robotId,
+    //         pageNo:start,
+    //         pageSize:size,
+    //         robotId:robotId,
+    //         answer:answer,
+    //     };
+    //     this.props.getDataML(params,this);
+    // }
     getOtherData = (username,start,size) => {
         const params = {
             search:username,
@@ -123,6 +139,7 @@ class tablesML extends React.Component {
 
         }else{
             if(this.state.value.length!==0){
+                console.log(this.state.robotId)
                 const params = {
                     robotId:this.state.robotId,
                     categoryIds:this.state.value
@@ -479,8 +496,20 @@ class tablesML extends React.Component {
                                     <h4 className={classes.cardIconTitle}> </h4>
                                 </Grid>
                                 <Grid style={{textAlign:'right',marginTop:10}} item xs={11}>
-                                <Select style={{ width: 200,borderStyle:'solid',
+                                    <Search
+                                        placeholder="标准问题搜索"
+                                        onSearch={value => this.getTableData(value,1,20,this.state.robotId)}
+                                        style={{ width: 150,borderStyle:'solid',
                                             borderWidth:0,paddingRight:10 }}
+                                    />
+                                    {/*<Search*/}
+                                        {/*placeholder="回答内容搜索"*/}
+                                        {/*onSearch={value => this.answerGetTableData(value,1,20,this.state.robotId)}*/}
+                                        {/*style={{ width: 150,borderStyle:'solid',*/}
+                                            {/*borderWidth:0,paddingRight:10 }}*/}
+                                    {/*/>*/}
+                                    <Select style={{ width: 150,borderStyle:'solid',
+                                        borderWidth:0,paddingRight:10 }}
                                             showSearch
                                             placeholder="请选择机器人"
                                             value={this.state.robotId}
@@ -489,19 +518,13 @@ class tablesML extends React.Component {
                                             onFocus={this.handleFocus}
                                             onBlur={this.handleBlur}
                                             filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                                        >
-                                            {optionsRobot}
-                                        </Select>
-                                    <Search
-                                        placeholder="名称搜索"
-                                        onSearch={value => this.getTableData(value,1,20,this.state.robotId)}
-                                        style={{ width: 200,borderStyle:'solid',
-                                            borderWidth:0,paddingRight:10 }}
-                                    />
+                                    >
+                                        {optionsRobot}
+                                    </Select>
                                     {/* <Button onClick={this.showModalCreate} style={{ height: 30,marginRight:10 }} size={'small'}>增加</Button> */}
                                     <TreeSelect
                                         showSearch
-                                        style={{ width: 200 }}
+                                        style={{ width: 150 }}
                                         value={this.state.value}
                                         dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
                                         placeholder="选择知识库"
@@ -528,7 +551,7 @@ class tablesML extends React.Component {
                                     };
                                 }}  key={"tablesML"} pagination={false} columns={columns} dataSource={this.props.tablesML.tableDataML} scroll={{ y: 360}} />
                             {/* <Pagination showSizeChanger onShowSizeChange={onShowSizeChange} defaultCurrent={1} defaultPageSize={this.state.defaultPageSize} total={this.props.tablesML.tableCountML} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10,this.state.robotId)}/> */}
-                            <Pagination defaultCurrent={1} defaultPageSize={this.state.defaultPageSize} total={this.props.tablesML.tableCountML} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,20,this.state.robotId)}/>
+                            <Pagination current ={this.state.current} defaultPageSize={this.state.defaultPageSize} total={this.props.tablesML.tableCountML} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,20,this.state.robotId)}/>
                         </CardBody>
                     </Card>
                 </GridItem>
@@ -569,8 +592,8 @@ const mapDispatchToProps = (dispatch) => {
         getDataKnowladgeMng: (params,obj) => {
             dispatch(getDataKnowladgeMng(params,obj))
         },
-        getDataML: (params,obj) => {
-            dispatch(getDataML(params,obj))
+        getDataML: (params) => {
+            dispatch(getDataML(params))
         },
         updateDataML: (params,obj) => {
             dispatch(updateDataML(params,obj))
