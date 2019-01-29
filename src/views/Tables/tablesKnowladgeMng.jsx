@@ -614,6 +614,13 @@ class tablesKnowladgeMng extends React.Component {
                                         <Input />
                                     )}
                                 </FormItem>
+                                <FormItem label="标签">
+                                    {getFieldDecorator('articleLabel', {
+                                        rules: [{ required: true, message: '请输入新增标签!' }],
+                                    })(
+                                        <Input />
+                                    )}
+                                </FormItem>
                                 <FormItem label="内容">
                                     {getFieldDecorator('articleContent', {
                                         rules: [{ required: true, message: '请输入新增内容!' }],
@@ -641,10 +648,18 @@ class tablesKnowladgeMng extends React.Component {
                             onOk={onCreate}
                         >
                             <Form layout="vertical">
-                                <FormItem label="名称">
+                                <FormItem label="标题">
                                     {getFieldDecorator('articleTitle', {
                                         initialValue:  thisTemp.state.recordActionArticleData.articleTitle ,
                                         rules: [{ required: true, message: '请输入修改名称!' }],
+                                    })(
+                                        <Input />
+                                    )}
+                                </FormItem>
+                                <FormItem label="标签">
+                                    {getFieldDecorator('articleLabel', {
+                                        initialValue:  thisTemp.state.recordActionArticleData.articleLabel ,
+                                        rules: [{ required: true, message: '请输入修改标签!' }],
                                     })(
                                         <Input />
                                     )}
@@ -668,7 +683,7 @@ class tablesKnowladgeMng extends React.Component {
             dataIndex: 'categoryName',
             key: 'categoryName',
             width: 350,
-            fixed: 'left',
+            // fixed: 'left',
           }, {
             title: '描述',
             dataIndex: 'categoryDesc',
@@ -686,7 +701,7 @@ class tablesKnowladgeMng extends React.Component {
             title: '操作',
             key: 'action',
             width: 200,
-            fixed: 'right',
+            // fixed: 'right',
             render: (text, record) => (
                 <span>
                     <a onClick={() => this.showModifyModalArticleData(record)} >编辑</a>
@@ -749,8 +764,8 @@ class tablesKnowladgeMng extends React.Component {
             title: '文章标题',
             dataIndex: 'articleTitle',
             key: 'articleTitle',
-            fixed: 'left',
-            width: '35%',
+            // fixed: 'left',
+            width: '30%',
             render: text =><Popover content={(
                 <div style={{width:270}}>
                     <p>{text}</p>
@@ -764,12 +779,12 @@ class tablesKnowladgeMng extends React.Component {
              }}>{text}</span>
             </Popover>,
         }, {
-            title: '文章内容',
-            dataIndex: 'articleContent',
-            key: 'articleContent',
+            title: '文章标签',
+            dataIndex: 'articleLabel',
+            key: 'articleLabel',
             // fixed: 'left',
             // align: 'center'
-            width: '35%',
+            width: '25%',
             render: text => <Popover content={(
                 <div style={{width:270}}>
                   <p>{text}</p>
@@ -779,9 +794,28 @@ class tablesKnowladgeMng extends React.Component {
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
                     display: 'inline-block',
-                    width: 270
+                    width: 150
                 }}>{text}</span>
           </Popover>
+        },{
+            title: '文章内容',
+            dataIndex: 'articleContent',
+            key: 'articleContent',
+            // fixed: 'left',
+            // align: 'center'
+            width: '30%',
+            render: text => <Popover content={(
+                <div style={{width:270}}>
+                    <p>{text}</p>
+                </div>
+            )}>
+             <span style={{overflow: 'hidden',
+                 textOverflow: 'ellipsis',
+                 whiteSpace: 'nowrap',
+                 display: 'inline-block',
+                 width: 150
+             }}>{text}</span>
+            </Popover>
         },
         // {
         //     title: '启用状态',
@@ -794,8 +828,8 @@ class tablesKnowladgeMng extends React.Component {
         {
             title: '操作',
             key: 'action',
-            width: 270,
-            fixed: 'right',
+            width: '15%',
+            // fixed: 'right',
             render: (text, record) => (
                 <span>
                     <a onClick={() => this.showModifyModalArticleData(record)} >编辑</a>

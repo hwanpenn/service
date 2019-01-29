@@ -123,7 +123,6 @@ class tablesRobotMng extends React.Component {
             dataIndex: 'robotName',
             key: 'robotName',
             width: window.screen.width*0.15,
-            fixed: 'left',
             render: text => <a >{text}</a>,
         }, {
             title: '机器人展示名称',
@@ -140,8 +139,8 @@ class tablesRobotMng extends React.Component {
         }, {
             title: '操作',
             key: 'action',
-            width: window.screen.width*0.20,
-            fixed: 'right',
+            width: window.screen.width*0.15,
+            // fixed: 'right',
             render: (text, record) => (
                  <span>
                  <a onClick={() => this.showModifyModal(record)} >编辑</a>

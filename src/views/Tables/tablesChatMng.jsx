@@ -125,7 +125,7 @@ class tablesChatMng extends React.Component {
             values.windowId=this.state.recordAction.windowId
             values.startTime=this.formRefModifyData.state.timeValueStartModify
             values.endTime=this.formRefModifyData.state.timeValueEndModify
-            this.props.updateDataChatMng(values);
+            this.props.updateDataChatMng(values,this);
             form.resetFields();
             this.setState({ visibleModify: false });
         });
@@ -165,7 +165,7 @@ class tablesChatMng extends React.Component {
             status:record.status,
             windowId:record.windowId,
         }
-        this.props.activeDataChatMng(params)
+        this.props.activeDataChatMng(params,this)
     }
     deleteConfirm = (record) => {
         const params = {
@@ -623,7 +623,7 @@ class tablesChatMng extends React.Component {
                                 <FormItem style={{marginTop:-15}} label="开始时间">
                                     {getFieldDecorator('startTime',{
                                         // initialValue:  thisTemp.state.recordAction.startTime ,
-                                    })(<TimePicker style={{width:'50%'}} placeholder={'请选择时间'} onChange={this.onChangeStartModify} value={this.state.timeValueStartModify} defaultValue={moment('12:08:23', 'HH:mm:ss')}  />)}
+                                    })(<TimePicker style={{width:'50%'}} placeholder={'请选择时间'} onChange={this.onChangeStartModify} value={this.state.timeValueStartModify} initialValue={moment('12:08:23', 'HH:mm:ss')}  />)}
                                 </FormItem>
                                 <FormItem style={{marginTop:-15}} label="结束时间">
                                     {getFieldDecorator('endTime',{
@@ -716,14 +716,14 @@ const mapDispatchToProps = (dispatch) => {
         getDataChatMng: (params) => {
             dispatch(getDataChatMng(params))
         },
-        updateDataChatMng: (params) => {
-            dispatch(updateDataChatMng(params))
+        updateDataChatMng: (params,obj) => {
+            dispatch(updateDataChatMng(params,obj))
         },
         deleteDataChatMng: (params,obj) => {
             dispatch(deleteDataChatMng(params,obj))
         },
-        activeDataChatMng: (params) => {
-            dispatch(activeDataChatMng(params))
+        activeDataChatMng: (params,obj) => {
+            dispatch(activeDataChatMng(params,obj))
         },
         createDataChatMng: (params,obj) => {
             dispatch(createDataChatMng(params,obj))

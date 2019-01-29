@@ -101,7 +101,7 @@ export function createDataChatMng(params,obj) {
         },
     }
 }
-export function updateDataChatMng(params) {
+export function updateDataChatMng(params,obj) {
     return {
         types: [UPDATE_REQUEST_ChatMng, UPDATE_SUCCESS_ChatMng, UPDATE_FAIL_ChatMng],
         promise: client => client.post('/cs/api/robot/updateChatWindow',params),
@@ -109,7 +109,7 @@ export function updateDataChatMng(params) {
             if(response.data.code===0){
                 message.info(response.data.msg);
                 const params = {
-                    pageNo:1,
+                    pageNo:obj.state.current,
                     pageSize:10,
                 };
                 dispatch(getDataChatMng(params));
@@ -150,7 +150,7 @@ export function deleteDataChatMng(params,obj) {
         },
     }
 }
-export function activeDataChatMng(params) {
+export function activeDataChatMng(params,obj) {
     return {
         types: [ACTIVE_REQUEST_ChatMng, ACTIVE_SUCCESS_ChatMng, ACTIVE_FAIL_ChatMng],
         promise: client => client.post('/cs/api/robot/operationChatWindow',params),
@@ -158,7 +158,7 @@ export function activeDataChatMng(params) {
             if(response.data.code===0){
                 message.info(response.data.msg);
                 const params = {
-                    pageNo:1,
+                    pageNo:obj.state.current,
                     pageSize:10,
                 };
                 dispatch(getDataChatMng(params));

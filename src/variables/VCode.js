@@ -11,6 +11,8 @@ class VCode extends Component {
         }
     }
 
+
+
     initState(){
         return {
             data: this.getRandom(109,48,4),
@@ -54,7 +56,14 @@ class VCode extends Component {
     }
     componentDidMount() {
         this.canvas()
+        this.props.zsx(this)
     }
+    renovate = () =>{
+        this.setState({...this.initState(),refresh: false})
+        this.canvas()
+    }
+    myName = () => alert('xiaohesong')
+
 
     render() {
         const { rotate, fz, color } = this.state
@@ -80,8 +89,7 @@ class VCode extends Component {
                         ? <div
                             className='mask'
                             onClick={() => {
-                                this.setState({...this.initState(),refresh: false})
-                                this.canvas()
+                                this.renovate()
                             }}
                         >
                         </div>

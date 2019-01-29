@@ -20,6 +20,9 @@ export const DELETE_FAIL_Company = "DELETE_FAIL_Company";
 export const GET_REQUEST_Company_OTHER = "GET_REQUEST_Company_OTHER";
 export const GET_SUCCESS_Company_OTHER = "GET_SUCCESS_Company_OTHER";
 export const GET_FAIL_Company_OTHER = "GET_FAIL_Company_OTHER";
+export const GET_REQUEST_Province = "GET_REQUEST_Province";
+export const GET_SUCCESS_Province = "GET_SUCCESS_Province";
+export const GET_FAIL_Province = "GET_FAIL_Province";
 
 let lastPage
 let dataTotal
@@ -113,5 +116,16 @@ export function deleteDataCompany(params,obj) {
                 message.info(response.data.msg);
             }
         },
+    }
+}
+
+export function getProvince(params) {
+    return {
+        types: [GET_REQUEST_Province, GET_SUCCESS_Province, GET_FAIL_Province],
+        promise: client => client.get('/cs/api/area/selectProvince',{params: params}),
+        afterSuccess:(dispatch,getState,response)=>{
+            /*请求成功后执行的函数*/
+        },
+        // otherData:otherData
     }
 }

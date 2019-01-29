@@ -20,6 +20,8 @@ import LockOpen from "@material-ui/icons/LockOpen";
 import axios from '../../Utils/axios';
 import { message } from 'antd';
 import VCode from '../../variables/VCode'
+import {canvas} from '../../variables/VCode'
+
 
 import 'jsencrypt';
 
@@ -80,14 +82,15 @@ class LoginPage extends React.Component {
     // guid = () => {
     //     return (this.S4()+this.S4()+"-"+this.S4()+"-"+this.S4()+"-"+this.S4()+"-"+this.S4()+this.S4()+this.S4());
     // }
-
+    renovate = (vaule) =>{
+        this.child = vaule
+    }
     handleClick = (event) =>{
 
         const thisTemp = this;
         const username = window.sessionStorage.getItem('username');
         // alert("用户名"+username)
         const password = window.sessionStorage.getItem('password');
-        console.log(password)
         const checked = window.sessionStorage.getItem('checked');
         const check = window.sessionStorage.getItem('check');
         const {JSEncrypt} = require('jsencrypt')
@@ -96,11 +99,11 @@ class LoginPage extends React.Component {
         encrypt.setPublicKey(publicKey);
         // encrypt.setPublicKey('-----BEGIN PUBLIC KEY-----'+'\n' + publicKey + '\n'+'-----END PUBLIC KEY-----');
         let encrypted = encrypt.encrypt(password);
-        console.log(password)
-        console.log(encrypted)
 
         if(checked !== check ){
+            this.child.renovate()
             message.info("验证码有误请重新输入");
+
         }else{
             // this.props.history.push("/cms/home");
             // axios.defaults.headers.common['Authorization'] = '';
@@ -137,6 +140,7 @@ class LoginPage extends React.Component {
                     thisTemp.props.history.push("/cms/home");
                     // document.getElementById("layui-layer2").style.display='block'
                 }else {
+                    this.child.renovate()
                     message.info(response.data.msg);
                 }
 
@@ -153,6 +157,7 @@ class LoginPage extends React.Component {
             [name]: event.target.value,
         });
     };
+
     render() {
         const { classes } = this.props;
         return (
@@ -217,7 +222,7 @@ class LoginPage extends React.Component {
                                                 endAdornment: (
                                                     <InputAdornment position="end">
                                                         {/*<LockOutline*/}
-                                                        <VCode/>
+                                                        <VCode zsx={this.renovate} />
                                                     </InputAdornment>
                                                 )
                                             }}

@@ -1,10 +1,51 @@
 //转人工服务地址
-var robotSocketUrl = "ws://192.168.2.198:9322"
-var nginxUrl = "http://192.168.2.105:3000"
+var robotSocketUrl
+var nginxUrl
 //客服系统后台服务地址
-var serviceUrl = "http://192.168.2.198:8013"
-var chatlogUrl = "http://192.168.2.105:3001"
+var serviceUrl
+var chatlogUrl
 // robotSocketUrl='ws://'+window.location.host.split(":")[0]+':9322';
+
+var url = window.location.href;
+var serviceUrl
+
+function choosePath() {
+    if(url.indexOf("192.168.2.198") >0){//198环境下
+        //转人工服务地址
+         robotSocketUrl = "ws://192.168.2.198:9322"
+         nginxUrl = "http://192.168.2.198:8079"
+        //客服系统后台服务地址
+         serviceUrl = "http://192.168.2.198:8013"
+         chatlogUrl = "http://192.168.2.198:8081"
+
+    }else if(url.indexOf("12329.pub") >0){//测试环境的情况下
+        //转人工服务地址
+         robotSocketUrl = "ws://12329.pub:10242"
+         nginxUrl = "http://12329.pub:10234"
+        //客服系统后台服务地址
+         serviceUrl = "http://12329.pub:10235"
+         chatlogUrl = "http://12329.pub:15000"
+
+    }else if(url.indexOf("gjj12329.cn") >0){//正式环境下
+        //转人工服务地址
+         robotSocketUrl = "ws://www.gjj12329.cn:9330"
+         nginxUrl = "http://www.gjj12329.cn:8079"
+        //客服系统后台服务地址
+         serviceUrl = "http://www.gjj12329.cn:8079"
+         chatlogUrl = "http://www.gjj12329.cn:8081"
+
+    }else{
+        //转人工服务地址
+         robotSocketUrl = "ws://192.168.2.198:9322"
+         nginxUrl = "http://192.168.2.105:3000"
+        //客服系统后台服务地址
+         serviceUrl = "http://192.168.2.198:8013"
+         chatlogUrl = "http://192.168.2.105:3001"
+    }
+}
+
+choosePath()
+
 //加密
 function encryptData(data, publicKey){            
   data = JSON.stringify(data)
