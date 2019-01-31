@@ -12,12 +12,13 @@ import extendedTablesStyle from "assets/jss/material-dashboard-pro-react/views/e
 import {getOtherML,getDataML,updateDataML,deleteDataML,createDataML,importDataML } from "actions/tablesML";
 import {getDataKnowladgeMng} from "actions/tablesKnowladgeMng";
 import {connect} from "react-redux";
-import {Table, Divider,Button } from 'antd';
+import {Table, Divider, Button, LocaleProvider} from 'antd';
 import {Input,Modal } from 'antd';
 import {Form,Pagination,Popconfirm } from 'antd';
 import {Upload, message, Icon,Select,Popover } from 'antd';
 import { TreeSelect } from 'antd';
 import { chatTestUrl } from '../../cfg/cfg.js';
+import zh_CN from "antd/lib/locale-provider/zh_CN";
 
 const FormItem = Form.Item;
 const Search = Input.Search;
@@ -41,7 +42,8 @@ class tablesML extends React.Component {
             learnIds:[],
             defaultRobotId:'',
             value: undefined,
-            current:1
+            current:1,
+            pageSize:20
         };
     }
     componentWillMount(){
@@ -69,7 +71,8 @@ class tablesML extends React.Component {
     getTableData = (standardQuesiton,start,size,robotId) => {
 
         this.setState({
-            current:start
+            current:start,
+            pageSize:size
         })
         const params = {
             // robotId:robotId,
@@ -550,8 +553,10 @@ class tablesML extends React.Component {
                                     // onMouseEnter: () => {},  
                                     };
                                 }}  key={"tablesML"} pagination={false} columns={columns} dataSource={this.props.tablesML.tableDataML} scroll={{ y: 360}} />
-                            {/* <Pagination showSizeChanger onShowSizeChange={onShowSizeChange} defaultCurrent={1} defaultPageSize={this.state.defaultPageSize} total={this.props.tablesML.tableCountML} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10,this.state.robotId)}/> */}
-                            <Pagination current ={this.state.current} defaultPageSize={this.state.defaultPageSize} total={this.props.tablesML.tableCountML} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,20,this.state.robotId)}/>
+                            {/*<Pagination current ={this.state.current} defaultPageSize={this.state.defaultPageSize} total={this.props.tablesML.tableCountML} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,20,this.state.robotId)}/>*/}
+                            <LocaleProvider locale={zh_CN}>
+                                <Pagination  current={this.state.current} showTotal={total => `总共 ${total} 条`} showSizeChanger showQuickJumper defaultPageSize={this.state.defaultPageSize} total={this.props.tablesML.tableCountML} style={{textAlign:'right',marginTop:25}}  onShowSizeChange={(current, pageSize)=>this.getTableData('',current, pageSize,this.state.robotId)} onChange={(page, pageSize)=>this.getTableData('',page,pageSize,this.state.robotId)}/>
+                            </LocaleProvider>
                         </CardBody>
                     </Card>
                 </GridItem>

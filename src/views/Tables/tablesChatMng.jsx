@@ -11,12 +11,13 @@ import CardHeader from "components/Card/CardHeader.jsx";
 import extendedTablesStyle from "assets/jss/material-dashboard-pro-react/views/extendedTablesStyle.jsx";
 import {getOtherChatMng,getOtherRobotChatMng,getOtherKillGroupChatMng,getDataChatMng,updateDataChatMng,deleteDataChatMng,activeDataChatMng,createDataChatMng } from "actions/tablesChatMng";
 import {connect} from "react-redux";
-import {Table, Divider,Button } from 'antd';
+import {Table, Divider, Button, LocaleProvider} from 'antd';
 import {Input,Modal,Select } from 'antd';
 import {Form,Pagination,Popconfirm } from 'antd';
 import { message ,Row,Col,Popover} from 'antd';
 import { TimePicker } from 'antd';
 import moment from 'moment';
+import zh_CN from "antd/lib/locale-provider/zh_CN";
 message.config({
     duration: 1,
 });
@@ -44,7 +45,8 @@ class tablesChatMng extends React.Component {
             timeValueEnd: '',
             timeValueStartModify: '',
             timeValueEndModify: '',
-            current:1
+            current:1,
+            pageSize:10
         };
     }
     componentWillMount(){
@@ -57,7 +59,8 @@ class tablesChatMng extends React.Component {
     }
     getTableData = (windowName,start,size) => {
         this.setState({
-            current:start
+            current:start,
+            pageSize:size
         })
         const params = {
             windowName:windowName,
@@ -671,7 +674,7 @@ class tablesChatMng extends React.Component {
                                 <Grid style={{textAlign:'right',marginTop:10}} item xs={6}>
                                     <Search
                                         placeholder="名称搜索"
-                                        onSearch={value => this.getTableData(value,1,10)}
+                                        onSearch={value => this.getTableData(value,1,this.state.pageSize)}
                                         style={{ width: 200,borderStyle:'solid',
                                             borderWidth:0,paddingRight:10 }}
                                     />
@@ -686,7 +689,10 @@ class tablesChatMng extends React.Component {
                                     // onMouseEnter: () => {},  
                                     };
                                 }} key={"tablesChatMng"} pagination={false} columns={columns} dataSource={this.props.tablesChatMng.tableDataChatMng} scroll={{ x: 2250 , y: 360}} />
-                            <Pagination current={this.state.current} defaultPageSize={10} total={this.props.tablesChatMng.tableCountChatMng} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10)}/>
+                            {/*<Pagination current={this.state.current} defaultPageSize={10} total={this.props.tablesChatMng.tableCountChatMng} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10)}/>*/}
+                            <LocaleProvider locale={zh_CN}>
+                                <Pagination  current={this.state.current} showTotal={total => `总共 ${total} 条`} showSizeChanger showQuickJumper defaultPageSize={10} total={this.props.tablesChatMng.tableCountChatMng} style={{textAlign:'right',marginTop:25}}  onShowSizeChange={(current, pageSize)=>this.getTableData('',current, pageSize)} onChange={(page, pageSize)=>this.getTableData('',page,pageSize)}/>
+                            </LocaleProvider>
                         </CardBody>
                     </Card>
                 </GridItem>

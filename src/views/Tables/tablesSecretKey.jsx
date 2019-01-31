@@ -14,6 +14,9 @@ import {connect} from "react-redux";
 import {Table, Divider,Button } from 'antd';
 import {Input,Modal } from 'antd';
 import {Form,Pagination,Popconfirm,Popover } from 'antd';
+import zh_CN from 'antd/lib/locale-provider/zh_CN';
+import { LocaleProvider } from 'antd';
+import 'moment/locale/zh-cn';
 
 const FormItem = Form.Item;
 const Search = Input.Search;
@@ -32,7 +35,8 @@ class tablesSecretKey extends React.Component {
             recordSelect:{},
             defaultSelectValue:'',
             page:1,
-            current:1
+            current:1,
+            pageSize:10
         };
     }
     componentWillMount(){
@@ -50,6 +54,17 @@ class tablesSecretKey extends React.Component {
     //         systemName:chineseName,
     //         pageNo:start,
     //         pageSize:size,
+    //     };
+    //     this.props.getDataSecretKey(params);
+    // }
+    // onShowSizeChange(systemName,current, pageSize) {
+    //     this.setState({
+    //         current:current
+    //     })
+    //     const params = {
+    //         systemName:systemName,
+    //         pageNo:current,
+    //         pageSize:pageSize,
     //     };
     //     this.props.getDataSecretKey(params);
     // }
@@ -151,7 +166,7 @@ class tablesSecretKey extends React.Component {
                  textOverflow: 'ellipsis',
                  whiteSpace: 'nowrap',
                  display: 'inline-block',
-                 width: 140
+                 width: 70
              }}>{text===undefined||text===null?'空':text}</span>
                 </Popover>,
         },{
@@ -169,7 +184,7 @@ class tablesSecretKey extends React.Component {
                  textOverflow: 'ellipsis',
                  whiteSpace: 'nowrap',
                  display: 'inline-block',
-                 width: 140
+                 width: 30
              }}>{text}</span>
             </Popover>,
         }, {
@@ -377,7 +392,9 @@ class tablesSecretKey extends React.Component {
                                     // onMouseEnter: () => {},  
                                     };
                                 }} key={"tablesSecretKey"} pagination={false} columns={columns} dataSource={this.props.tablesSecretKey.tableDataSecretKey} scroll={{ x: 500 , y: 360}} />
-                            <Pagination current={this.state.current} defaultPageSize={10} total={this.props.tablesSecretKey.tableCountSecretKey} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10)}/>
+                            <LocaleProvider locale={zh_CN}>
+                                <Pagination  current={this.state.current} showTotal={total => `总共 ${total} 条`} showSizeChanger showQuickJumper defaultPageSize={10} total={this.props.tablesSecretKey.tableCountSecretKey} style={{textAlign:'right',marginTop:25}}  onShowSizeChange={(current, pageSize)=>this.getTableData('',current, pageSize)} onChange={(page, pageSize)=>this.getTableData('',page,pageSize)}/>
+                            </LocaleProvider>
                         </CardBody>
                     </Card>
                 </GridItem>

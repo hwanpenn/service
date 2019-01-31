@@ -11,9 +11,10 @@ import CardHeader from "components/Card/CardHeader.jsx";
 import extendedTablesStyle from "assets/jss/material-dashboard-pro-react/views/extendedTablesStyle.jsx";
 import {activeDataRobotMng,getOtherRobotMng,getDataRobotMng,updateDataRobotMng,deleteDataRobotMng,createDataRobotMng } from "actions/tablesRobotMng";
 import {connect} from "react-redux";
-import {Table, Divider,Button } from 'antd';
+import {Table, Divider, Button, LocaleProvider} from 'antd';
 import {Input,Modal } from 'antd';
 import {Form,Pagination,Popconfirm } from 'antd';
+import zh_CN from "antd/lib/locale-provider/zh_CN";
 
 const FormItem = Form.Item;
 const Search = Input.Search;
@@ -29,7 +30,8 @@ class tablesRobotMng extends React.Component {
             recordAction:{},
             recordSelect:{},
             defaultSelectValue:'',
-            current:1
+            current:1,
+            pageSize:10
         };
     }
     componentWillMount(){
@@ -269,7 +271,9 @@ class tablesRobotMng extends React.Component {
                                     // onMouseEnter: () => {},  
                                     };
                                 }} key={"tablesRobotMng"} pagination={false} columns={columns} dataSource={this.props.tablesRobotMng.tableDataRobotMng} scroll={{  y: 360}} />
-                            <Pagination current={this.state.current} defaultPageSize={10} total={this.props.tablesRobotMng.tableCountRobotMng} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10)}/>
+                            <LocaleProvider locale={zh_CN}>
+                                <Pagination  current={this.state.current} showTotal={total => `总共 ${total} 条`} showSizeChanger showQuickJumper defaultPageSize={10} total={this.props.tablesRobotMng.tableCountRobotMng} style={{textAlign:'right',marginTop:25}}  onShowSizeChange={(current, pageSize)=>this.getTableData('',current, pageSize)} onChange={(page, pageSize)=>this.getTableData('',page,pageSize)}/>
+                            </LocaleProvider>
                         </CardBody>
                     </Card>
                 </GridItem>

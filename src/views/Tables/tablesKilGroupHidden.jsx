@@ -11,9 +11,10 @@ import CardHeader from "components/Card/CardHeader.jsx";
 import extendedTablesStyle from "assets/jss/material-dashboard-pro-react/views/extendedTablesStyle.jsx";
 import {getOtherKillGroupHidden,getDataKillGroupHidden,updateDataKillGroupHidden,deleteDataKillGroupHidden,createDataKillGroupHidden } from "actions/tablesKillGroupHidden";
 import {connect} from "react-redux";
-import {Table, Divider,Button } from 'antd';
+import {Table, Divider, Button, LocaleProvider} from 'antd';
 import {Input,Modal } from 'antd';
 import {Form,Pagination,Popconfirm } from 'antd';
+import zh_CN from "antd/lib/locale-provider/zh_CN";
 
 const FormItem = Form.Item;
 const Search = Input.Search;
@@ -32,7 +33,8 @@ class tablesKillGroupHidden extends React.Component {
             recordSelect:{},
             defaultSelectValue:'',
             cuSkGroupId:'',
-            current:1
+            current:1,
+            pageSize:10
         };
     }
     parseQueryString = (url)=> {
@@ -72,7 +74,8 @@ class tablesKillGroupHidden extends React.Component {
     // }
     getTableData = (articleTitle,start,size,cuSkGroupId) => {
         this.setState({
-            current:start
+            current:start,
+            pageSize:size
         })
         const params = {
             // articleTitle:articleTitle,
@@ -166,21 +169,20 @@ class tablesKillGroupHidden extends React.Component {
             title: '账号',
             dataIndex: 'user',
             key: 'user',
-            fixed: 'left',
-            width: '35%',
+            width: '40%',
             render: text => <a >{text.username}</a>,
         }, {
             title: '企业名称',
             dataIndex: 'user',
             key: 'user',
             // align: 'center'
-            width: '35%',
+            width: '40%',
             render: text => {return JSON.stringify(text.tenantName)==='null'?'空':text.tenantName},
         }, {
             title: '操作',
             key: 'action',
-            width: 400,
-            fixed: 'right',
+            width: 300,
+            // fixed: 'right',
             render: (text, record) => (
                 <span>
                     <Popconfirm cancelText="取消" okText="确定" title="确定删除?" onConfirm={() => this.deleteConfirm(record)}>
@@ -290,7 +292,10 @@ class tablesKillGroupHidden extends React.Component {
                                     // onMouseEnter: () => {},  
                                     };
                                 }} key={"tablesKillGroupHidden"} pagination={false} columns={columns} dataSource={this.props.tablesKillGroupHidden.tableDataKillGroupHidden} scroll={{  y: 360}} />
-                            <Pagination current={this.state.current} defaultPageSize={10} total={this.props.tablesKillGroupHidden.tableCountKillGroupHidden} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10,this.state.cuSkGroupId)}/>
+                            {/*<Pagination current={this.state.current} defaultPageSize={10} total={this.props.tablesKillGroupHidden.tableCountKillGroupHidden} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10,this.state.cuSkGroupId)}/>*/}
+                            <LocaleProvider locale={zh_CN}>
+                                <Pagination  current={this.state.current} showTotal={total => `总共 ${total} 条`} showSizeChanger showQuickJumper defaultPageSize={10} total={this.props.tablesKillGroupHidden.tableCountKillGroupHidden} style={{textAlign:'right',marginTop:25}}  onShowSizeChange={(current, pageSize)=>this.getTableData('',current, pageSize,this.state.cuSkGroupId)} onChange={(page, pageSize)=>this.getTableData('',page,pageSize,this.state.cuSkGroupId)}/>
+                            </LocaleProvider>
                         </CardBody>
                     </Card>
                 </GridItem>

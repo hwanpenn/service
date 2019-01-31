@@ -11,9 +11,10 @@ import CardHeader from "components/Card/CardHeader.jsx";
 import extendedTablesStyle from "assets/jss/material-dashboard-pro-react/views/extendedTablesStyle.jsx";
 import {getOtherCategory,getDataCategory,updateDataCategory,deleteDataCategory,createDataCategory } from "actions/tablesCategory";
 import {connect} from "react-redux";
-import {Table, Divider,Button } from 'antd';
+import {Table, Divider, Button, LocaleProvider} from 'antd';
 import {Input,Modal } from 'antd';
 import {Form,Pagination,Popconfirm } from 'antd';
+import zh_CN from "antd/lib/locale-provider/zh_CN";
 
 const FormItem = Form.Item;
 const Search = Input.Search;
@@ -29,7 +30,8 @@ class tablesCategory extends React.Component {
             recordAction:{},
             recordSelect:{},
             defaultSelectValue:'',
-            current:1
+            current:1,
+            pageSize:10
         };
     }
     componentWillMount(){
@@ -40,7 +42,8 @@ class tablesCategory extends React.Component {
     }
     getTableData = (categoryName,start,size) => {
         this.setState({
-            current:start
+            current:start,
+            pageSize:size
         })
         const params = {
             categoryName:categoryName,
@@ -224,8 +227,11 @@ class tablesCategory extends React.Component {
                                     // onMouseEnter: () => {},  
                                     };
                                 }} key={"tablesCategory"} pagination={false} columns={columns} dataSource={this.props.tablesCategory.tableDataCategory} scroll={{x: 200, y: 360}} />
-                            <Pagination current={this.state.current} defaultPageSize={10} total={this.props.tablesCategory.tableCountCategory} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10)}/>
-                            </CardBody>
+                            {/*<Pagination current={this.state.current} defaultPageSize={10} total={this.props.tablesCategory.tableCountCategory} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10)}/>*/}
+                            <LocaleProvider locale={zh_CN}>
+                                <Pagination  current={this.state.current} showTotal={total => `总共 ${total} 条`} showSizeChanger showQuickJumper defaultPageSize={10} total={this.props.tablesCategory.tableCountCategory} style={{textAlign:'right',marginTop:25}}  onShowSizeChange={(current, pageSize)=>this.getTableData('',current, pageSize)} onChange={(page, pageSize)=>this.getTableData('',page,pageSize)}/>
+                            </LocaleProvider>
+                        </CardBody>
                     </Card>
                 </GridItem>
                 <CollectionCreateForm

@@ -71,7 +71,7 @@ export function createDataCompany(params,obj) {
         },
     }
 }
-export function updateDataCompany(params) {
+export function updateDataCompany(params,obj) {
     return {
         types: [UPDATE_REQUEST_Company, UPDATE_SUCCESS_Company, UPDATE_FAIL_Company],
         promise: client => client.post('/cs/api/organization/updateTenant',params),
@@ -79,7 +79,7 @@ export function updateDataCompany(params) {
             if(response.data.code===0){
                 message.info(response.data.msg);
                 const params = {
-                    pageNo:1,
+                    pageNo:obj.state.current,
                     pageSize:10,
                 };
                 dispatch(getDataCompany(params));

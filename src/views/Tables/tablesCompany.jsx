@@ -10,11 +10,15 @@ import CardIcon from "components/Card/CardIcon.jsx";
 import CardHeader from "components/Card/CardHeader.jsx";
 import extendedTablesStyle from "assets/jss/material-dashboard-pro-react/views/extendedTablesStyle.jsx";
 import {getOtherCompany,getDataCompany,updateDataCompany,deleteDataCompany,createDataCompany } from "actions/tablesCompany";
+import {getOtherSecretKey} from "actions/tablesSecretKey";
 import {connect} from "react-redux";
-import {Table, Divider,Button } from 'antd';
+import {Table, Divider, Button, LocaleProvider} from 'antd';
 import {Input,Modal } from 'antd';
 import {Form,Pagination,Popconfirm,Select,Cascader } from 'antd';
 import {cities } from '../../variables/city';
+import zh_CN from 'antd/lib/locale-provider/zh_CN';
+// import { LocaleProvider } from 'antd';
+import 'moment/locale/zh-cn';
 const cityOptions = cities.provinces
 const FormItem = Form.Item;
 const Search = Input.Search;
@@ -31,7 +35,8 @@ class tablesCompany extends React.Component {
             recordAction:{},
             recordSelect:{},
             defaultSelectValue:'',
-            current:1
+            current:1,
+            pageSize:10
         };
     }
     componentWillMount(){
@@ -51,7 +56,7 @@ class tablesCompany extends React.Component {
     // }
     getTableData = (tenantName,start,size) => {
         this.setState({
-            currrent:start
+            current:start
         })
         const params = {
             tenantName:tenantName,
@@ -99,7 +104,7 @@ class tablesCompany extends React.Component {
             }
             values.id=this.state.recordAction.id
             // values.citysName=values.citysName[0]+values.citysName[1]+''
-            this.props.updateDataCompany(values);
+            this.props.updateDataCompany(values,this);
             form.resetFields();
             this.setState({ visibleModify: false });
         });
@@ -339,7 +344,9 @@ class tablesCompany extends React.Component {
                                     // onMouseEnter: () => {},  
                                     };
                                 }} key={"tablesCompany"} pagination={false} columns={columns} dataSource={this.props.tablesCompany.tableDataCompany} scroll={{x: 600, y: 360}} />
-                            <Pagination current={this.state.current} defaultPageSize={10} total={this.props.tablesCompany.tableCountCompany} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10)}/>
+                            <LocaleProvider locale={zh_CN}>
+                                <Pagination  current={this.state.current} showTotal={total => `总共 ${total} 条`} showSizeChanger showQuickJumper defaultPageSize={10} total={this.props.tablesCompany.tableCountCompany} style={{textAlign:'right',marginTop:25}}  onShowSizeChange={(current, pageSize)=>this.getTableData('',current, pageSize)} onChange={(page, pageSize)=>this.getTableData('',page, this.state.pageSize)}/>
+                            </LocaleProvider>
                         </CardBody>
                     </Card>
                 </GridItem>
@@ -369,8 +376,8 @@ const mapDispatchToProps = (dispatch) => {
         getDataCompany: (params) => {
             dispatch(getDataCompany(params))
         },
-        updateDataCompany: (params) => {
-            dispatch(updateDataCompany(params))
+        updateDataCompany: (params,obj) => {
+            dispatch(updateDataCompany(params,obj))
         },
         deleteDataCompany: (params,obj) => {
             dispatch(deleteDataCompany(params,obj))
