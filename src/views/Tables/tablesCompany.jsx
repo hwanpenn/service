@@ -15,11 +15,10 @@ import {connect} from "react-redux";
 import {Table, Divider, Button, LocaleProvider} from 'antd';
 import {Input,Modal } from 'antd';
 import {Form,Pagination,Popconfirm,Select,Cascader } from 'antd';
-import {cities } from '../../variables/city';
+import axios from '../../Utils/axios';
 import zh_CN from 'antd/lib/locale-provider/zh_CN';
 // import { LocaleProvider } from 'antd';
 import 'moment/locale/zh-cn';
-const cityOptions = cities.provinces
 const FormItem = Form.Item;
 const Search = Input.Search;
 const Option = Select.Option;
@@ -46,14 +45,6 @@ class tablesCompany extends React.Component {
     }
     componentDidMount(){
     }
-    // getIdTableData = (id,start,size) => {
-    //     const params = {
-    //         id:id,
-    //         pageNo:start,
-    //         pageSize:size,
-    //     };
-    //     this.props.getDataCompany(params);
-    // }
     getTableData = (tenantName,start,size) => {
         this.setState({
             current:start
@@ -177,11 +168,64 @@ class tablesCompany extends React.Component {
         }
         const CollectionCreateForm = Form.create()(
             class extends React.Component {
+                constructor(props) {
+                    super(props);
+                    this.state = {
+                        checked: [],
+                        tableData: [],
+                        visible: false,
+                        visibleModify: false,
+                        recordAction: {},
+                        recordSelect: {},
+                        defaultSelectValue: '',
+                        provinces:[],
+                        cities:[],
+                        counties:[]
+                    };
+                }
                 handleChange = (value) => {
-                    console.log(`selected ${value}`);
                     this.props.form.setFieldsValue({
                         categoryId: value,
                     });
+                }
+                componentWillMount(){
+                    axios.get('/cs/api/area/selectProvince',{params:{tenantId:'1'}}).then((res)=>{
+                        this.setState({
+                            provinces:res.data.rows,
+                        })
+                    }).catch((err)=>{
+                        console.log(err)
+                    })
+                }
+
+                onSecondCityChange = (value) => {
+                    this.props.form.setFieldsValue({
+                        cityId: value,
+                    });
+                    axios.get('/cs/api/area/selectCounty',{params:{cityId:value}}).then((res)=>{
+                        this.setState({
+                            counties:res.data.rows
+                        })
+                    }).catch((err)=>{
+                        console.log(err)
+                    })
+                }
+                onCountyChange = (value) => {
+                    this.props.form.setFieldsValue({
+                        countyId: value,
+                    });
+                }
+                onProvincechange = (value) => {
+                    this.props.form.setFieldsValue({
+                        provinceId: value,
+                    });
+                    axios.get('/cs/api/area/selectCity',{params:{provinceId:value}}).then((res)=>{
+                        this.setState({
+                            cities:res.data.rows
+                        })
+                    }).catch((err)=>{
+                        console.log(err)
+                    })
                 }
                 // onCityChange = (value) => {
                 //     console.log(value);
@@ -192,9 +236,31 @@ class tablesCompany extends React.Component {
                 handleFocus = () => {
                 console.log('focus');
                 }
+
                 render() {
                     const { visible, onCancel, onCreate, form } = this.props;
                     const { getFieldDecorator } = form;
+                    let pros;
+                    let thecity;
+                    let thecounty;
+                    let selectprovince = this.state.provinces;
+                    let selectcity = this.state.cities;
+                    let selectcounty = this.state.counties;
+                    if(selectprovince == []){
+                        pros = '';
+                    }else{
+                        pros = selectprovince.map(prov => <Option value={prov.key} key={prov.value}>{prov.value}</Option>)
+                    }
+                    if(selectcity == []){
+                        thecity = ''
+                    }else{
+                        thecity = selectcity.map(city => <Option value={city.key} key={city.value}>{city.value}</Option>)
+                    }
+                    if(selectcounty == []){
+                        thecounty=''
+                    }else{
+                        thecounty = selectcounty.map(city => <Option value={city.key} key={city.value}>{city.value}</Option>)
+                    }
                     return (
                        <Modal maskClosable={false}
                             visible={visible}
@@ -208,7 +274,36 @@ class tablesCompany extends React.Component {
                                     {getFieldDecorator('tenantName', {
                                         rules: [{ required: true, message: '请输入新增企业用户名称!' }],
                                     })(
-                                        <Input />
+                                        <Input      placeholder="请输入新增企业用户名称"/>
+                                    )}
+                                </FormItem>
+                                <FormItem label="企业所在城市">
+                                    {getFieldDecorator('provinceId', {
+                                        rules: [{ required: true, message: '请选择省'}],
+                                    })(
+                                        <Select style={{ width: "33.3%" }}
+                                                placeholder="请选择所在省份"
+                                                onChange={this.onProvincechange}>
+                                            {pros}
+                                        </Select>
+                                    )}
+                                    {getFieldDecorator('cityId', {
+                                        rules: [{ required: true, message: '请选择市'}],
+                                    })(
+                                        <Select style={{ width: "33.3%" }}
+                                                placeholder="市"
+                                                onChange={this.onSecondCityChange}>
+                                            {thecity}
+                                        </Select>
+                                    )}
+                                    {getFieldDecorator('countyId', {
+                                        rules: [{ required: true, message: '请选择县'}],
+                                    })(
+                                        <Select style={{ width: "33.3%" }}
+                                                placeholder="县"
+                                                onChange={this.onCountyChange}>
+                                            {thecounty}
+                                        </Select>
                                     )}
                                 </FormItem>
                                 {/*<FormItem label="所在城市">*/}
@@ -244,11 +339,82 @@ class tablesCompany extends React.Component {
         );
         const CollectionModifyForm = Form.create()(
             class extends React.Component {
+                constructor(props) {
+                    super(props);
+                    this.state = {
+                        checked: [],
+                        tableData: [],
+                        visible: false,
+                        visibleModify: false,
+                        recordAction: {},
+                        recordSelect: {},
+                        defaultSelectValue: '',
+                        provinces: [],
+                        cities: [],
+                        counties: [],
+                        defaultpro:'',
+                        defaultcity:'',
+                        defaultcounty:'',
+                    };
+                }
+
                 handleChange = (value) => {
-                    console.log(`selected ${value}`);
                     this.props.form.setFieldsValue({
                         categoryId: value,
                     });
+                }
+                componentWillMount(){
+                    axios.get('/cs/api/area/selectProvince',{params:{tenantId:'1'}}).then((res)=>{
+                        this.setState({
+                            provinces:res.data.rows,
+                        })
+                    }).catch((err)=>{
+                        console.log(err)
+                    })
+                    axios.get('/cs/api/area/selectCity',{params:{provinceId:thisTemp.state.recordAction.provinceId}}).then((res)=>{
+                        this.setState({
+                            cities:res.data.rows,
+                        })
+                    }).catch((err)=>{
+                        console.log(err)
+                    })
+                    axios.get('/cs/api/area/selectCounty',{params:{cityId:thisTemp.state.recordAction.cityId}}).then((res)=>{
+                        this.setState({
+                            counties:res.data.rows
+                        })
+                    }).catch((err)=>{
+                        console.log(err)
+                    })
+                }
+
+                onSecondCityChange = (value) => {
+                    this.props.form.setFieldsValue({
+                        cityId: value,
+                    });
+                    axios.get('/cs/api/area/selectCounty',{params:{cityId:value}}).then((res)=>{
+                        this.setState({
+                            counties:res.data.rows
+                        })
+                    }).catch((err)=>{
+                        console.log(err)
+                    })
+                }
+                onCountyChange = (value) => {
+                    this.props.form.setFieldsValue({
+                        countyId: value,
+                    });
+                }
+                onProvincechange = (value) => {
+                    this.props.form.setFieldsValue({
+                        provinceId: value,
+                    });
+                    axios.get('/cs/api/area/selectCity',{params:{provinceId:value}}).then((res)=>{
+                        this.setState({
+                            cities:res.data.rows
+                        })
+                    }).catch((err)=>{
+                        console.log(err)
+                    })
                 }
                 handleBlur = () => {
                 console.log('blur');
@@ -259,6 +425,27 @@ class tablesCompany extends React.Component {
                 render() {
                     const { visible, onCancel, onCreate, form } = this.props;
                     const { getFieldDecorator } = form;
+                    let pros;
+                    let thecity;
+                    let thecounty;
+                    let selectprovince = this.state.provinces;
+                    let selectcity = this.state.cities;
+                    let selectcounty = this.state.counties;
+                    if(selectprovince == []){
+                        pros = '';
+                    }else{
+                        pros = selectprovince.map(prov => <Option value={prov.key} key={prov.value}>{prov.value}</Option>)
+                    }
+                    if(selectcity == []){
+                        thecity = ''
+                    }else{
+                        thecity = selectcity.map(city => <Option value={city.key} key={city.value}>{city.value}</Option>)
+                    }
+                    if(selectcounty == []){
+                        thecounty=''
+                    }else{
+                        thecounty = selectcounty.map(city => <Option value={city.key} key={city.value}>{city.value}</Option>)
+                    }
                     return (
                        <Modal maskClosable={false}
                             visible={visible}
@@ -274,6 +461,35 @@ class tablesCompany extends React.Component {
                                         rules: [{ required: true, message: '请输入修改企业用户名称!' }],
                                     })(
                                         <Input />
+                                    )}
+                                </FormItem>
+                                <FormItem label="企业所在城市">
+                                    {getFieldDecorator('provinceId', {
+                                        rules: [{ required: true, message: '请选择省'}],
+                                    })(
+                                        <Select style={{ width: "33.3%" }}
+                                                placeholder="请选择所在省份"
+                                                onChange={this.onProvincechange}>
+                                            {pros}
+                                        </Select>
+                                    )}
+                                    {getFieldDecorator('cityId', {
+                                        rules: [{ required: true, message: '请选择市'}],
+                                    })(
+                                        <Select style={{ width: "33.3%" }}
+                                                placeholder="市"
+                                                onChange={this.onSecondCityChange}>
+                                            {thecity}
+                                        </Select>
+                                    )}
+                                    {getFieldDecorator('countyId', {
+                                        rules: [{ required: true, message: '请选择县'}],
+                                    })(
+                                        <Select style={{ width: "33.3%" }}
+                                                placeholder="县"
+                                                onChange={this.onCountyChange}>
+                                            {thecounty}
+                                        </Select>
                                     )}
                                 </FormItem>
                                 {/*<FormItem label="所在城市">*/}
@@ -344,6 +560,7 @@ class tablesCompany extends React.Component {
                                     // onMouseEnter: () => {},  
                                     };
                                 }} key={"tablesCompany"} pagination={false} columns={columns} dataSource={this.props.tablesCompany.tableDataCompany} scroll={{x: 600, y: 360}} />
+                            {/*<Pagination current={this.state.current} defaultPageSize={10} total={this.props.tablesCompany.tableCountCompany} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10)}/>*/}
                             <LocaleProvider locale={zh_CN}>
                                 <Pagination  current={this.state.current} showTotal={total => `总共 ${total} 条`} showSizeChanger showQuickJumper defaultPageSize={10} total={this.props.tablesCompany.tableCountCompany} style={{textAlign:'right',marginTop:25}}  onShowSizeChange={(current, pageSize)=>this.getTableData('',current, pageSize)} onChange={(page, pageSize)=>this.getTableData('',page, this.state.pageSize)}/>
                             </LocaleProvider>
