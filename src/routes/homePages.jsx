@@ -17,24 +17,24 @@ import ContentPaste from "@material-ui/icons/ContentPaste";
 import LockOpen from "@material-ui/icons/LockOpen";
 import Timeline from "@material-ui/icons/Timeline";
 import WidgetsIcon from "@material-ui/icons/Widgets";
-// import page from "@material-ui/icons/Pages";
+import Home from "@material-ui/icons/Home";
 
 const dashRoutes = [
-    // {
-    //     collapse: true,
-    //     path: "/cms/home/tables",
-    //     name: "主页",
-    //     state: "openTables0",
-    //     icon: page,
-    //     views: [
-    //         {
-    //             path: "/cms/home/tables/echartsmng",
-    //             name: "可视化数据",
-    //             mini: "N",
-    //             component: tablesEchartsMng
-    //         }
-    //     ]
-    // },
+    {
+        collapse: true,
+        path: "/cms/home/tables",
+        name: "主页",
+        state: "openTables0",
+        icon: Home,
+        views: [
+            {
+                path: "/cms/home/tables/echartsmng",
+                name: "可视化数据",
+                mini: "N",
+                component: tablesEchartsMng
+            }
+        ]
+    },
     {
         collapse: true,
         path: "/cms/home/tables",
