@@ -51,7 +51,8 @@ class tablesMyCompany extends React.Component {
     }
     getTableData = (caption,start,size) => {
         this.setState({
-            current:start
+            current:start,
+            pageSize:size
         })
         const params = {
             caption:caption,

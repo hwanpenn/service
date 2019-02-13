@@ -43,7 +43,7 @@ export function getDataRobotMng(params) {
         types: [GET_REQUEST_RobotMng, GET_SUCCESS_RobotMng, GET_FAIL_RobotMng],
         promise: client => client.get('/cs/api/robot/queryPageToRobot',{params: params}),
         afterSuccess:(dispatch,getState,response)=>{
-            lastPage = parseInt(response.data.total/10)+1
+            lastPage = parseInt(response.data.total/params.pageSize)+1
             dataTotal = response.data.total
             /*请求成功后执行的函数*/
         },
@@ -96,20 +96,20 @@ export function deleteDataRobotMng(params,obj) {
         afterSuccess:(dispatch,getState,response)=>{
             if(response.data.code===0){
                 message.info(response.data.msg);
-                if(dataTotal % 10 === 1){
+                if(dataTotal % obj.state.pageSize  === 1){
                     lastPage = lastPage - 1;
                     obj.setState({
                         current:lastPage
                     })
                     const params = {
                         pageNo:lastPage,
-                        pageSize:10,
+                        pageSize:obj.state.pageSize,
                     };
                     dispatch(getDataRobotMng(params));
                 }else{
                     const params = {
                         pageNo:obj.state.current,
-                        pageSize:10,
+                        pageSize:obj.state.pageSize,
                     };
                     dispatch(getDataRobotMng(params));
                 }

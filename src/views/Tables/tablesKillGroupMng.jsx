@@ -42,7 +42,7 @@ class tablesKillGroupMng extends React.Component {
         if(obj.page===''||obj.page===undefined){
             this.setState({ page:obj.page });
         }
-        this.getTableData('',this.state.page,10);
+        this.getTableData('',this.state.page,this.state.pageSize);
         // this.getOtherData('',1,10);
     }
     componentDidMount(){
@@ -156,21 +156,21 @@ class tablesKillGroupMng extends React.Component {
             title: '组名称',
             dataIndex: 'groupName',
             key: 'groupName',
-            fixed: 'left',
-            width: window.screen.width*0.20,
+            // fixed: 'left',
+            width: window.screen.width*0.15,
             render: text => <a >{text}</a>,
         }, {
             title: '组展示名称',
             dataIndex: 'groupShowName',
             key: 'groupShowName',
             // align: 'center'
-            width: window.screen.width*0.20,
+            width: window.screen.width*0.15,
         }, {
             title: '启用状态',
             dataIndex: 'status',
             key: 'status',
             // align: 'center'
-            width: window.screen.width*0.15,
+            width: window.screen.width*0.20,
             render: text => <span >{text===1?'已启用':'未启用'}</span>,
         }, {
             title: '操作',
@@ -295,7 +295,7 @@ class tablesKillGroupMng extends React.Component {
                                 }} key={"tablesKillGroupMng"} pagination={false} columns={columns} dataSource={this.props.tablesKillGroupMng.tableDataKillGroupMng} scroll={{ x: 500 , y: 360}} />
                             {/*<Pagination current={this.state.page} defaultPageSize={10} total={this.props.tablesKillGroupMng.tableCountKillGroupMng} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10)}/>*/}
                             <LocaleProvider locale={zh_CN}>
-                                <Pagination  current={this.state.current} showTotal={total => `总共 ${total} 条`} showSizeChanger showQuickJumper defaultPageSize={10} total={this.props.tablesKillGroupMng.tableCountKillGroupMng} style={{textAlign:'right',marginTop:25}}  onShowSizeChange={(current, pageSize)=>this.getTableData('',current, pageSize)} onChange={(page, pageSize)=>this.getTableData('',page,pageSize)}/>
+                                <Pagination  current={this.state.page} showTotal={total => `总共 ${total} 条`} showSizeChanger showQuickJumper defaultPageSize={10} total={this.props.tablesKillGroupMng.tableCountKillGroupMng} style={{textAlign:'right',marginTop:25}}  onShowSizeChange={(current, pageSize)=>this.getTableData('',current, pageSize)} onChange={(page, pageSize)=>this.getTableData('',page,pageSize)}/>
                             </LocaleProvider>
                         </CardBody>
                     </Card>

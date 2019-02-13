@@ -17,7 +17,6 @@ import {Input,Modal } from 'antd';
 import {Form,Pagination,Popconfirm,Select,Cascader } from 'antd';
 import axios from '../../Utils/axios';
 import zh_CN from 'antd/lib/locale-provider/zh_CN';
-// import { LocaleProvider } from 'antd';
 import 'moment/locale/zh-cn';
 const FormItem = Form.Item;
 const Search = Input.Search;
@@ -40,14 +39,15 @@ class tablesCompany extends React.Component {
     }
     componentWillMount(){
         // this.getIdTableData('',1,10);
-        this.getTableData('',1,10);
-        this.getOtherData('',1,10);
+        this.getTableData('',1,this.state.pageSize);
+        this.getOtherData('',1,this.state.pageSize);
     }
     componentDidMount(){
     }
     getTableData = (tenantName,start,size) => {
         this.setState({
-            current:start
+            current:start,
+            pageSize:size
         })
         const params = {
             tenantName:tenantName,
@@ -67,15 +67,6 @@ class tablesCompany extends React.Component {
         this.setState({ recordSelect:record });
     }
     showModifyModal = (record) => {
-        // if(record.citysName!==undefined){
-        //     const city = record.citysName
-        //     // record.citysName=["河北省","石家庄市"]
-        //     const index = city.indexOf("省")
-        //     const provinceName = city.substr(0,index+1)
-        //     const cityName = city.substr(index+1,city.length)
-        //     let citysName = [provinceName,cityName]
-        //     record.citysName=citysName
-        // }
         this.setState({ visibleModify: true,recordAction:record });
     }
     showModalCreate = () => {
@@ -306,13 +297,6 @@ class tablesCompany extends React.Component {
                                         </Select>
                                     )}
                                 </FormItem>
-                                {/*<FormItem label="所在城市">*/}
-                                    {/*{getFieldDecorator('citysName', {*/}
-                                        {/*rules: [{ required: false, message: '请输入新增企业所在城市!' }],*/}
-                                    {/*})(*/}
-                                        {/*<Cascader fieldNames={{ label: 'citysName', value: 'citysName', children: 'citys' }} options={cityOptions} onChange={this.onCityChange} placeholder="请选择" />*/}
-                                    {/*)}*/}
-                                {/*</FormItem>*/}
                                 <FormItem label="企业分类">
                                     {getFieldDecorator('categoryId', {
                                         rules: [{ required: true, message: '请选择企业分类!' }],
@@ -492,14 +476,6 @@ class tablesCompany extends React.Component {
                                         </Select>
                                     )}
                                 </FormItem>
-                                {/*<FormItem label="所在城市">*/}
-                                    {/*{getFieldDecorator('citysName', {*/}
-                                        {/*initialValue:  thisTemp.state.recordAction.citysName ,*/}
-                                        {/*rules: [{ required: false, message: '请输入新增企业所在城市!' }],*/}
-                                    {/*})(*/}
-                                        {/*<Cascader fieldNames={{ label: 'citysName', value: 'citysName', children: 'citys' }} options={cityOptions} onChange={this.onCityChange} placeholder="请选择" />*/}
-                                    {/*)}*/}
-                                {/*</FormItem>*/}
                                 <FormItem label="企业分类">
                                     {getFieldDecorator('categoryId', {
                                         initialValue:  thisTemp.state.recordAction.categoryId ,
@@ -539,7 +515,7 @@ class tablesCompany extends React.Component {
                                 <Grid style={{textAlign:'right',marginTop:10}} item xs={6}>
                                     <Search
                                         placeholder="企业用户名称搜索"
-                                        onSearch={value => this.getTableData(value,1,10)}
+                                        onSearch={value => this.getTableData(value,1,this.state.pageSize)}
                                         style={{ width: 200,borderStyle:'solid',
                                             borderWidth:0,paddingRight:10 }}
                                     />
@@ -560,7 +536,6 @@ class tablesCompany extends React.Component {
                                     // onMouseEnter: () => {},  
                                     };
                                 }} key={"tablesCompany"} pagination={false} columns={columns} dataSource={this.props.tablesCompany.tableDataCompany} scroll={{x: 600, y: 360}} />
-                            {/*<Pagination current={this.state.current} defaultPageSize={10} total={this.props.tablesCompany.tableCountCompany} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10)}/>*/}
                             <LocaleProvider locale={zh_CN}>
                                 <Pagination  current={this.state.current} showTotal={total => `总共 ${total} 条`} showSizeChanger showQuickJumper defaultPageSize={10} total={this.props.tablesCompany.tableCountCompany} style={{textAlign:'right',marginTop:25}}  onShowSizeChange={(current, pageSize)=>this.getTableData('',current, pageSize)} onChange={(page, pageSize)=>this.getTableData('',page, this.state.pageSize)}/>
                             </LocaleProvider>

@@ -43,7 +43,7 @@ export function getDataCompany(params) {
         types: [GET_REQUEST_Company, GET_SUCCESS_Company, GET_FAIL_Company],
         promise: client => client.get('/cs/api/organization/queryTenant',{params: params}),
         afterSuccess:(dispatch,getState,response)=>{
-            lastPage = parseInt(response.data.total/10)+1
+            lastPage = parseInt(response.data.total/params.pageSize)+1
             dataTotal = response.data.total
             /*请求成功后执行的函数*/
         },
@@ -62,7 +62,7 @@ export function createDataCompany(params,obj) {
                 })
                 const params = {
                     pageNo:lastPage,
-                    pageSize:10,
+                    pageSize:obj.state.pageSize,
                 };
                 dispatch(getDataCompany(params));
             }else {
@@ -80,7 +80,7 @@ export function updateDataCompany(params,obj) {
                 message.info(response.data.msg);
                 const params = {
                     pageNo:obj.state.current,
-                    pageSize:10,
+                    pageSize:obj.state.pageSize,
                 };
                 dispatch(getDataCompany(params));
             }else {
@@ -96,20 +96,20 @@ export function deleteDataCompany(params,obj) {
         afterSuccess:(dispatch,getState,response)=>{
             if(response.data.code===0){
                 message.info(response.data.msg);
-                if(dataTotal % 10 === 1){
+                if(dataTotal % obj.state.pageSize === 1){
                     lastPage -= 1
                     obj.setState({
                         current:lastPage
                     })
                     const params = {
                         pageNo:lastPage,
-                        pageSize:10,
+                        pageSize:obj.state.pageSize,
                     };
                     dispatch(getDataCompany(params));
                 }
                 const params = {
                     pageNo:obj.state.current,
-                    pageSize:10,
+                    pageSize:obj.state.pageSize,
                 };
                 dispatch(getDataCompany(params));
             }else {

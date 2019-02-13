@@ -109,7 +109,7 @@ export function createDataKnowladgeMng(params,obj) {
                 message.info(response.data.msg);
                 const params = {
                     pageNo:obj.state.current,
-                    pageSize:10,
+                    pageSize:obj.state.pageSize,
                 };
                 dispatch(getDataKnowladgeMng(params));
             }else {
@@ -127,7 +127,7 @@ export function updateDataKnowladgeMng(params,obj) {
                 message.info(response.data.msg);
                 const params = {
                     pageNo:obj.state.current,
-                    pageSize:10,
+                    pageSize:obj.state.pageSize,
                 };
                 dispatch(getDataKnowladgeMng(params));
             }else {
@@ -145,7 +145,7 @@ export function deleteDataKnowladgeMng(params,obj) {
                 message.info(response.data.msg);
                 const params = {
                     pageNo:obj.state.current,
-                    pageSize:10,
+                    pageSize:obj.state.pageSize,
                 };
                 dispatch(getDataKnowladgeMng(params));
             }else {

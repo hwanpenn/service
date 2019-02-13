@@ -54,7 +54,7 @@ export function getDataArticleMng(params) {
         types: [GET_REQUEST_ArticleMng, GET_SUCCESS_ArticleMng, GET_FAIL_ArticleMng],
         promise: client => client.get('/cs/api/knowledgeBase/queryArticle',{params: params}),
         afterSuccess:(dispatch,getState,response)=>{
-            last = parseInt(response.data.total/10)+1
+            last = parseInt(response.data.total/params.pageSize)+1
             total = response.data.total
             // console.log(response.data.total % 10 )
             // // console.log(response.data.total % response.rows.length )
@@ -83,7 +83,7 @@ export function createDataArticleMng(params,obj) {
                 const paramsTemp = {
                     categoryId:params.categoryId,
                     pageNo:last,
-                    pageSize:10,
+                    pageSize:obj.state.pageSize,
                 };
                 dispatch(getDataArticleMng(paramsTemp));
             }else {
@@ -102,7 +102,7 @@ export function updateDataArticleMng(params,obj) {
                 const paramsTemp = {
                     categoryId:params.categoryId,
                     pageNo:obj.state.current,
-                    pageSize:10,
+                    pageSize:obj.state.pageSize,
                 };
                 dispatch(getDataArticleMng(paramsTemp));
             }else {
@@ -119,7 +119,7 @@ export function deleteDataArticleMng(params,obj) {
             if(response.data.code===0){
                 message.info(response.data.msg);
                 // console.log(response.data.total % response.rows.length )
-                if(total % 10 === 1){
+                if(total % obj.state.pageSize === 1){
                     last = last - 1;
                     obj.setState({
                         current:last
@@ -127,14 +127,14 @@ export function deleteDataArticleMng(params,obj) {
                     const paramsTemp = {
                         categoryId:params.categoryId,
                         pageNo:last,
-                        pageSize:10,
+                        pageSize:obj.state.pageSize,
                     };
                     dispatch(getDataArticleMng(paramsTemp));
                 }else{
                     const paramsTemp = {
                         categoryId:params.categoryId,
                         pageNo:obj.state.current,
-                        pageSize:10,
+                        pageSize:obj.state.pageSize,
                     };
                     dispatch(getDataArticleMng(paramsTemp));
                 }

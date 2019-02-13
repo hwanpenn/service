@@ -70,10 +70,10 @@ export function getDataMyCompany(params) {
         types: [GET_REQUEST_MyCompany, GET_SUCCESS_MyCompany, GET_FAIL_MyCompany],
         promise: client => client.get('/cs/api/organization/queryUser',{params: params}),
         afterSuccess:(dispatch,getState,response)=>{
-            lastPage = parseInt(response.data.total/10)+1
+            lastPage = parseInt(response.data.total/params.pageSize)+1
             dataTotal = response.data.total
-            // console.log(response)
-            // console.log(response.data.total)
+            // console.log("lastPage",lastPage)
+            // console.log("params.pageSize",params.pageSize)
             /*请求成功后执行的函数*/
         },
         // otherData:otherData
@@ -91,7 +91,7 @@ export function createDataMyCompany(params,obj) {
                 })
                 const params = {
                     pageNo:lastPage,
-                    pageSize:10,
+                    pageSize:obj.state.pageSize,
                 };
                 dispatch(getDataMyCompany(params));
             }else {
@@ -109,7 +109,7 @@ export function updateDataMyCompany(params,obj) {
                 message.info(response.data.msg);
                 const params = {
                     pageNo:obj.state.current,
-                    pageSize:10,
+                    pageSize:obj.state.pageSize,
                 };
                 dispatch(getDataMyCompany(params));
             }else {
@@ -123,23 +123,22 @@ export function deleteDataMyCompany(params,obj) {
         types: [DELETE_REQUEST_MyCompany, DELETE_SUCCESS_MyCompany, DELETE_FAIL_MyCompany],
         promise: client => client.post('/cs/api/organization/deleteUser',params),
         afterSuccess:(dispatch,getState,response)=>{
-            console.log(dataTotal % 10,"走这儿")
             if(response.data.code===0){
                 message.info(response.data.msg);
-                if(dataTotal % 10 ===1){
+                if(dataTotal % obj.state.pageSize ===1){
                     lastPage -= 1
                     obj.setState({
                         current:lastPage
                     })
                     const params = {
                         pageNo:lastPage,
-                        pageSize:10,
+                        pageSize:obj.state.pageSize,
                     };
                     dispatch(getDataMyCompany(params));
                 }else{
                     const params = {
                         pageNo:obj.state.current,
-                        pageSize:10,
+                        pageSize:obj.state.pageSize,
                     };
                     dispatch(getDataMyCompany(params));
                 }

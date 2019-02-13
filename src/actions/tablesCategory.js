@@ -40,7 +40,7 @@ export function getDataCategory(params) {
         types: [GET_REQUEST_Category, GET_SUCCESS_Category, GET_FAIL_Category],
         promise: client => client.get('/cs/api/organization/queryCategory',{params: params}),
         afterSuccess:(dispatch,getState,response)=>{
-            lastPage = parseInt(response.data.total/10)+1
+            lastPage = parseInt(response.data.total/params.pageSize)+1
             dataTotal = response.data.total
             /*请求成功后执行的函数*/
         },
@@ -59,7 +59,7 @@ export function createDataCategory(params,obj) {
                 })
                 const params = {
                     pageNo:lastPage,
-                    pageSize:10,
+                    pageSize:obj.state.pageSize,
                 };
                 dispatch(getDataCategory(params));
             }else {
@@ -68,7 +68,7 @@ export function createDataCategory(params,obj) {
         },
     }
 }
-export function updateDataCategory(params) {
+export function updateDataCategory(params,obj) {
     return {
         types: [UPDATE_REQUEST_Category, UPDATE_SUCCESS_Category, UPDATE_FAIL_Category],
         promise: client => client.post('/cs/api/organization/updateCategory',params),
@@ -77,7 +77,7 @@ export function updateDataCategory(params) {
                 message.info(response.data.msg);
                 const params = {
                     pageNo:1,
-                    pageSize:10,
+                    pageSize:obj.state.pageSize,
                 };
                 dispatch(getDataCategory(params));
             }else {
@@ -93,20 +93,20 @@ export function deleteDataCategory(params,obj) {
         afterSuccess:(dispatch,getState,response)=>{
             if(response.data.code===0){
                 message.info(response.data.msg);
-                if(dataTotal % 10 === 1){
+                if(dataTotal % obj.state.pageSize === 1){
                     lastPage -= 1
                     obj.setState({
                         current:lastPage
                     })
                     const params = {
                         pageNo:lastPage,
-                        pageSize:10,
+                        pageSize:obj.state.pageSize,
                     };
                     dispatch(getDataCategory(params));
                 }else{
                     const params = {
                         pageNo:obj.state.current,
-                        pageSize:10,
+                        pageSize:obj.state.pageSize,
                     };
                     dispatch(getDataCategory(params));
                 }

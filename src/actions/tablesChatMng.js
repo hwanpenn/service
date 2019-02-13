@@ -73,7 +73,7 @@ export function getDataChatMng(params) {
         types: [GET_REQUEST_ChatMng, GET_SUCCESS_ChatMng, GET_FAIL_ChatMng],
         promise: client => client.get('/cs/api/robot/queryPageToChatWindow',{params: params}),
         afterSuccess:(dispatch,getState,response)=>{
-            lastPage = parseInt(response.data.total/10)+1
+            lastPage = parseInt(response.data.total/params.pageSize)+1
             dataTotal = response.data.total
             /*请求成功后执行的函数*/
         },
@@ -88,11 +88,11 @@ export function createDataChatMng(params,obj) {
             if(response.data.code===0){
                 message.info(response.data.msg);
                 obj.setState({
-                    current:lastPage
+                    current:1
                 })
                 const params = {
-                    pageNo:lastPage,
-                    pageSize:10,
+                    pageNo:1,
+                    pageSize:obj.state.pageSize,
                 };
                 dispatch(getDataChatMng(params));
             }else {
@@ -110,7 +110,7 @@ export function updateDataChatMng(params,obj) {
                 message.info(response.data.msg);
                 const params = {
                     pageNo:obj.state.current,
-                    pageSize:10,
+                    pageSize:obj.state.pageSize,
                 };
                 dispatch(getDataChatMng(params));
             }else {
@@ -126,20 +126,20 @@ export function deleteDataChatMng(params,obj) {
         afterSuccess:(dispatch,getState,response)=>{
             if(response.data.code===0){
                 message.info(response.data.msg);
-                if(dataTotal % 10 === 1){
+                if(dataTotal % obj.state.pageSize === 1){
                     lastPage -= 1
                     obj.setState({
                         current:lastPage
                     })
                     const params = {
                         pageNo:lastPage,
-                        pageSize:10,
+                        pageSize:obj.state.pageSize,
                     };
                     dispatch(getDataChatMng(params));
                 }else{
                     const params = {
                         pageNo:obj.state.current,
-                        pageSize:10,
+                        pageSize:obj.state.pageSize,
                     };
                     dispatch(getDataChatMng(params));
                 }
@@ -159,7 +159,7 @@ export function activeDataChatMng(params,obj) {
                 message.info(response.data.msg);
                 const params = {
                     pageNo:obj.state.current,
-                    pageSize:10,
+                    pageSize:obj.state.pageSize,
                 };
                 dispatch(getDataChatMng(params));
             }else {

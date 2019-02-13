@@ -68,20 +68,31 @@ class tablesML extends React.Component {
         };
         this.props.getDataKnowladgeMng(params,this);
     }
-    getTableData = (standardQuesiton,start,size,robotId) => {
+     getTableData = (standardQuesiton,start,size,robotId) => {
+        // this.setState({
+        //     current:start,
+        //     pageSize:size
+        //  })
+             this.setState(
+                 { current:start,
+                     pageSize:size },
+                 () => {
+                     //这里打印的是最新的state值
+                     const params = {
+                         // robotId:robotId,
+                         pageNo:start,
+                         pageSize:size,
+                         robotId:robotId,
+                         standardQuesiton:standardQuesiton,
+                     };
+                     // console.log("111111")
+                     // console.log(size,"传进来的值")
+                     // console.log(this.state.pageSize,"设置之后的值")
+                     this.props.getDataML(params);
+                 }
+             );
 
-        this.setState({
-            current:start,
-            pageSize:size
-        })
-        const params = {
-            // robotId:robotId,
-            pageNo:start,
-            pageSize:size,
-            robotId:robotId,
-            standardQuesiton:standardQuesiton,
-        };
-        this.props.getDataML(params,this);
+
     }
     // answerGetTableData = (answer,start,size,robotId) => {
     //     const params = {
@@ -132,7 +143,7 @@ class tablesML extends React.Component {
             urlValue = chatTestUrl.release
         }else if(urlTemp.indexOf("12329.pub") != -1){
             urlValue = chatTestUrl.beta
-        }else if(urlTemp.indexOf("192.168.21") != -1){
+        }else if(urlTemp.indexOf("192.168.2") != -1){
             urlValue = chatTestUrl.local
         }
         window.open(urlValue+"/client?type=robotChatTest&tenantId="+window.sessionStorage.getItem('tenantId')+"&userId=12345&userName=uer01")

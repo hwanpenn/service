@@ -42,7 +42,7 @@ export function getOtherML(params,obj) {
                     const params = {
                         robotId:response.data.rows[0].robotId,
                         pageNo:1,
-                        pageSize:20,
+                        pageSize:obj.state.pageSize,
                     };
                     dispatch(getDataML(params));
                 }
@@ -61,8 +61,9 @@ export function getDataML(params) {
         types: [GET_REQUEST_ML, GET_SUCCESS_ML, GET_FAIL_ML],
         promise: client => client.get('/cs/api/robot/queryPageToRobotLearn',{params: params}),
         afterSuccess:(dispatch,getState,response)=>{
-            lastPage = parseInt(response.data.total/20)+1
+            lastPage = parseInt(response.data.total/params.pageSize)+1
             dataTotal = response.data.total
+            // console.log("lastPage",lastPage)
             /*请求成功后执行的函数*/
         },
         // otherData:otherData
@@ -75,10 +76,13 @@ export function importDataML(params,obj) {
         afterSuccess:(dispatch,getState,response)=>{
             if(response.data.code===0){
                 message.info(response.data.msg);
+                obj.setState({
+                    current:1
+                })
                 const params = {
                     robotId:obj.state.robotId,
                     pageNo:1,
-                    pageSize:999,
+                    pageSize:obj.state.pageSize,
                 };
                 dispatch(getDataML(params));
             }else {
@@ -115,7 +119,7 @@ export function updateDataML(params,obj) {
                 message.info(response.data.msg);
                 const params = {
                     robotId:obj.state.robotId,
-                    pageNo:obj.state.current,
+                    pageNo:1,
                     pageSize:999,
                 };
                 dispatch(getDataML(params));
@@ -130,10 +134,10 @@ export function deleteDataML(params,obj) {
         types: [DELETE_REQUEST_ML, DELETE_SUCCESS_ML, DELETE_FAIL_ML],
         promise: client => client.post('/cs/api/robot/deleteRobotLearn',params),
         afterSuccess:(dispatch,getState,response)=>{
-            console.log(dataTotal % 10,"最后一页数据条数")
             if(response.data.code===0){
+                console.log("obj.state.pageSize",obj.state.pageSize)
                 message.info(response.data.msg);
-                if(dataTotal % 20 ===1) {
+                if(dataTotal % obj.state.pageSize ===1) {
                     lastPage -= 1
                     obj.setState({
                         current:lastPage
@@ -141,14 +145,14 @@ export function deleteDataML(params,obj) {
                     const params = {
                         robotId:obj.state.robotId,
                         pageNo:lastPage,
-                        pageSize:20,
+                        pageSize:obj.state.pageSize,
                     };
                     dispatch(getDataML(params));
                 }else{
                     const params = {
                         robotId:obj.state.robotId,
                         pageNo:obj.state.current,
-                        pageSize:20,
+                        pageSize:obj.state.pageSize,
                     };
                     dispatch(getDataML(params));
                 }

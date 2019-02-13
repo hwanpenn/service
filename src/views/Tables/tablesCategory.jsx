@@ -83,7 +83,7 @@ class tablesCategory extends React.Component {
                 return;
             }
             values.id=this.state.recordAction.id
-            this.props.updateDataCategory(values);
+            this.props.updateDataCategory(values,this);
             form.resetFields();
             this.setState({ visibleModify: false });
         });
@@ -260,8 +260,8 @@ const mapDispatchToProps = (dispatch) => {
         getDataCategory: (params) => {
             dispatch(getDataCategory(params))
         },
-        updateDataCategory: (params) => {
-            dispatch(updateDataCategory(params))
+        updateDataCategory: (params,obj) => {
+            dispatch(updateDataCategory(params,obj))
         },
         deleteDataCategory: (params,obj) => {
             dispatch(deleteDataCategory(params,obj))

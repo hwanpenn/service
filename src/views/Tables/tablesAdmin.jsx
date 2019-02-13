@@ -37,8 +37,8 @@ class tablesAdmin extends React.Component {
         };
     }
     componentWillMount(){
-        this.getTableData('',1,10);
-        this.getOtherData('',1,10);
+        this.getTableData('',1,this.state.pageSize);
+        this.getOtherData('',1,this.state.pageSize);
     }
     componentDidMount(){
     }
@@ -98,7 +98,7 @@ class tablesAdmin extends React.Component {
                 return;
             }
             values.id=this.state.recordAction.id
-            this.props.updateDataAdmin(values);
+            this.props.updateDataAdmin(values,this);
             form.resetFields();
             this.setState({ visibleModify: false });
         });
@@ -318,7 +318,7 @@ class tablesAdmin extends React.Component {
                                 <Grid style={{textAlign:'right',marginTop:10}} item xs={6}>
                                     <Search
                                         placeholder="用户别名搜索"
-                                        onSearch={value => this.getTableData(value,1,10)}
+                                        onSearch={value => this.getTableData(value,1,this.state.pageSize)}
                                         style={{ width: 200,borderStyle:'solid',
                                             borderWidth:0,paddingRight:10 }}
                                     />
@@ -372,8 +372,8 @@ const mapDispatchToProps = (dispatch) => {
         getDataAdmin: (params) => {
             dispatch(getDataAdmin(params))
         },
-        updateDataAdmin: (params) => {
-            dispatch(updateDataAdmin(params))
+        updateDataAdmin: (params,obj) => {
+            dispatch(updateDataAdmin(params,obj))
         },
         deleteDataAdmin: (params,obj) => {
             dispatch(deleteDataAdmin(params,obj))

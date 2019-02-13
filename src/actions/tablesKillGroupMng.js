@@ -44,7 +44,7 @@ export function getDataKillGroupMng(params) {
         types: [GET_REQUEST_KillGroupMng, GET_SUCCESS_KillGroupMng, GET_FAIL_KillGroupMng],
         promise: client => client.get('/cs/api/customer/queryPageToCustomerSkillGroup',{params: params}),
         afterSuccess:(dispatch,getState,response)=>{
-            last = parseInt(response.data.total/10)+1
+            last = parseInt(response.data.total/params.pageSize)+1
             total = response.data.total
             /*请求成功后执行的函数*/
         },
@@ -57,13 +57,14 @@ export function createDataKillGroupMng(params,obj) {
         promise: client => client.post('/cs/api/customer/addCustomerSkillGroup',params),
         afterSuccess:(dispatch,getState,response)=>{
             if(response.data.code===0){
+                console.log("obj.state.page",obj.state.page)
                 message.info(response.data.msg);
                 obj.setState({
                     page:1
                 })
                 const params = {
                     pageNo:1,
-                    pageSize:10,
+                    pageSize:obj.state.pageSize,
                 };
                 dispatch(getDataKillGroupMng(params));
             }else {
@@ -83,7 +84,7 @@ export function updateDataKillGroupMng(params,obj) {
                 message.info(response.data.msg);
                 const params = {
                     pageNo:obj.state.page,
-                    pageSize:10,
+                    pageSize:obj.state.pageSize,
                 };
                 dispatch(getDataKillGroupMng(params));
             }else {
@@ -100,20 +101,20 @@ export function deleteDataKillGroupMng(params,obj) {
         afterSuccess:(dispatch,getState,response)=>{
             if(response.data.code===0){
                 message.info(response.data.msg);
-                if(total % 10 ===1){
+                if(total % obj.state.pageSize ===1){
                     last -= 1
                     obj.setState({
                         page:last
                     })
                     const params = {
                         pageNo:last,
-                        pageSize:10,
+                        pageSize:obj.state.pageSize,
                     };
                     dispatch(getDataKillGroupMng(params));
                 }else{
                     const params = {
                         pageNo:obj.state.page,
-                        pageSize:10,
+                        pageSize:obj.state.pageSize,
                     };
                     dispatch(getDataKillGroupMng(params));
                 }

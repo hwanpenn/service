@@ -42,7 +42,8 @@ class tablesRobotMng extends React.Component {
     }
     getTableData = (robotName,start,size) => {
         this.setState({
-            current:start
+            current:start,
+            pageSize:size
         })
         const params = {
             robotName:robotName,
