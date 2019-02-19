@@ -94,16 +94,16 @@ class tablesML extends React.Component {
 
 
     }
-    // answerGetTableData = (answer,start,size,robotId) => {
-    //     const params = {
-    //         // robotId:robotId,
-    //         pageNo:start,
-    //         pageSize:size,
-    //         robotId:robotId,
-    //         answer:answer,
-    //     };
-    //     this.props.getDataML(params,this);
-    // }
+    answerGetTableData = (answer,start,size,robotId) => {
+        const params = {
+            // robotId:robotId,
+            pageNo:start,
+            pageSize:size,
+            robotId:robotId,
+            answer:answer,
+        };
+        this.props.getDataML(params,this);
+    }
     getOtherData = (username,start,size) => {
         const params = {
             search:username,
@@ -123,7 +123,7 @@ class tablesML extends React.Component {
         // console.log('value')
         // console.log(value)
         this.setState({ robotId: value });
-        this.getTableData('',1,20,value);
+        this.getTableData('',1,this.state.pageSize,value);
     }
     handleML = () => {
         if(this.state.selectedRows.length!==0){
@@ -251,6 +251,18 @@ class tablesML extends React.Component {
             dataIndex: 'label',
             key: 'label',
             width: window.screen.width*0.15,
+            render: text => <Popover content={(
+                <div style={{width:270}}>
+                    <p>{text}</p>
+                </div>
+            )}>
+             <span style={{overflow: 'hidden',
+                 textOverflow: 'ellipsis',
+                 whiteSpace: 'nowrap',
+                 display: 'inline-block',
+                 width: 100
+             }}>{text}</span>
+            </Popover>
         }, {
             title: '回答内容',
             key: 'answer',
@@ -446,7 +458,7 @@ class tablesML extends React.Component {
                 // if(obj.page===''||obj.page===undefined){
                 //     this.setState({ page:obj.page });
                 // }
-                thisTemp.getTableData('',1,20,thisTemp.state.robotId);
+                thisTemp.getTableData('',1,this.state.pageSize,thisTemp.state.robotId);
             } else if (info.file.status === 'error') {
                 // message.error(`${info.file.name} 导入失败.`);
               }
@@ -512,16 +524,16 @@ class tablesML extends React.Component {
                                 <Grid style={{textAlign:'right',marginTop:10}} item xs={11}>
                                     <Search
                                         placeholder="标准问题搜索"
-                                        onSearch={value => this.getTableData(value,1,20,this.state.robotId)}
+                                        onSearch={value => this.getTableData(value,1,this.state.pageSize,this.state.robotId)}
                                         style={{ width: 150,borderStyle:'solid',
                                             borderWidth:0,paddingRight:10 }}
                                     />
-                                    {/*<Search*/}
-                                        {/*placeholder="回答内容搜索"*/}
-                                        {/*onSearch={value => this.answerGetTableData(value,1,20,this.state.robotId)}*/}
-                                        {/*style={{ width: 150,borderStyle:'solid',*/}
-                                            {/*borderWidth:0,paddingRight:10 }}*/}
-                                    {/*/>*/}
+                                    <Search
+                                        placeholder="回答内容搜索"
+                                        onSearch={value => this.answerGetTableData(value,1,this.state.pageSize,this.state.robotId)}
+                                        style={{ width: 150,borderStyle:'solid',
+                                            borderWidth:0,paddingRight:10 }}
+                                    />
                                     <Select style={{ width: 150,borderStyle:'solid',
                                         borderWidth:0,paddingRight:10 }}
                                             showSearch
@@ -564,7 +576,7 @@ class tablesML extends React.Component {
                                     // onMouseEnter: () => {},  
                                     };
                                 }}  key={"tablesML"} pagination={false} columns={columns} dataSource={this.props.tablesML.tableDataML} scroll={{ y: 360}} />
-                            {/*<Pagination current ={this.state.current} defaultPageSize={this.state.defaultPageSize} total={this.props.tablesML.tableCountML} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,20,this.state.robotId)}/>*/}
+                            {/*<Pagination current ={this.state.current} defaultPageSize={this.state.defaultPageSize} total={this.props.tablesML.tableCountML} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,this.state.pageSize,this.state.robotId)}/>*/}
                             <LocaleProvider locale={zh_CN}>
                                 <Pagination  current={this.state.current} showTotal={total => `总共 ${total} 条`} showSizeChanger showQuickJumper defaultPageSize={this.state.defaultPageSize} total={this.props.tablesML.tableCountML} style={{textAlign:'right',marginTop:25}}  onShowSizeChange={(current, pageSize)=>this.getTableData('',current, pageSize,this.state.robotId)} onChange={(page, pageSize)=>this.getTableData('',page,pageSize,this.state.robotId)}/>
                             </LocaleProvider>

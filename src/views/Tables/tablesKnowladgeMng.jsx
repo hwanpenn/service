@@ -271,13 +271,20 @@ class tablesKnowladgeMng extends React.Component {
             if (err) {
                 return;
             }
+            const uPattern = /^[\u4e00-\u9fa5\S]{1,4}$/;
+            if(uPattern.test(values.articleLabel)===false){
+                message.info('请输入小于4个汉字长度的标签');
+            }else{
+                values.categoryId=this.state.recordSelect.categoryId
+                console.log('开始调用getDataArticleMng')
+                this.props.createDataArticleMng(values,this)
+                //清空表单的值
+                form.resetFields();
+                this.setState({ visibleArticleData: false });
+            }
+            // console.log(uPattern.test(values.articleLabel),"正则匹配标签")
             // values.categoryId=this.state.categoryId
-            values.categoryId=this.state.recordSelect.categoryId
-            console.log('开始调用getDataArticleMng')
-            this.props.createDataArticleMng(values,this)
-            //清空表单的值
-            form.resetFields();
-            this.setState({ visibleArticleData: false });
+
         });
     }
     saveFormRefModify = (formRef) => {
@@ -621,7 +628,7 @@ class tablesKnowladgeMng extends React.Component {
                                     {getFieldDecorator('articleLabel', {
                                         rules: [{ required: true, message: '请输入新增标签!' }],
                                     })(
-                                        <Input />
+                                        <Input placeholder="请输入小于4个汉字长度的标签"/>
                                     )}
                                 </FormItem>
                                 <FormItem label="内容">

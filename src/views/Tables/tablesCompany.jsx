@@ -265,7 +265,7 @@ class tablesCompany extends React.Component {
                                     {getFieldDecorator('tenantName', {
                                         rules: [{ required: true, message: '请输入新增企业用户名称!' }],
                                     })(
-                                        <Input      placeholder="请输入新增企业用户名称"/>
+                                        <Input placeholder="请输入新增企业用户名称"/>
                                     )}
                                 </FormItem>
                                 <FormItem label="企业所在城市">

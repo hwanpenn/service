@@ -81,7 +81,7 @@ function Header({ ...props }) {
           </Button>
         </div>
         <Hidden smDown implementation="css">
-          <HeaderLinks rtlActive={rtlActive} />
+          {/*<HeaderLinks rtlActive={rtlActive} />*/}
         </Hidden>
         <Hidden mdUp>
           <Button

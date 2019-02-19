@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>聊天记录</title>
 
-<link rel="stylesheet" href="http://192.168.21.109:3001/user-chat/chat/layim/dist/css/layui.css">
+<link rel="stylesheet" href="/user-chat/chat/layim/dist/css/layui.css">
 <style>
 body .layim-chat-main{height: auto;}
 </style>
@@ -32,105 +32,105 @@ body .layim-chat-main{height: auto;}
 </textarea>
 
 
-<script src="http://192.168.21.109:3001//user-chat/chat/layim/dist/layui.js"></script>
-<script>
-function parseQueryString(url){
-    console.log(url)
-    var obj = {};
-    var keyvalue = [];
-    var key = "",
-        value = "";
-    var paraString = url.split("?")[1].split("&");
-    // console.log(url.split("?")[1])
-    for (var i in paraString) {
-        keyvalue = paraString[i].split("=");
-        key = keyvalue[0];
-        value = keyvalue[1];
-        obj[key] = value;
-    }
-    return obj;
-}
-var obj = parseQueryString(window.location.href)
-var fromUserId = '502911085762838528'
-// var fromUserId = obj.fromUserId
-var toUserId = obj.toUserId
-var channel = obj.channel
-var userName = obj.userName
-
-console.log('url获取的值')
-console.log(fromUserId)
-console.log(toUserId)
-console.log(channel)
-layui.use(['layim', 'laypage'], function(){
-  var laytpl = layui.laytpl
-  ,$ = layui.jquery
-  ,laypage = layui.laypage;
-    // var paramTemp = getParams()
-
-    var valueList = []
-    var params = {
-        page:1,
-        num:7,
-        fromUserId:fromUserId,
-        toUserId:toUserId,
-        queryType:"1",
-        channel:channel
-    };
-    var showData = document.getElementById("LAY_view")
-    $.ajax({
-        type: "get",
-        // async:false,
-        url: "http://192.168.21.198:8080/chat-service/interface/queryRecord",
-        data: params,
-        success: function (res) {
-         console.log(res)
-            laypage.render({
-                elem: 'LAY_page'
-                ,count: res.total===undefined?'':res.total//数据总数
-                ,limit: 7
-                ,jump: function(obj){
-                    var params = {
-                        page:obj.curr,
-                        num:7,
-                        fromUserId:fromUserId,
-                        toUserId:toUserId,
-                        queryType:"1",
-                        channel:channel
-                    };
-                    $.ajax({
-                        type : "get",
-                        url :"http://192.168.21.198:8080/chat-service/interface/queryRecord",
-                        count: res.total===undefined?'':res.total, //数据总数
-                        data: params,
-                        success : function(res){
-                            console.log(res)
-                            valueList =[]
-                            res.p2pList.map((item,i) => {
-                                var data = {
-                                    username: "纸飞机"
-                                    , id: item.id
-                                    , avatar: ' http://192.168.21.109:3001/user-chat/chat/picture/yonghu.png'
-                                    , timestamp: item.createTime
-                                    , content: item.content
-                                    , fromCsUserId: item.fromCsUserId
-                                }
-                                valueList.push(data);
-                            })
-                            var html = laytpl(LAY_tpl.value).render({
-                                data: valueList
-                            });
-                            $('#LAY_view').html(html);
-                        }
-                    })
-                }
-            })
-
-        },
-        error:function () {
-            alert(11111)
-        }
-    })
-});
+<script src="/user-chat/chat/layim/dist/layui.js"></script>
+<script src="/service-chat/chat/chatlog.js">
+// function parseQueryString(url){
+//     console.log(url)
+//     var obj = {};
+//     var keyvalue = [];
+//     var key = "",
+//         value = "";
+//     var paraString = url.split("?")[1].split("&");
+//     // console.log(url.split("?")[1])
+//     for (var i in paraString) {
+//         keyvalue = paraString[i].split("=");
+//         key = keyvalue[0];
+//         value = keyvalue[1];
+//         obj[key] = value;
+//     }
+//     return obj;
+// }
+// var obj = parseQueryString(window.location.href)
+// var fromUserId = '502911085762838528'
+// // var fromUserId = obj.fromUserId
+// var toUserId = obj.toUserId
+// var channel = obj.channel
+// var userName = obj.userName
+//
+// console.log('url获取的值')
+// console.log(fromUserId)
+// console.log(toUserId)
+// console.log(channel)
+// layui.use(['layim', 'laypage'], function(){
+//   var laytpl = layui.laytpl
+//   ,$ = layui.jquery
+//   ,laypage = layui.laypage;
+//     // var paramTemp = getParams()
+//
+//     var valueList = []
+//     var params = {
+//         page:1,
+//         num:7,
+//         fromUserId:fromUserId,
+//         toUserId:toUserId,
+//         queryType:"1",
+//         channel:channel
+//     };
+//     var showData = document.getElementById("LAY_view")
+//     $.ajax({
+//         type: "get",
+//         // async:false,
+//         url: "http://192.168.21.198:8080/chat-service/interface/queryRecord",
+//         data: params,
+//         success: function (res) {
+//          console.log(res)
+//             laypage.render({
+//                 elem: 'LAY_page'
+//                 ,count: res.total===undefined?'':res.total//数据总数
+//                 ,limit: 7
+//                 ,jump: function(obj){
+//                     var params = {
+//                         page:obj.curr,
+//                         num:7,
+//                         fromUserId:fromUserId,
+//                         toUserId:toUserId,
+//                         queryType:"1",
+//                         channel:channel
+//                     };
+//                     $.ajax({
+//                         type : "get",
+//                         url :"http://192.168.2.198:8080/chat-service/interface/queryRecord",
+//                         count: res.total===undefined?'':res.total, //数据总数
+//                         data: params,
+//                         success : function(res){
+//                             console.log(res)
+//                             valueList =[]
+//                             res.p2pList.map((item,i) => {
+//                                 var data = {
+//                                     username: "纸飞机"
+//                                     , id: item.id
+//                                     , avatar: ' http://192.168.21.109:3001/user-chat/chat/picture/yonghu.png'
+//                                     , timestamp: item.createTime
+//                                     , content: item.content
+//                                     , fromCsUserId: item.fromCsUserId
+//                                 }
+//                                 valueList.push(data);
+//                             })
+//                             var html = laytpl(LAY_tpl.value).render({
+//                                 data: valueList
+//                             });
+//                             $('#LAY_view').html(html);
+//                         }
+//                     })
+//                 }
+//             })
+//
+//         },
+//         error:function () {
+//             alert(11111)
+//         }
+//     })
+// });
 </script>
 </body>
 </html>

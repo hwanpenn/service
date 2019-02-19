@@ -1,51 +1,4 @@
-//转人工服务地址
-var robotSocketUrl
-var nginxUrl
-//客服系统后台服务地址
-var serviceUrl
-var chatlogUrl
-// robotSocketUrl='ws://'+window.location.host.split(":")[0]+':9322';
-
-var url = window.location.href;
-var serviceUrl
-
-function choosePath() {
-    if(url.indexOf("192.168.2.198") >0){//198环境下
-        //转人工服务地址
-         robotSocketUrl = "ws://192.168.2.198:9322"
-         nginxUrl = "http://192.168.2.198:8079"
-        //客服系统后台服务地址
-         serviceUrl = "http://192.168.2.198:8013"
-         chatlogUrl = "http://192.168.2.198:8081"
-
-    }else if(url.indexOf("12329.pub") >0){//测试环境的情况下
-        //转人工服务地址
-         robotSocketUrl = "ws://12329.pub:10242"
-         nginxUrl = "http://12329.pub:10234"
-        //客服系统后台服务地址
-         serviceUrl = "http://12329.pub:10235"
-         chatlogUrl = "http://12329.pub:15000"
-
-    }else if(url.indexOf("gjj12329.cn") >0){//正式环境下
-        //转人工服务地址
-         robotSocketUrl = "ws://www.gjj12329.cn:9330"
-         nginxUrl = "http://www.gjj12329.cn:8079"
-        //客服系统后台服务地址
-         serviceUrl = "http://www.gjj12329.cn:8079"
-         chatlogUrl = "http://www.gjj12329.cn:8081"
-
-    }else{
-        //转人工服务地址
-         robotSocketUrl = "ws://192.168.2.198:9322"
-         nginxUrl = "http://192.168.2.105:3000"
-        //客服系统后台服务地址
-         serviceUrl = "http://192.168.2.198:8013"
-         chatlogUrl = "http://192.168.2.105:3001"
-    }
-}
-
-choosePath()
-
+document.write("<script  src='/service-chat/chat/config/config.js'><\/script>");
 //加密
 function encryptData(data, publicKey){            
   data = JSON.stringify(data)
@@ -81,18 +34,49 @@ var resrows = ''
 var robotShowName = '小玥'
 var isSetByUser = false
 
+var obj = parseQueryString(window.location.href)
 
-try{
-  enterpriseCode = chatConfig.tenantId
-  tenantId = chatConfig.tenantId
-  group = chatConfig.tenantId
-  userId = chatConfig.userId
-  userName = chatConfig.userName
-  caption = chatConfig.caption
-  console.log(chatConfig)
-} catch(err) {
-  console.log(err)
+if(obj.type==='robotChatTest'){
+    enterpriseCode = obj.tenantId
+    tenantId = obj.tenantId
+    group = obj.tenantId
+    userId = obj.userId
+    userName = obj.userName
+    caption = obj.caption
+}else{
+    enterpriseCode = chatConfig.tenantId
+    tenantId = chatConfig.tenantId
+    group = chatConfig.tenantId
+    userId = chatConfig.userId
+    userName = chatConfig.userName
+    caption = chatConfig.caption
 }
+function parseQueryString(url){
+    var obj = {};
+    var keyvalue = [];
+    var key = "",
+        value = "";
+    var paraString = url.substring(url.indexOf("?") + 1, url.length).split("&");
+    for (var i in paraString) {
+        keyvalue = paraString[i].split("=");
+        key = keyvalue[0];
+        value = keyvalue[1];
+        obj[key] = value;
+    }
+    return obj;
+}
+
+// try{
+//   enterpriseCode = chatConfig.tenantId
+//   tenantId = chatConfig.tenantId
+//   group = chatConfig.tenantId
+//   userId = chatConfig.userId
+//   userName = chatConfig.userName
+//   caption = chatConfig.caption
+//   console.log(chatConfig)
+// } catch(err) {
+//   console.log(err)
+// }
 
 
 function refreshCount() {
@@ -346,250 +330,250 @@ function initRobotConfig(layim,userName){
     brief: true,
     voice:false,
     minRight: '0px'
-    ,chatLog: chatlogUrl+'/chatlog'
+    ,chatLog: chatlogUrlPage+'/chatlog'
   });
 }
-layui.use('layim', function(layim){
-  layim = layim
- 
-  //初始化机器人
-  initRobotConfig(layim,userName)
+window.onload = function(){
+    layui.use('layim', function(layim){
+        layim = layim
 
-  //监听advice
-  layim.on('tool(advice)', function(insert, send, obj){ 
-    layer.prompt({
-      title: '建议'
-      ,formType: 2
-      ,shade: 0
-    }, function(text, index){
-      layer.close(index);
-      // alert("已提交客服人员，提示内容："+text)
-    });
-  });
-  
-  //监听start
-  layim.on('tool(start)', function(insert, send, obj){ 
-    console.log(status)
-    // if(socket===''){
-    //   console.log('重新上线')
-    //   reconnectedWebsocket=true
-    //   reconnectWebsocket=window.setInterval(reconnected, 5000); 
-    //   // reconnected()
-    // }
-    if(status==='1'){
-      var obj = {};
-              obj = {
-                username: robotShowName
-                ,avatar: nginxUrl+"/service-chat/chat/picture/xiaoyue.png"
-                ,id: 1111
-                ,type: "robot"
-                ,content: '您已上线'
-              }
-              layim.getMessage(obj);
-    }else if(status==='0'){
-      console.log("发起websocket")
-      var data = {userId:userId,userName:userName};
-      var encryptValue = encryptData(data,publicKey) 
-      if(group ===null){
-        obj1 = {
-          username: robotShowName
-          ,avatar: nginxUrl+"/service-chat/chat/picture/xiaoyue.png"
-          ,id: 1111
-          ,type: "robot"
-          ,content: "暂未启用客服服务"
+        //初始化机器人
+        initRobotConfig(layim,userName)
+
+        //监听advice
+        layim.on('tool(advice)', function(insert, send, obj){
+            layer.prompt({
+                title: '建议'
+                ,formType: 2
+                ,shade: 0
+            }, function(text, index){
+                layer.close(index);
+                // alert("已提交客服人员，提示内容："+text)
+            });
+        });
+
+        //监听start
+        layim.on('tool(start)', function(insert, send, obj){
+            // if(socket===''){
+            //   console.log('重新上线')
+            //   reconnectedWebsocket=true
+            //   reconnectWebsocket=window.setInterval(reconnected, 5000);
+            //   // reconnected()
+            // }
+            if(status==='1'){
+                var obj = {};
+                obj = {
+                    username: robotShowName
+                    ,avatar: nginxUrl+"/service-chat/chat/picture/xiaoyue.png"
+                    ,id: 1111
+                    ,type: "robot"
+                    ,content: '您已上线'
+                }
+                layim.getMessage(obj);
+            }else if(status==='0'){
+                console.log("发起websocket")
+                var data = {userId:userId,userName:userName};
+                var encryptValue = encryptData(data,publicKey)
+                if(group ===null){
+                    obj1 = {
+                        username: robotShowName
+                        ,avatar: nginxUrl+"/service-chat/chat/picture/xiaoyue.png"
+                        ,id: 1111
+                        ,type: "robot"
+                        ,content: "暂未启用客服服务"
+                    }
+                    layim.getMessage(obj1);
+                }else{
+                    socket = new WebSocket(robotSocketUrl+"?systemName="+tenantId+"&userName="+caption+"&userId="+userId+"&requestSource=0");
+                    addEnent(socket,'isDoByUser',layim)
+                }
+            }else if(status==='2'){
+                console.log("忙碌转上线")
+                var dataTemp = {role:'0',operationType:'1',type:'11',group:group};
+                socket.send(JSON.stringify(dataTemp));
+            }else{
+                console.log('上线')
+                var dataTemp = {role:'0',operationType:'1',type:'11',group:group};
+                socket.send(JSON.stringify(dataTemp));
+                // socket.emit('open', dataTemp);
+            }
+        });
+
+        //监听hangup
+        layim.on('tool(hangup)', function(insert, send, obj){
+            if(chatUserData===''){
+                var obj = {};
+                obj = {
+                    username: robotShowName
+                    ,avatar: nginxUrl+"/service-chat/chat/picture/xiaoyue.png"
+                    ,id: 1111
+                    ,type: "robot"
+                    ,content: '没有连接的用户'
+                }
+                layim.getMessage(obj);
+            }else{
+                console.log('挂断')
+                var dataTemp = {role:'0',operationType:'2',type:'11',group:group,overUserId:chatUserData.userId};
+                socket.send(JSON.stringify(dataTemp));
+            }
+
+        });
+
+        //监听end
+        layim.on('tool(end)', function(insert, send, obj){
+            console.log(status,"状态1")
+            if(status==='0'){
+                // console.log("go")
+                status='0'
+                var obj = {};
+                obj = {
+                    username: robotShowName
+                    ,avatar: nginxUrl+"/service-chat/chat/picture/xiaoyue.png"
+                    ,id: 1111
+                    ,type: "robot"
+                    ,content: '您还没有上线'
+                }
+                layim.getMessage(obj);
+            }else if(status==='1'){
+                status='0'
+                var dataTemp = {role:'0',operationType:'4',type:'11',group:group};
+                socket.send(JSON.stringify(dataTemp));
+            }else if(status==='2'){
+                var obj = {};
+                obj = {
+                    username: robotShowName
+                    ,avatar: nginxUrl+"/service-chat/chat/picture/xiaoyue.png"
+                    ,id: 1111
+                    ,type: "robot"
+                    ,content: '请先挂断用户'
+                }
+                layim.getMessage(obj);
+            }
+
+        });
+
+        //监听busy
+        layim.on('tool(busy)', function(insert, send, obj){
+            if(status!=='1'){
+                var obj = {};
+                obj = {
+                    username: robotShowName
+                    ,avatar: nginxUrl+"/service-chat/chat/picture/xiaoyue.png"
+                    ,id: 1111
+                    ,type: "robot"
+                    ,content: '您还没有上线'
+                }
+                layim.getMessage(obj);
+            }else{
+                status='2'
+                var dataTemp = {role:'0',operationType:'3',type:'11',group:group,overUserId:chatUserData.userId};
+                socket.send(JSON.stringify(dataTemp));
+            }
+
+        });
+
+        layim.chat({
+            name: '在线答疑'
+            ,type: 'robot'
+            ,avatar: nginxUrl+'/service-chat/chat/picture/xiaoyue.png'
+            ,id: 1111
+        });
+        var url = window.location.href;
+        // alert(url.indexOf("platform") )
+        if(url.indexOf("platform") <0){
+            layim.setChatMin();
         }
-        layim.getMessage(obj1);
-      }else{
-      socket = new WebSocket(robotSocketUrl+"?systemName="+tenantId+"&userName="+caption+"&userId="+userId+"&requestSource=0");
-      addEnent(socket,'isDoByUser',layim)
-      }
-    }else if(status==='2'){
-      console.log("忙碌转上线")
-      var dataTemp = {role:'0',operationType:'1',type:'11',group:group};
-      socket.send(JSON.stringify(dataTemp));
-    }else{
-      console.log('上线')
-      var dataTemp = {role:'0',operationType:'1',type:'11',group:group};
-      socket.send(JSON.stringify(dataTemp));
-      // socket.emit('open', dataTemp); 
-    }
-  });
-  
-  //监听hangup
-  layim.on('tool(hangup)', function(insert, send, obj){ 
-    if(chatUserData===''){
-      var obj = {};
-              obj = {
-                username: robotShowName
-                ,avatar: nginxUrl+"/service-chat/chat/picture/xiaoyue.png"
-                ,id: 1111
-                ,type: "robot"
-                ,content: '没有连接的用户'
-              }
-              layim.getMessage(obj);
-    }else{
-      console.log('挂断')
-      var dataTemp = {role:'0',operationType:'2',type:'11',group:group,overUserId:chatUserData.userId};
-      socket.send(JSON.stringify(dataTemp));
-    }
-    
-  });
 
-  //监听end
-  layim.on('tool(end)', function(insert, send, obj){
-    console.log(status)
-    if(status==='0'){
-      // console.log("go")
-      status='0'
-      var obj = {};
-              obj = {
-                username: robotShowName
-                ,avatar: nginxUrl+"/service-chat/chat/picture/xiaoyue.png"
-                ,id: 1111
-                ,type: "robot"
-                ,content: '您还没有上线'
-              }
-              layim.getMessage(obj);
-    }else if(status==='1'){
-      status='0'
-      var dataTemp = {role:'0',operationType:'4',type:'11',group:group};
-      socket.send(JSON.stringify(dataTemp));
-    }else if(status==='2'){
-      var obj = {};
-      obj = {
-        username: robotShowName
-        ,avatar: nginxUrl+"/service-chat/chat/picture/xiaoyue.png"
-        ,id: 1111
-        ,type: "robot"
-        ,content: '请先挂断用户'
-      }
-      layim.getMessage(obj);
-    }
-    
-  });
+        var $ = layui.jquery;
+        $('.layim-chat-main').children("ul").children("li").remove();
+            console.log("加载完成")
+            // var chatlogButton = document.getElementsByClassName("layim-tool-log")
+            //   $('.layim-tool-log').on('click', function(){
 
-  //监听busy
-  layim.on('tool(busy)', function(insert, send, obj){
-    if(status!=='1'){
-      var obj = {};
-              obj = {
-                username: robotShowName
-                ,avatar: nginxUrl+"/service-chat/chat/picture/xiaoyue.png"
-                ,id: 1111
-                ,type: "robot"
-                ,content: '您还没有上线'
-              }
-              layim.getMessage(obj);
-    }else{
-      status='2'
-      var dataTemp = {role:'0',operationType:'3',type:'11',group:group,overUserId:chatUserData.userId};
-      socket.send(JSON.stringify(dataTemp));
-    }
-    
-  });
+            //   console.log('添加定时')
+            //   var t1=window.setInterval(sendParams(), 3000);
+            // })
+            window.onbeforeunload = function(){
+                status='0'
+                var dataTemp = {role:'0',operationType:'4',type:'11',group:group,overUserId:chatUserData.userId};
+                socket.send(JSON.stringify(dataTemp));
+            }
 
-  layim.chat({
-    name: '在线答疑'
-    ,type: 'robot'
-    ,avatar: nginxUrl+'/service-chat/chat/picture/xiaoyue.png'
-    ,id: 1111
-  });
-    var url = window.location.href;
-    // alert(url.indexOf("platform") )
-    if(url.indexOf("platform") <0){
-        layim.setChatMin();
-    }
+            console.log('初始化socket---空值')
+            console.log(socket)
+            // 去sessionstorage里去权限数据 publicKey group 企业编码 userId
+            // publicKey = window.sessionStorage.getItem('publicKey')
+            // chatConfig = window.sessionStorage.getItem('chatConfig')
+            if(window.sessionStorage.getItem('tenantId')!==null){
+                userId = window.sessionStorage.getItem('userId')
+                userName = window.sessionStorage.getItem('userName')
+                tenantId = window.sessionStorage.getItem('tenantId')
+                caption = window.sessionStorage.getItem('caption')
+                group = window.sessionStorage.getItem('tenantId')
+                enterpriseCode = window.sessionStorage.getItem('tenantId')
+                console.log('获取数据')
+                console.log('userName:'+userName+'--'+'userId:'+userId+'--'+'tenantId:'+tenantId
+                    +'--'+'caption:'+caption+'--'+'group:'+group+'--'+'enterpriseCode:'+enterpriseCode)
+            }
+            //更新机器人
+            initRobotConfig(layim,userName)
 
-  var $ = layui.jquery;
-  $('.layim-chat-main').children("ul").children("li").remove();
+            var params = {enterpriseCode:enterpriseCode,sortNum:'',source:'0'}
+            $.ajax({
+                type : "get",
+                async:false,
+                url : serviceUrl+"/cs/api/robot/achieveChatWindow",
+                data: params,
+                success : function(res){
+                    console.log('http请求返回值')
+                    console.log(res.rows)
+                    resrows = res.rows
+                    uniqueKey = resrows.robotId
+                    group = res.rows.cuSkGroupId
+                    robotShowName = resrows.robotShowName===''?robotShowName:resrows.robotShowName
+                }
+            });
 
-  $('#mytempid').on('click', function(){
-    // var chatlogButton = document.getElementsByClassName("layim-tool-log")
-  //   $('.layim-tool-log').on('click', function(){
-       
-  //   console.log('添加定时')
-  //   var t1=window.setInterval(sendParams(), 3000);
-  // })
-    window.onbeforeunload = function(){
-      status='0'
-      var dataTemp = {role:'0',operationType:'4',type:'11',group:group,overUserId:chatUserData.userId};
-      socket.send(JSON.stringify(dataTemp));
-    } 
+            var cache =  layui.layim.cache();
+            if(cache!==undefined&&cache.chatlog!==undefined){
+                delete cache.chatlog;
+            }
+            var local = layui.data('layim')[cache.mine.id];
+            if(local!==undefined&&local.chatlog!==undefined){
+                delete local.chatlog;
+            }
+            layui.data('layim', {
+                key: cache.mine.id
+                ,value: local
+            });
 
-    console.log('初始化socket---空值')
-    console.log(socket)
-    // 去sessionstorage里去权限数据 publicKey group 企业编码 userId
-    // publicKey = window.sessionStorage.getItem('publicKey')
-    // chatConfig = window.sessionStorage.getItem('chatConfig')
-    if(window.sessionStorage.getItem('tenantId')!==null){
-      userId = window.sessionStorage.getItem('userId')
-      userName = window.sessionStorage.getItem('userName')
-      tenantId = window.sessionStorage.getItem('tenantId')
-      caption = window.sessionStorage.getItem('caption')
-      group = window.sessionStorage.getItem('tenantId')  
-      enterpriseCode = window.sessionStorage.getItem('tenantId')  
-      console.log('获取数据')
-      console.log('userName:'+userName+'--'+'userId:'+userId+'--'+'tenantId:'+tenantId
-      +'--'+'caption:'+caption+'--'+'group:'+group+'--'+'enterpriseCode:'+enterpriseCode)
-    }
-    //更新机器人
-    initRobotConfig(layim,userName)
+            var data = {userId:userId,userName:userName};
+            var encryptValue = encryptData(data,publicKey)
 
-    var params = {enterpriseCode:enterpriseCode,sortNum:'',source:'0'}
-      $.ajax({
-        type : "get", 
-        async:false,
-        url : serviceUrl+"/cs/api/robot/achieveChatWindow", 
-        data: params,
-        success : function(res){ 
-            console.log('http请求返回值')
-            console.log(res.rows)
-            resrows = res.rows
-            uniqueKey = resrows.robotId
-            group = res.rows.cuSkGroupId
-            robotShowName = resrows.robotShowName===''?robotShowName:resrows.robotShowName
-        } 
+            if(socket===''){
+                if(reconnectedWebsocket){
+
+                }else{
+                    console.log("发起websocket")
+                    socket = new WebSocket(robotSocketUrl+"?systemName="+tenantId+"&userName="+caption+"&userId="+userId+"&requestSource=0");
+                };
+            }
+            addEnent(socket,'',layim)
+
+            S4 = () => {
+                return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+            }
+            guid = () => {
+                return (S4()+S4()+S4());
+            }
+            layim.on('sendMessage', function(data){
+                var dataTemp = {content:data.mine.content,toUserId:chatUserData.userId,toUserName:chatUserData.userName,type:'3',uqIdentNo:Date.parse(new Date())};
+                // console.log(dataTemp)
+                socket.send(JSON.stringify(dataTemp));
+            });
     });
+}
 
-    var cache =  layui.layim.cache();
-    if(cache!==undefined&&cache.chatlog!==undefined){
-      delete cache.chatlog;
-    }
-    var local = layui.data('layim')[cache.mine.id];
-    if(local!==undefined&&local.chatlog!==undefined){
-      delete local.chatlog;
-    }
-    layui.data('layim', {
-      key: cache.mine.id
-      ,value: local
-    });
-   
-    var data = {userId:userId,userName:userName};
-    var encryptValue = encryptData(data,publicKey) 
-
-    if(socket===''){
-      if(reconnectedWebsocket){
-        
-      }else{
-        console.log("发起websocket")
-        socket = new WebSocket(robotSocketUrl+"?systemName="+tenantId+"&userName="+caption+"&userId="+userId+"&requestSource=0");
-      };
-    }
-    addEnent(socket,'',layim)
-      
-    S4 = () => {
-      return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
-    }
-    guid = () => {
-        return (S4()+S4()+S4());
-    }
-    layim.on('sendMessage', function(data){
-      var dataTemp = {content:data.mine.content,toUserId:chatUserData.userId,toUserName:chatUserData.userName,type:'3',uqIdentNo:Date.parse(new Date())};
-      // console.log(dataTemp)
-      socket.send(JSON.stringify(dataTemp));
-    });
-  });
-});
 // userId toUserId tenantId caption fromUserName
 // function sendParams() {
 //   var iframeConfig  = {

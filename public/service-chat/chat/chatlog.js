@@ -1,3 +1,5 @@
+document.write("<script  src='/service-chat/chat/config/config.js'><\/script>");
+
 var chatlogUrl
 var nginxUrl
 // var iframeConfig = {fromUserId: "502911085762838528", toUserId: "12345", fromUserName: "客服", toUserName: "用户", channel: "1112"}
@@ -20,7 +22,7 @@ function choosePath() {
 
     }else{
          chatlogUrl = "http://192.168.2.198:8080"
-         nginxUrl = "http://192.168.2.123:3000"
+         nginxUrl = "http://192.168.2.105:3000"
     }
 }
 
@@ -77,7 +79,7 @@ layui.use(['layim', 'laypage'], function(){
         type: "get",
         // async:false,
         // url: chatlogUrl+"/chat-service/interface/queryRecord?fromUserId=502911085762838528&toUserId=12345&queryType=1&page=1&num=7&channel=502883989623668736",
-        url: "http://192.168.21.198:8080/chat-service/interface/queryRecord",
+        url: chatlogUrl+"/chat-service/interface/queryRecord",
         data: params,
         success: function (res) {
         //  console.log(res)
@@ -97,7 +99,7 @@ layui.use(['layim', 'laypage'], function(){
                     $.ajax({
                         type : "get",
                         // url :chatlogUrl+"/chat-service/interface/queryRecord?fromUserId=502911085762838528&toUserId=12345&queryType=1&page=1&num=7&channel=502883989623668736",
-                        url :"http://192.168.21.198:8080/chat-service/interface/queryRecord",
+                        url :chatlogUrl+"/chat-service/interface/queryRecord",
                         count: res.total===undefined?'':res.total, //数据总数
                         data: params,
                         success : function(res){
