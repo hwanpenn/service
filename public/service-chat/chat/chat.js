@@ -1,4 +1,4 @@
-document.write("<script  src='/service-chat/chat/config/config.js'><\/script>");
+document.write("<script  src='/service-chat/chat/config/config.js'></script>");
 //加密
 function encryptData(data, publicKey){            
   data = JSON.stringify(data)
@@ -33,24 +33,34 @@ var reconnectedWebsocket = false
 var resrows = ''
 var robotShowName = '小玥'
 var isSetByUser = false
+var url = window.location.href;
+var obj = parseQueryString(url)
 
-var obj = parseQueryString(window.location.href)
-
-if(obj.type==='robotChatTest'){
+if(url.indexOf("platform") >0){//判断是综合服务平台
+    if(obj.type==='robotChatTest'){
+        enterpriseCode = obj.tenantId
+        tenantId = obj.tenantId
+        group = obj.tenantId
+        userId = obj.userId
+        userName = obj.userName
+        caption = obj.caption
+    }else{
+        enterpriseCode = chatConfig.tenantId
+        tenantId = chatConfig.tenantId
+        group = chatConfig.tenantId
+        userId = chatConfig.userId
+        userName = chatConfig.userName
+        caption = chatConfig.caption
+    }
+}else{
     enterpriseCode = obj.tenantId
     tenantId = obj.tenantId
     group = obj.tenantId
     userId = obj.userId
     userName = obj.userName
     caption = obj.caption
-}else{
-    enterpriseCode = chatConfig.tenantId
-    tenantId = chatConfig.tenantId
-    group = chatConfig.tenantId
-    userId = chatConfig.userId
-    userName = chatConfig.userName
-    caption = chatConfig.caption
 }
+
 function parseQueryString(url){
     var obj = {};
     var keyvalue = [];
@@ -109,7 +119,7 @@ function addEnent(socket,isDoByUser,layim){
     console.log('添加心跳')
     timerHeartbeat=window.setInterval(refreshCount, 5000);
     if(isDoByUser==='isDoByUser'){
-      console.log('上线')
+      // console.log('上线')
       var dataTemp = {role:'0',operationType:'1',type:'11',group:group};
       // socket.emit('open', dataTemp);
       socket.send(JSON.stringify(dataTemp));
@@ -478,7 +488,7 @@ window.onload = function(){
             ,avatar: nginxUrl+'/service-chat/chat/picture/xiaoyue.png'
             ,id: 1111
         });
-        var url = window.location.href;
+
         // alert(url.indexOf("platform") )
         if(url.indexOf("platform") <0){
             layim.setChatMin();

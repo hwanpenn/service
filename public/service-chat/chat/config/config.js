@@ -1,4 +1,3 @@
-console.log("成功了！")
 //转人工服务地址
 var robotSocketUrl
 var nginxUrl

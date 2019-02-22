@@ -14,6 +14,7 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import Hidden from "@material-ui/core/Hidden";
 import Collapse from "@material-ui/core/Collapse";
+import { ceshi } from "App.css"
 
 // core components
 import HeaderLinks from "components/Header/HeaderLinks.jsx";
@@ -187,7 +188,10 @@ class Sidebar extends React.Component {
     }
     handleClick = (event) =>{
         axios.defaults.headers.common['Authorization'] = window.sessionStorage.getItem('token');
-        axios.post('/cs/api/exit'
+        axios.post('/cs/api/exit',
+        {
+            username: '',
+        }
         ).then((response) => {
                 console.log(response)
             }
@@ -262,6 +266,7 @@ class Sidebar extends React.Component {
               onClick={() => this.openCollapse("openAvatar")}
             >
               <ListItemText
+                  className={ceshi}
                 primary={window.sessionStorage.getItem('role')==='ROLE_SUPERADMIN'?"超级管理员":"管理员"+"--"+ window.sessionStorage.getItem('realName')}
                 secondary={
                   <b

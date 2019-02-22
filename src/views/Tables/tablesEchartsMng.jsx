@@ -13,7 +13,7 @@ import Card from "components/Card/Card.jsx";
 import CardIcon from "components/Card/CardIcon.jsx";
 import CardHeader from "components/Card/CardHeader.jsx";
 import {getOtherSecretKey,getDataSecretKey,updateDataSecretKey,deleteDataSecretKey,createDataSecretKey,activeDataSecretKey } from "actions/tablesSecretKey";
-import {Input,Modal } from 'antd';
+import {Button, Input, Modal, Upload} from 'antd';
 import { Tabs } from 'antd';
 const TabPane = Tabs.TabPane;
 const Search = Input.Search;
@@ -22,60 +22,56 @@ const Search = Input.Search;
 class tablesEchartsMng extends React.Component {
 
     componentWillMount(){
-        // this.getTreeData()
     }
     componentDidMount(){
     }
-    // getTreeData = (TreeId) => {
-    //     const params = {
-    //         TreeId:TreeId,
-    //     };
-    //     this.props.getTreeDataSuggestion(params);
-    // }
     render(){
         return(
             <GridContainer>
                 <Card>
                     <CardHeader color="rose" icon>
                         <Grid container spacing={24}>
-                            <Grid item xs={6}>
+                            <Grid item xs={3}>
                                 <CardIcon color="rose">
                                     <Assignment />
                                 </CardIcon>
-                                <h4> </h4>
+                            </Grid>
+                            <Grid style={{textAlign:'center',marginTop:10}} item xs={9}>
+                                <h4>1234 </h4>
                             </Grid>
                         </Grid>
                     </CardHeader>
-                    <Grid container style={{marginLeft:25}}>
+                    <Grid container style={{marginLeft:25,marginTop:20}}>
                         <Grid item xs={6}>
                             <Tabs defaultActiveKey="1" style={{ width: 500 }}>
-                                <TabPane tab="图表一" key="1">
+                                <TabPane tab="投诉建议" key="1">
                                     <Echartone></Echartone>
                                 </TabPane>
-                                <TabPane tab="图表二" key="2">
+                                <TabPane tab="对话详情" key="2">
                                     <Echarttwo></Echarttwo>
                                 </TabPane>
                             </Tabs>
                         </Grid>
                         <Grid item xs={6}>
                             <Tabs defaultActiveKey="1" style={{ width: 500 }}>
-                                <TabPane tab="图一" key="1">
+                                <TabPane tab="人员管理" key="1">
                                     <Echartfour></Echartfour>
                                 </TabPane>
-                                <TabPane tab="图二" key="2">
+                                <TabPane tab="机器人" key="2">
                                     <Echartfive></Echartfive>
                                 </TabPane>
                             </Tabs>
                         </Grid>
                         <Grid item xs={12} style={{ marginTop:50}}>
+                            <h3 className="echarttitle">知识库</h3>
                             <Echartthree></Echartthree>
                         </Grid>
                         <Grid item xs={5}>
-                            <h3 className="echarttitle">客服信息</h3>
+                            <h3 className="echarttitle">技能组管理</h3>
                             <Echartsix></Echartsix>
                         </Grid>
                         <Grid item xs={7}>
-                            <h3 className="echarttitle">客户信息</h3>
+                            <h3 className="echarttitle">聊天窗管理</h3>
                             <Echartseven></Echartseven>
                         </Grid>
                     </Grid>

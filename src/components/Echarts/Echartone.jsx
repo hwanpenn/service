@@ -35,11 +35,11 @@ class Echartone extends React.Component {
 			tooltip: {
 				formatter: function(params) {
 					console.log(params);
-					return params.name + '：' + params.data + "件"
+					return params.name + '：' + params.data + "条"
 				}
 			},
 			xAxis: {
-				data: ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"]
+				data: ["总条数", "已回复", "未回复"]
 			},
 			yAxis: {
 				splitNumber: 3,
@@ -56,7 +56,7 @@ class Echartone extends React.Component {
 				}
 			},
 			series: [{
-				name: '销量',
+				name: '总数',
 				type: 'bar',
 				barWidth: 30,
 				itemStyle: {
@@ -68,7 +68,7 @@ class Echartone extends React.Component {
 
 					}
 				},
-				data: [5, 20, 36, 10, 10, 20]
+				data: [22, 22, 0]
 			}]
 		});	
 	}

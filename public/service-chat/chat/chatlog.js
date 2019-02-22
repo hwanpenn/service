@@ -1,4 +1,4 @@
-document.write("<script  src='/service-chat/chat/config/config.js'><\/script>");
+document.write("<script  src='/service-chat/chat/config/config.js'></script>");
 
 var chatlogUrl
 var nginxUrl

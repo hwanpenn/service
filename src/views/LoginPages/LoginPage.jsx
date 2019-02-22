@@ -137,6 +137,8 @@ class LoginPage extends React.Component {
 
                     window.sessionStorage.setItem('password','')
                     // thisTemp.removeEvt()
+                    // document.write("<script id='script1' src='/service-chat/chat/chat.js'></script>");
+
                     thisTemp.props.history.push("/cms/home");
                     // document.getElementById("layui-layer2").style.display='block'
                 }else {

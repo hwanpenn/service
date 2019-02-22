@@ -6,3 +6,13 @@
 .tableBackground{
     background: #b9d3e8;
   }
+/*.Sidebar-userCollapseButton-62{*/
+ /*padding: 0 0 !important;*/
+/*}*/
+.ceshi{
+    padding: 0 0 !important;
+}
+.visible{
+    display: none !important;
+    visibility: hidden !important;
+}

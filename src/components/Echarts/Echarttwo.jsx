@@ -1,46 +1,15 @@
 import React from "react";
-// nodejs library that concatenates classes
-import classNames from "classnames";
-// nodejs library to set properties for components
 /*按需加载*/
 import echarts from "echarts/lib/echarts";
 import 'echarts/lib/chart/line';
 import 'echarts/lib/component/tooltip';
 import 'echarts/lib/component/title';
 import 'echarts/lib/component/grid';
-// @material-ui/core components
-import withStyles from "@material-ui/core/styles/withStyles";
-// @material-ui/icons
 
-// core components
+import withStyles from "@material-ui/core/styles/withStyles";
+
 import cardTextStyle from "assets/jss/material-dashboard-pro-react/components/cardTextStyle.jsx";
 
-//function CardText({ ...props }) {
-//const { classes, className, children, color, ...rest } = props;
-//const cardTextClasses = classNames({
-//  [classes.cardText]: true,
-//  [classes[color + "CardHeader"]]: color,
-//  [className]: className !== undefined
-//});
-//return (
-//  <div className={cardTextClasses} {...rest}>
-//    {children}
-//  </div>
-//);
-//}
-
-//CardText.propTypes = {
-//classes: PropTypes.object.isRequired,
-//className: PropTypes.string,
-//color: PropTypes.oneOf([
-//  "warning",
-//  "success",
-//  "danger",
-//  "info",
-//  "primary",
-//  "rose"
-//])
-//};
 class Echarttwo extends React.Component {
 	componentDidMount() {
 		const mychart = echarts.init(document.getElementById('second'));
@@ -58,11 +27,11 @@ class Echarttwo extends React.Component {
 			tooltip: {
 				formatter: function(params) {
 					console.log(params);
-					return params.name + '：' + params.data + "件"
+					return params.name + '：' + params.data + "个"
 				}
 			},
 			xAxis: {
-				data: ["案例一", "案例二", "案例三", "案例四", "案例五", "案例六"]
+				data: ["问题"]
 			},
 			yAxis: {
 				splitNumber: 3,
@@ -79,9 +48,10 @@ class Echarttwo extends React.Component {
 				}
 			},
 			series: [{
-				name: '销量',
-				type: 'line',
-				data: [5, 20, 36, 10, 10, 20],
+				name: '总数',
+				type: 'bar',
+				data: [75],
+				barWidth:40,
 				itemStyle:{
 					normal:{
 						lineStyle:{
