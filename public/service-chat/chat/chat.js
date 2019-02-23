@@ -1,15 +1,5 @@
-document.write("<script  src='/service-chat/chat/config/config.js'></script>");
-//加密
-function encryptData(data, publicKey){            
-  data = JSON.stringify(data)
-  var encrypt = new JSEncrypt();
-  encrypt.setPublicKey(publicKey);
-  var encrypted = encrypt.encrypt(data);
-  encrypted=encodeURIComponent(encrypted) 
-  encrypted=encodeURIComponent(encrypted) 
-  return encrypted;
-}
 
+var url = window.location.href;
 var publicKey = 'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDRoXWHKSkmbrar8+xstOgOl2VNM8PARvbFSlFepiFnqv7Arc1zpjkVUYDRauagZEabxrmja8phaRMy9NW3/IpEZhBzUQpwNVriOYH8YmZ1hLrrOxFeAtqv43DwUo7ah2hzRYMIUi0KFssGYPaFMAueIXQO7a3jHERcfaleUS1R/QIDAQAB'
 var socket = '';
 var tenantId = '1112'
@@ -35,6 +25,23 @@ var robotShowName = '小玥'
 var isSetByUser = false
 var url = window.location.href;
 var obj = parseQueryString(url)
+if(url.indexOf("192.168.2.198")>0||url.indexOf("12329.pub")>0||url.indexOf("192.168.2.105")>0||url.indexOf("gjj12329.cn")>0){
+    document.write("<script  src='/service-chat/chat/config/config.js'></script>");
+}else{
+    document.write("<script  src='http://www.gjj12329.cn//service-chat/chat/config/config.js'></script>");
+}
+
+
+//加密
+function encryptData(data, publicKey){
+    data = JSON.stringify(data)
+    var encrypt = new JSEncrypt();
+    encrypt.setPublicKey(publicKey);
+    var encrypted = encrypt.encrypt(data);
+    encrypted=encodeURIComponent(encrypted)
+    encrypted=encodeURIComponent(encrypted)
+    return encrypted;
+}
 
 if(url.indexOf("platform") >0){//判断是综合服务平台
     if(obj.type==='robotChatTest'){

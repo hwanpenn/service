@@ -1,3 +1,4 @@
+import 'babel-polyfill'
 import React from "react";
 import ReactDOM from "react-dom";
 import "assets/scss/material-dashboard-pro-react.css?v=1.2.0";

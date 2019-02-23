@@ -100,7 +100,7 @@ class LoginPage extends React.Component {
         // encrypt.setPublicKey('-----BEGIN PUBLIC KEY-----'+'\n' + publicKey + '\n'+'-----END PUBLIC KEY-----');
         let encrypted = encrypt.encrypt(password);
 
-        if(checked !== check ){
+        if(checked.toUpperCase() !== check.toUpperCase() ){
             this.child.renovate()
             message.info("验证码有误请重新输入");
 

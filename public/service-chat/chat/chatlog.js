@@ -1,32 +1,16 @@
-document.write("<script  src='/service-chat/chat/config/config.js'></script>");
 
 var chatlogUrl
 var nginxUrl
 // var iframeConfig = {fromUserId: "502911085762838528", toUserId: "12345", fromUserName: "客服", toUserName: "用户", channel: "1112"}
 // var iframeConfig = parent.sendParams()
-
 var url = window.location.href;
 var serviceUrl
 
-function choosePath() {
-    if(url.indexOf("192.168.2.198") >0){//198环境下
-         chatlogUrl = "http://192.168.2.198:8080"
-         nginxUrl = "http://192.168.2.198:8079"
-    }else if(url.indexOf("12329.pub") >0){//测试环境的情况下
-         chatlogUrl = "http://12329.pub:10231"
-         nginxUrl = "http://12329.pub:10234"
-
-    }else if(url.indexOf("gjj12329.cn") >0){//正式环境下
-         chatlogUrl = "http://www.gjj12329.cn"
-         nginxUrl = "http://www.gjj12329.cn:8079"
-
-    }else{
-         chatlogUrl = "http://192.168.2.198:8080"
-         nginxUrl = "http://192.168.2.105:3000"
-    }
+if(url.indexOf("192.168.2.198")>0||url.indexOf("12329.pub")>0||url.indexOf("192.168.2.105")>0||url.indexOf("gjj12329.cn")>0){
+    document.write("<script  src='/service-chat/chat/config/config.js'></script>");
+}else{
+    document.write("<script  src='http://www.gjj12329.cn//service-chat/chat/config/config.js'></script>");
 }
-
-choosePath()
 
 var iframeConfig = parseQueryString(window.location.href)
 var fromUserId = iframeConfig.fromUserId
