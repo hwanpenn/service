@@ -23,12 +23,12 @@ var reconnectedWebsocket = false
 var resrows = ''
 var robotShowName = '小玥'
 var isSetByUser = false
-var url = window.location.href;
 var obj = parseQueryString(url)
+var $
 if(url.indexOf("192.168.2.198")>0||url.indexOf("12329.pub")>0||url.indexOf("192.168.2.105")>0||url.indexOf("gjj12329.cn")>0){
     document.write("<script  src='/service-chat/chat/config/config.js'></script>");
 }else{
-    document.write("<script  src='http://www.gjj12329.cn//service-chat/chat/config/config.js'></script>");
+    document.write("<script  src='http://www.gjj12329.cn:8081//service-chat/chat/config/config.js'></script>");
 }
 
 
@@ -495,15 +495,19 @@ window.onload = function(){
             ,avatar: nginxUrl+'/service-chat/chat/picture/xiaoyue.png'
             ,id: 1111
         });
-
+        $ = layui.jquery;
         // alert(url.indexOf("platform") )
         if(url.indexOf("platform") <0){
             layim.setChatMin();
+            $('#mytempid').on('click', function(){
+                sendSocket()
+            })
+        }else{
+            sendSocket()
         }
-
-        var $ = layui.jquery;
         $('.layim-chat-main').children("ul").children("li").remove();
-            console.log("加载完成")
+
+        function sendSocket(){
             // var chatlogButton = document.getElementsByClassName("layim-tool-log")
             //   $('.layim-tool-log').on('click', function(){
 
@@ -577,18 +581,21 @@ window.onload = function(){
             }
             addEnent(socket,'',layim)
 
-            S4 = () => {
-                return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
-            }
-            guid = () => {
-                return (S4()+S4()+S4());
-            }
+            // S4 = () => {
+            //     return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+            // }
+            // guid = () => {
+            //     return (S4()+S4()+S4());
+            // }
             layim.on('sendMessage', function(data){
                 var dataTemp = {content:data.mine.content,toUserId:chatUserData.userId,toUserName:chatUserData.userName,type:'3',uqIdentNo:Date.parse(new Date())};
                 // console.log(dataTemp)
                 socket.send(JSON.stringify(dataTemp));
+                socket.send(JSON.stringify(dataTemp));
             });
+        };
     });
+
 }
 
 // userId toUserId tenantId caption fromUserName

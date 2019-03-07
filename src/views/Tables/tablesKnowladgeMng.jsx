@@ -244,7 +244,7 @@ class tablesKnowladgeMng extends React.Component {
             if(this.state.layerStatus==='layer2-add2'){
                 values.categoryParentId=this.state.recordSelect.categoryParentId
             }
-            this.props.createDataKnowladgeMng(values)
+            this.props.createDataKnowladgeMng(values,this)
             form.resetFields();
             this.setState({ visible: false });
         });
@@ -1082,8 +1082,8 @@ const mapDispatchToProps = (dispatch) => {
         deleteDataKnowladgeMng: (params,obj) => {
             dispatch(deleteDataKnowladgeMng(params,obj))
         },
-        createDataKnowladgeMng: (params) => {
-            dispatch(createDataKnowladgeMng(params))
+        createDataKnowladgeMng: (params,obj) => {
+            dispatch(createDataKnowladgeMng(params,obj))
         },
         getOtherKnowladgeMng: (params) => {
             dispatch(getOtherKnowladgeMng(params))

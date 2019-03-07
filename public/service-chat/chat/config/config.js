@@ -1,3 +1,4 @@
+console.log("成功拿取路径")
 //转人工服务地址
 var robotSocketUrl
 var nginxUrl

@@ -15,6 +15,7 @@ import CardHeader from "components/Card/CardHeader.jsx";
 import {getOtherSecretKey,getDataSecretKey,updateDataSecretKey,deleteDataSecretKey,createDataSecretKey,activeDataSecretKey } from "actions/tablesSecretKey";
 import {Button, Input, Modal, Upload} from 'antd';
 import { Tabs } from 'antd';
+import axios from "../../Utils/axios";
 const TabPane = Tabs.TabPane;
 const Search = Input.Search;
 
@@ -22,6 +23,7 @@ const Search = Input.Search;
 class tablesEchartsMng extends React.Component {
 
     componentWillMount(){
+
     }
     componentDidMount(){
     }
@@ -47,33 +49,27 @@ class tablesEchartsMng extends React.Component {
                                 <TabPane tab="投诉建议" key="1">
                                     <Echartone></Echartone>
                                 </TabPane>
-                                <TabPane tab="对话详情" key="2">
-                                    <Echarttwo></Echarttwo>
-                                </TabPane>
                             </Tabs>
                         </Grid>
                         <Grid item xs={6}>
                             <Tabs defaultActiveKey="1" style={{ width: 500 }}>
-                                <TabPane tab="人员管理" key="1">
-                                    <Echartfour></Echartfour>
-                                </TabPane>
-                                <TabPane tab="机器人" key="2">
-                                    <Echartfive></Echartfive>
+                                <TabPane tab="对话详情" key="1">
+                                    <Echartseven></Echartseven>
                                 </TabPane>
                             </Tabs>
                         </Grid>
                         <Grid item xs={12} style={{ marginTop:50}}>
-                            <h3 className="echarttitle">知识库</h3>
+                            <h3 className="echarttitle">机器学习</h3>
                             <Echartthree></Echartthree>
                         </Grid>
-                        <Grid item xs={5}>
-                            <h3 className="echarttitle">技能组管理</h3>
-                            <Echartsix></Echartsix>
-                        </Grid>
-                        <Grid item xs={7}>
-                            <h3 className="echarttitle">聊天窗管理</h3>
-                            <Echartseven></Echartseven>
-                        </Grid>
+                        {/*<Grid item xs={5}>*/}
+                            {/*<h3 className="echarttitle">技能组管理</h3>*/}
+                            {/*<Echartsix></Echartsix>*/}
+                        {/*</Grid>*/}
+                        {/*<Grid item xs={7}>*/}
+                            {/*<h3 className="echarttitle">聊天窗管理</h3>*/}
+                            {/*<Echartseven></Echartseven>*/}
+                        {/*</Grid>*/}
                     </Grid>
 
                 </Card>

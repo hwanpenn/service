@@ -51,7 +51,7 @@ class PagesHeader extends React.Component {
     });
     var list = (
       <List className={classes.list}>
-        <ListItem className={classes.listItem}>
+        {/*<ListItem className={classes.listItem}>*/}
           {/*<NavLink to={"/dashboard"} className={classes.navLink}>*/}
             {/*<ListItemIcon className={classes.listItemIcon}>*/}
               {/*<Dashboard />*/}
@@ -62,7 +62,7 @@ class PagesHeader extends React.Component {
               {/*className={classes.listItemText}*/}
             {/*/>*/}
           {/*</NavLink>*/}
-        </ListItem>
+        {/*</ListItem>*/}
         {pagesRoutes.map((prop, key) => {
           if (prop.redirect) {
             return null;
@@ -102,7 +102,7 @@ class PagesHeader extends React.Component {
           <Hidden mdUp>
             <div className={classes.flex}>
               <Button href="#" className={classes.title} color="transparent">
-                MD Pro React
+                  智能客服后台管理系统
               </Button>
             </div>
           </Hidden>

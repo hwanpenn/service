@@ -9,7 +9,7 @@ var serviceUrl
 if(url.indexOf("192.168.2.198")>0||url.indexOf("12329.pub")>0||url.indexOf("192.168.2.105")>0||url.indexOf("gjj12329.cn")>0){
     document.write("<script  src='/service-chat/chat/config/config.js'></script>");
 }else{
-    document.write("<script  src='http://www.gjj12329.cn//service-chat/chat/config/config.js'></script>");
+    document.write("<script  src='http://www.gjj12329.cn:8081//service-chat/chat/config/config.js'></script>");
 }
 
 var iframeConfig = parseQueryString(window.location.href)
@@ -87,19 +87,31 @@ layui.use(['layim', 'laypage'], function(){
                         count: res.total===undefined?'':res.total, //数据总数
                         data: params,
                         success : function(res){
-                            // console.log(res)
+
+                            var p2pList = res.p2pList;
                             valueList =[]
-                            res.p2pList.map((item,i) => {
+                            for(var i=0;i<p2pList.length;i++){
                                 var data = {
-                                    username: item.fromCsUserId===fromUserId?fromUserName:toUserName
-                                    , id: item.id
-                                    , avatar: item.fromCsUserId===fromUserId?nginxUrl+'/service-chat/chat/picture/ktkf.png':nginxUrl+'/service-chat/chat/picture/yonghu.png'
-                                    , timestamp: item.createTime
-                                    , content: item.content
-                                    , fromCsUserId: item.fromCsUserId
+                                    username: p2pList[i].fromCsUserId===fromUserId?fromUserName:toUserName
+                                    , id: p2pList[i].id
+                                    , avatar: p2pList[i].fromCsUserId===fromUserId?nginxUrl+'/service-chat/chat/picture/ktkf.png':nginxUrl+'/service-chat/chat/picture/yonghu.png'
+                                    , timestamp:p2pList[i].createTime
+                                    , content:p2pList[i].content
+                                    , fromCsUserId:p2pList[i].fromCsUserId
                                 }
                                 valueList.push(data);
-                            })
+                            }
+                            // res.p2pList.map((item,i) => {
+                            //     var data = {
+                            //         username: item.fromCsUserId===fromUserId?fromUserName:toUserName
+                            //         , id: item.id
+                            //         , avatar: item.fromCsUserId===fromUserId?nginxUrl+'/service-chat/chat/picture/ktkf.png':nginxUrl+'/service-chat/chat/picture/yonghu.png'
+                            //         , timestamp: item.createTime
+                            //         , content: item.content
+                            //         , fromCsUserId: item.fromCsUserId
+                            //     }
+                            //     valueList.push(data);
+                            // })
                             var html = laytpl(LAY_tpl.value).render({
                                 data: valueList
                             });

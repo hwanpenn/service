@@ -52,7 +52,7 @@ export function getDataArticleMng(params) {
     // console.log('getDataArticleMng')
     return {
         types: [GET_REQUEST_ArticleMng, GET_SUCCESS_ArticleMng, GET_FAIL_ArticleMng],
-        promise: client => client.get('/cs/api/knowledgeBase/queryArticle',{params: params}),
+        promise: client => client.get('/cs/api/knowledgeBase/queryArticleByToken',{params: params}),
         afterSuccess:(dispatch,getState,response)=>{
             last = parseInt(response.data.total/params.pageSize)+1
             total = response.data.total

@@ -1,16 +1,16 @@
-import LoginPage from "views/LoginPages/LoginPage.jsx";
+import OfficialHomePage from "views/LoginPages/OfficialHomePage.jsx";
 // import Fingerprint from "@material-ui/icons/Fingerprint";
 import LockOpen from "@material-ui/icons/LockOpen";
 // import FaceIdPage from "views/LoginPages/FaceIdPage";
 
-const pagesRoutes = [
+const pagesRoutes2 = [
     {
-        path: "/cms/login/normal",
-        name: "Login Page",
-        short: "Login",
+        path: "/cms/official/OfficialHomePage",
+        name: "OfficialHome Page",
+        short: "OfficialHome",
         mini: "LP",
         icon: LockOpen,
-        component: LoginPage
+        component: OfficialHomePage
     },
     // {
     //   path: "/cms/login/faceid",
@@ -22,10 +22,10 @@ const pagesRoutes = [
     // },
     {
         redirect: true,
-        path: "/cms/login",
-        pathTo: "/cms/login/normal",
+        path: "/cms/official",
+        pathTo: "/cms/official/OfficialHomePage",
         name: "Register"
     },
 ];
 
-export default pagesRoutes;
+export default pagesRoutes2;

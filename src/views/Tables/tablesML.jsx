@@ -19,7 +19,6 @@ import {Upload, message, Icon,Select,Popover } from 'antd';
 import { TreeSelect } from 'antd';
 import { chatTestUrl } from '../../cfg/cfg.js';
 import zh_CN from "antd/lib/locale-provider/zh_CN";
-
 const FormItem = Form.Item;
 const Search = Input.Search;
 const Option = Select.Option;
@@ -522,18 +521,6 @@ class tablesML extends React.Component {
                                     <h4 className={classes.cardIconTitle}> </h4>
                                 </Grid>
                                 <Grid style={{textAlign:'right',marginTop:10}} item xs={11}>
-                                    <Search
-                                        placeholder="标准问题搜索"
-                                        onSearch={value => this.getTableData(value,1,this.state.pageSize,this.state.robotId)}
-                                        style={{ width: 150,borderStyle:'solid',
-                                            borderWidth:0,paddingRight:10 }}
-                                    />
-                                    <Search
-                                        placeholder="回答内容搜索"
-                                        onSearch={value => this.answerGetTableData(value,1,this.state.pageSize,this.state.robotId)}
-                                        style={{ width: 150,borderStyle:'solid',
-                                            borderWidth:0,paddingRight:10 }}
-                                    />
                                     <Select style={{ width: 150,borderStyle:'solid',
                                         borderWidth:0,paddingRight:10 }}
                                             showSearch
@@ -547,6 +534,19 @@ class tablesML extends React.Component {
                                     >
                                         {optionsRobot}
                                     </Select>
+                                    <Search
+                                        placeholder="标准问题搜索"
+                                        onSearch={value => this.getTableData(value,1,this.state.pageSize,this.state.robotId)}
+                                        style={{ width: 150,borderStyle:'solid',
+                                            borderWidth:0,paddingRight:10 }}
+                                    />
+                                    {/*<Search*/}
+                                        {/*placeholder="回答内容搜索"*/}
+                                        {/*onSearch={value => this.answerGetTableData(value,1,this.state.pageSize,this.state.robotId)}*/}
+                                        {/*style={{ width: 150,borderStyle:'solid',*/}
+                                            {/*borderWidth:0,paddingRight:10 }}*/}
+                                    {/*/>*/}
+
                                     {/* <Button onClick={this.showModalCreate} style={{ height: 30,marginRight:10 }} size={'small'}>增加</Button> */}
                                     <TreeSelect
                                         showSearch

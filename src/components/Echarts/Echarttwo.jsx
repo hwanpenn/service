@@ -26,7 +26,6 @@ class Echarttwo extends React.Component {
 			},
 			tooltip: {
 				formatter: function(params) {
-					console.log(params);
 					return params.name + '：' + params.data + "个"
 				}
 			},

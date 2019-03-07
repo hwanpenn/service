@@ -10,137 +10,149 @@ import withStyles from "@material-ui/core/styles/withStyles";
 // core components
 
 import cardAvatarStyle from "assets/jss/material-dashboard-pro-react/components/cardAvatarStyle.jsx";
+import axios from "../../Utils/axios";
 
-//function CardAvatar({ ...props }) {
-//const {
-//  classes,
-//  children,
-//  className,
-//  plain,
-//  profile,
-//  testimonial,
-//  testimonialFooter,
-//  ...rest
-//} = props;
-//const cardAvatarClasses = classNames({
-//  [classes.cardAvatar]: true,
-//  [classes.cardAvatarProfile]: profile,
-//  [classes.cardAvatarPlain]: plain,
-//  [classes.cardAvatarTestimonial]: testimonial,
-//  [classes.cardAvatarTestimonialFooter]: testimonialFooter,
-//  [className]: className !== undefined
-//});
-//return (
-//  <div className={cardAvatarClasses} {...rest}>
-//    {children}
-//  </div>
-//);
-//}
-//
-//CardAvatar.propTypes = {
-//children: PropTypes.node.isRequired,
-//className: PropTypes.string,
-//profile: PropTypes.bool,
-//plain: PropTypes.bool,
-//testimonial: PropTypes.bool,
-//testimonialFooter: PropTypes.bool
-//};
 class Echartseven extends React.Component {
-	componentDidMount() {
-		const mychart = echarts.init(document.getElementById('echartseven'));
-		mychart.setOption({
-    tooltip : {
-        trigger: 'axis',
-        axisPointer : {            // 坐标轴指示器，坐标轴触发有效
-            type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
-        }
-    },
-    legend: {
-        data: ['客户一', '客户二','客户三','客户四','客户五']
-    },
-    grid: {
-        left: '10%',
-        right: '10%',
-        bottom: '10%',
-        containLabel: true
-    },
-    xAxis:  {
-        type: 'value'
-    },
-    yAxis: {
-        type: 'category',
-        data: ['周一','周二','周三','周四','周五','周六','周日']
-    },
-    series: [
-        {
-            name: '客户一',
-            type: 'bar',
-            stack: '总量',
-            label: {
-                normal: {
-                    show: false,
-                    position: 'insideRight'
+    componentDidMount() {
+
+        let createTime,createTimeCount1,createTime1
+        let time = []
+        let count = []
+        let countArray = []
+        let totalCountArray=[]
+        let keys = []
+        let createTime2 = []
+        let series1 = []
+        let robotDialogData
+        axios.get('/cs/api/index/').then((res) => {
+            robotDialogData = res.data.rows.robotDialogData;
+            const mychart = echarts.init(document.getElementById('echartseven'));
+            //获取不同的聊天时间
+            for (let key in robotDialogData) {
+                if (robotDialogData[key] == "") {
+                } else {
+                    for (let robotDialogDataKey in robotDialogData[key]) {
+                        createTime = robotDialogData[key][robotDialogDataKey].createTime
+                        time.push(createTime)
+                    }
+
                 }
-            },
-            data: [320, 302, 301, 334, 390, 330, 320]
-        },
-        {
-            name: '客户二',
-            type: 'bar',
-            stack: '总量',
-            label: {
-                normal: {
-                    show: false,
-                    position: 'insideRight'
+                keys.push(key)
+            }
+            let totalRobotName = new Array();
+            for(let i in keys){
+                //该元素在tmp内部不存在才允许追加
+                if(totalRobotName.indexOf(keys[i]) < 0){
+                    totalRobotName.push(keys[i]);
                 }
-            },
-            data: [120, 132, 101, 134, 90, 230, 210]
-        },
-        {
-            name: '客户三',
-            type: 'bar',
-            stack: '总量',
-            label: {
-                normal: {
-                    show: false,
-                    position: 'insideRight'
+            }
+            //去掉重复的时间
+
+                let tmp = new Array();
+                for(let i in time){
+                    //该元素在tmp内部不存在才允许追加
+                    if(tmp.indexOf(time[i]) < 0){
+                        tmp.push(time[i]);
+                    }
                 }
-            },
-            data: [220, 182, 191, 234, 290, 330, 310]
-        },
-        {
-            name: '客户四',
-            type: 'bar',
-            stack: '总量',
-            label: {
-                normal: {
-                    show: false,
-                    position: 'insideRight'
+                tmp.sort();
+                tmp.reverse();
+            let keys1 = new Array();
+            for(let i in keys){
+                //该元素在tmp内部不存在才允许追加
+                if(keys1.indexOf(keys[i]) < 0){
+                    keys1.push(keys[i]);
                 }
-            },
-            data: [150, 212, 201, 154, 190, 330, 410]
-        },
-        {
-            name: '客户五',
-            type: 'bar',
-            stack: '总量',
-            label: {
-                normal: {
-                    show: false,
-                    position: 'insideRight'
+            }
+
+                //根据时间去遍历得到当前时间下的聊天机器人极其数据
+            for(let j=0;j<totalRobotName.length;j++){
+                for(let i=0;i<tmp.length;i++) {
+                    if(robotDialogData[totalRobotName[j]] == ""){
+
+                    }else{
+                        for (let robotDialogDataKey1 in robotDialogData[totalRobotName[j]]) {
+                            createTime1 = robotDialogData[totalRobotName[j]][robotDialogDataKey1].createTime
+                            createTimeCount1 = robotDialogData[totalRobotName[j]][robotDialogDataKey1].createTimeCount
+                            createTime2.push(createTime1)
+                        }
+                        if(createTime2.length == tmp.length){
+
+                            for (let robotDialogDataKey1 in robotDialogData[totalRobotName[j]]) {
+                                createTime1 = robotDialogData[totalRobotName[j]][robotDialogDataKey1].createTime
+                                createTimeCount1 = robotDialogData[totalRobotName[j]][robotDialogDataKey1].createTimeCount
+                                if (createTime1 === tmp[i]) {
+                                    count = createTimeCount1
+                                }
+                            }
+                            countArray.push(count)
+                        }else {
+                            if (createTime1 === tmp[i]) {
+                                count = createTimeCount1
+                            }else{
+                                count = 0
+                            }
+                            countArray.push(count)
+                        }
+                        createTime2=[]
+                    }
+
                 }
-            },
-            data: [820, 832, 901, 934, 1290, 1330, 1320]
-        }
-    ]
-		});	
-	}
-	
-	render() {
-		return(			
-                 <div id="echartseven" className="echartcenter" style={{width:550,height:450}}></div>            	
-		)
-	}
+                totalCountArray.push(countArray)
+                countArray=[]
+            }
+
+            for(let j in totalRobotName) {
+                    const series = {
+                        name: totalRobotName[j],    //机器人名称
+                        type: 'bar',
+                        stack: '总量',
+                        barWidth: "40",
+                        label: {
+                            normal: {
+                                show: false,
+                                position: 'insideRight'
+                            }
+                        },
+                        data: totalCountArray[j] //机器人对应的数据
+                    }
+                    series1.push(series)
+            }
+
+                mychart.setOption({
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+                            type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                        }
+                    },
+                    legend: {
+                        data: totalRobotName    //右上方颜色指示
+                    },
+                    grid: {
+                        left: '10%',
+                        right: '10%',
+                        bottom: '10%',
+                        containLabel: true
+                    },
+                    xAxis: {
+                        type: 'value'
+                    },
+                    yAxis: {
+                        type: 'category',
+                        data: tmp          //y轴时间
+                    },
+                    series: series1
+                });
+        }).catch((err) => {
+            console.log(err)
+        })
+    }
+    render(){
+        return(
+            <div id="echartseven" className="echartcenter" style={{width:550,height:450,marginLeft:-40}}></div>
+        )
+    }
 }
 
 export default withStyles(cardAvatarStyle)(Echartseven);

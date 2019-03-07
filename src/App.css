@@ -6,13 +6,31 @@
 .tableBackground{
     background: #b9d3e8;
   }
+.ant-btn:hover, .ant-btn:focus{
+    background: rgba(255,255,255,0.6);
+}
+.ant-breadcrumb,.ant-breadcrumb a,.ant-breadcrumb-separator{
+    color: white ;
+}
+.ant-breadcrumb > span:last-child{
+    color: white;
+}
+.ant-breadcrumb a:hover{
+    color:#40a9ff;
+}
+/*a{*/
+    /*color:black*/
+/*}*/
+.ant-btn-lg{
+    height: 46px;
+}
 /*.Sidebar-userCollapseButton-62{*/
  /*padding: 0 0 !important;*/
 /*}*/
-.ceshi{
-    padding: 0 0 !important;
-}
-.visible{
-    display: none !important;
-    visibility: hidden !important;
-}
+/*.ceshi{*/
+    /*padding: 0 0 !important;*/
+/*}*/
+/*.visible{*/
+    /*display: none !important;*/
+    /*visibility: hidden !important;*/
+/*}*/
