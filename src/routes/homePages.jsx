@@ -11,13 +11,30 @@ import tablesArticleMng from "views/Tables/tablesArticleMng.jsx";
 import tablesKilGroupHidden from "views/Tables/tablesKilGroupHidden.jsx";
 import tablesComplaintMng from "views/Tables/tablesComplaintMng.jsx";
 import tablesMyCompany from "views/Tables/tablesMyCompany.jsx";
+import tablesEchartsMng from "views/Tables/tablesEchartsMng.jsx";
 import Apps from "@material-ui/icons/Apps";
 import ContentPaste from "@material-ui/icons/ContentPaste";
 import LockOpen from "@material-ui/icons/LockOpen";
 import Timeline from "@material-ui/icons/Timeline";
 import WidgetsIcon from "@material-ui/icons/Widgets";
+import Home from "@material-ui/icons/Home";
 
 const dashRoutes = [
+    {
+        collapse: true,
+        path: "/cms/home/tables",
+        name: "主页",
+        state: "openTables0",
+        icon: Home,
+        views: [
+            {
+                path: "/cms/home/tables/echartsmng",
+                name: "可视化数据",
+                mini: "N",
+                component: tablesEchartsMng
+            }
+        ]
+    },
     {
         collapse: true,
         path: "/cms/home/tables",

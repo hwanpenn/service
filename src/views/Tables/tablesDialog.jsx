@@ -38,7 +38,9 @@ class tablesDialog extends React.Component {
             startTime: '',
             endTime: '',
             endOpen: false,
-            requestSource:''
+            requestSource:'',
+            current:1,
+            pageSize:10
         };
     }
     requestSource = ''
@@ -52,6 +54,10 @@ class tablesDialog extends React.Component {
     }
     getTableData = (question,start,size) => {
         // console.log(this.state.requestSource)
+        this.setState({
+            current:start,
+            pageSize:size
+        })
         const params = {
             robotId:this.state.robotId,
             startTime:this.startTime,
@@ -412,7 +418,10 @@ class tablesDialog extends React.Component {
                                     // onMouseEnter: () => {},  
                                     };
                                 }} key={"tablesDialog"} pagination={false} columns={columns} dataSource={this.props.tablesDialog.tableDataDialog} scroll={{ x: 600 , y: 360}} />
-                            <Pagination defaultCurrent={1} defaultPageSize={10} total={this.props.tablesDialog.tableCountDialog} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10)}/>
+                            {/*<Pagination current={this.state.current} defaultPageSize={10} total={this.props.tablesDialog.tableCountDialog} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10)}/>*/}
+                            <LocaleProvider locale={zh_CN}>
+                                <Pagination  current={this.state.current} showTotal={total => `总共 ${total} 条`} showSizeChanger showQuickJumper defaultPageSize={10} total={this.props.tablesDialog.tableCountDialog} style={{textAlign:'right',marginTop:25}}  onShowSizeChange={(current, pageSize)=>this.getTableData('',current, pageSize)} onChange={(page, pageSize)=>this.getTableData('',page,pageSize)}/>
+                            </LocaleProvider>
                         </CardBody>
                     </Card>
                 </GridItem>

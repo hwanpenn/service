@@ -1,4 +1,5 @@
 import { message } from 'antd';
+import {getDataChatMng} from "./tablesChatMng";
 message.config({
     duration: 1,
 });
@@ -23,6 +24,9 @@ export const GET_REQUEST_Admin_OTHER = "GET_REQUEST_Admin_OTHER";
 export const GET_SUCCESS_Admin_OTHER = "GET_SUCCESS_Admin_OTHER";
 export const GET_FAIL_Admin_OTHER = "GET_FAIL_Admin_OTHER";
 
+let dataTotal = ''
+let lastPage = ''
+
 export function getOtherAdmin(params) {
     return {
         types: [GET_REQUEST_Admin_OTHER, GET_SUCCESS_Admin_OTHER, GET_FAIL_Admin_OTHER],
@@ -39,21 +43,26 @@ export function getDataAdmin(params) {
         types: [GET_REQUEST_Admin, GET_SUCCESS_Admin, GET_FAIL_Admin],
         promise: client => client.get('/cs/api/organization/queryUser',{params: params}),
         afterSuccess:(dispatch,getState,response)=>{
+            lastPage = parseInt(response.data.total/params.pageSize)+1
+            dataTotal = response.data.total
             /*请求成功后执行的函数*/
         },
         // otherData:otherData
     }
 }
-export function createDataAdmin(params) {
+export function createDataAdmin(params,obj) {
     return {
         types: [CREATE_REQUEST_Admin, CREATE_SUCCESS_Admin, CREATE_FAIL_Admin],
         promise: client => client.post('/cs/api/organization/addUser',params),
         afterSuccess:(dispatch,getState,response)=>{
             if(response.data.code===0){
                 message.info(response.data.msg);
+                obj.setState({
+                    current:lastPage
+                })
                 const params = {
-                    pageNo:1,
-                    pageSize:10,
+                    pageNo:lastPage,
+                    pageSize:obj.state.pageSize,
                 };
                 dispatch(getDataAdmin(params));
             }else {
@@ -62,7 +71,7 @@ export function createDataAdmin(params) {
         },
     }
 }
-export function updateDataAdmin(params) {
+export function updateDataAdmin(params,obj) {
     return {
         types: [UPDATE_REQUEST_Admin, UPDATE_SUCCESS_Admin, UPDATE_FAIL_Admin],
         promise: client => client.post('/cs/api/organization/updateUser',params),
@@ -71,7 +80,7 @@ export function updateDataAdmin(params) {
                 message.info(response.data.msg);
                 const params = {
                     pageNo:1,
-                    pageSize:10,
+                    pageSize:obj.state.pageSize,
                 };
                 dispatch(getDataAdmin(params));
             }else {
@@ -93,18 +102,31 @@ export function updatePasswordDataAdmin(params) {
         },
     }
 }
-export function deleteDataAdmin(params) {
+export function deleteDataAdmin(params,obj) {
     return {
         types: [DELETE_REQUEST_Admin, DELETE_SUCCESS_Admin, DELETE_FAIL_Admin],
         promise: client => client.post('/cs/api/organization/deleteUser',params),
         afterSuccess:(dispatch,getState,response)=>{
             if(response.data.code===0){
                 message.info(response.data.msg);
-                const params = {
-                    pageNo:1,
-                    pageSize:10,
-                };
-                dispatch(getDataAdmin(params));
+                if(dataTotal % obj.state.pageSize === 1){
+                    lastPage -= 1
+                    obj.setState({
+                        current:lastPage
+                    })
+                    const params = {
+                        pageNo:lastPage,
+                        pageSize:obj.state.pageSize,
+                    };
+                    dispatch(getDataAdmin(params));
+                }else{
+                    const params = {
+                        pageNo:obj.state.current,
+                        pageSize:obj.state.pageSize,
+                    };
+                    dispatch(getDataAdmin(params));
+                }
+
             }else {
                 message.info(response.data.msg);
             }

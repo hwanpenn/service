@@ -14,6 +14,7 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import Hidden from "@material-ui/core/Hidden";
 import Collapse from "@material-ui/core/Collapse";
+import { ceshi } from "App.css"
 
 // core components
 import HeaderLinks from "components/Header/HeaderLinks.jsx";
@@ -143,22 +144,22 @@ class Sidebar extends React.Component {
         if(document.getElementById("layui-layer2")!==null){
           document.getElementById("layui-layer2").style.display='none'
         }
-        
+
         window.sessionStorage.setItem('token','')
         this.props.history.push("/cms/login");
     }
     state = {
       visible: false,
     };
-  
+
     showModal = () => {
       this.setState({ visible: true });
     }
-  
+
     handleCancel = () => {
       this.setState({ visible: false });
     }
-  
+
     handleCreate = () => {
       const form = this.formRef.props.form;
       form.validateFields((err, values) => {
@@ -167,7 +168,7 @@ class Sidebar extends React.Component {
         }
         const uPattern = /^[a-zA-Z0-9_-]{4,16}$/;
         if(uPattern.test(values.newPassword)===false){
-          message.info('密码需要4位以上的字母或数字');
+          message.info('密码需要4-16位之间字母或数字');
         }else{
           if(values.newPassword===values.password){
             values.userId=window.sessionStorage.getItem('userId')
@@ -181,13 +182,16 @@ class Sidebar extends React.Component {
         }
       });
     }
-  
+
     saveFormRef = (formRef) => {
       this.formRef = formRef;
     }
     handleClick = (event) =>{
         axios.defaults.headers.common['Authorization'] = window.sessionStorage.getItem('token');
-        axios.post('/cs/api/exit'
+        axios.post('/cs/api/exit',
+        {
+            username: '',
+        }
         ).then((response) => {
                 console.log(response)
             }
@@ -262,6 +266,7 @@ class Sidebar extends React.Component {
               onClick={() => this.openCollapse("openAvatar")}
             >
               <ListItemText
+                  className={ceshi}
                 primary={window.sessionStorage.getItem('role')==='ROLE_SUPERADMIN'?"超级管理员":"管理员"+"--"+ window.sessionStorage.getItem('realName')}
                 secondary={
                   <b
@@ -439,7 +444,7 @@ class Sidebar extends React.Component {
                                   </ListItem>
                                 );
                               }
-                            
+
                           })}
                         </List>
                     </Collapse>
@@ -556,7 +561,7 @@ class Sidebar extends React.Component {
             <SidebarWrapper
               className={sidebarWrapper}
               user={user}
-              headerLinks={<HeaderLinks rtlActive={rtlActive} />}
+              // headerLinks={<HeaderLinks rtlActive={rtlActive} />}
               links={links}
             />
             {image !== undefined ? (

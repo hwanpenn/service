@@ -11,9 +11,10 @@ import CardHeader from "components/Card/CardHeader.jsx";
 import extendedTablesStyle from "assets/jss/material-dashboard-pro-react/views/extendedTablesStyle.jsx";
 import {activeDataRobotMng,getOtherRobotMng,getDataRobotMng,updateDataRobotMng,deleteDataRobotMng,createDataRobotMng } from "actions/tablesRobotMng";
 import {connect} from "react-redux";
-import {Table, Divider,Button } from 'antd';
+import {Table, Divider, Button, LocaleProvider} from 'antd';
 import {Input,Modal } from 'antd';
 import {Form,Pagination,Popconfirm } from 'antd';
+import zh_CN from "antd/lib/locale-provider/zh_CN";
 
 const FormItem = Form.Item;
 const Search = Input.Search;
@@ -29,6 +30,8 @@ class tablesRobotMng extends React.Component {
             recordAction:{},
             recordSelect:{},
             defaultSelectValue:'',
+            current:1,
+            pageSize:10
         };
     }
     componentWillMount(){
@@ -38,6 +41,10 @@ class tablesRobotMng extends React.Component {
     componentDidMount(){
     }
     getTableData = (robotName,start,size) => {
+        this.setState({
+            current:start,
+            pageSize:size
+        })
         const params = {
             robotName:robotName,
             pageNo:start,
@@ -87,7 +94,7 @@ class tablesRobotMng extends React.Component {
             if (err) {
                 return;
             }
-            this.props.createDataRobotMng(values)
+            this.props.createDataRobotMng(values,this)
             form.resetFields();
             this.setState({ visible: false });
         });
@@ -102,7 +109,7 @@ class tablesRobotMng extends React.Component {
         const params = {
             robotId:record.robotId,
         }
-        this.props.deleteDataRobotMng(params)
+        this.props.deleteDataRobotMng(params,this)
     }
     activeConfirm = (record) => {
         const params = {
@@ -119,7 +126,6 @@ class tablesRobotMng extends React.Component {
             dataIndex: 'robotName',
             key: 'robotName',
             width: window.screen.width*0.15,
-            fixed: 'left',
             render: text => <a >{text}</a>,
         }, {
             title: '机器人展示名称',
@@ -136,8 +142,8 @@ class tablesRobotMng extends React.Component {
         }, {
             title: '操作',
             key: 'action',
-            width: window.screen.width*0.20,
-            fixed: 'right',
+            width: window.screen.width*0.15,
+            // fixed: 'right',
             render: (text, record) => (
                  <span>
                  <a onClick={() => this.showModifyModal(record)} >编辑</a>
@@ -266,7 +272,9 @@ class tablesRobotMng extends React.Component {
                                     // onMouseEnter: () => {},  
                                     };
                                 }} key={"tablesRobotMng"} pagination={false} columns={columns} dataSource={this.props.tablesRobotMng.tableDataRobotMng} scroll={{  y: 360}} />
-                            <Pagination defaultCurrent={1} defaultPageSize={10} total={this.props.tablesRobotMng.tableCountRobotMng} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10)}/>
+                            <LocaleProvider locale={zh_CN}>
+                                <Pagination  current={this.state.current} showTotal={total => `总共 ${total} 条`} showSizeChanger showQuickJumper defaultPageSize={10} total={this.props.tablesRobotMng.tableCountRobotMng} style={{textAlign:'right',marginTop:25}}  onShowSizeChange={(current, pageSize)=>this.getTableData('',current, pageSize)} onChange={(page, pageSize)=>this.getTableData('',page,pageSize)}/>
+                            </LocaleProvider>
                         </CardBody>
                     </Card>
                 </GridItem>
@@ -299,11 +307,11 @@ const mapDispatchToProps = (dispatch) => {
         updateDataRobotMng: (params) => {
             dispatch(updateDataRobotMng(params))
         },
-        deleteDataRobotMng: (params) => {
-            dispatch(deleteDataRobotMng(params))
+        deleteDataRobotMng: (params,obj) => {
+            dispatch(deleteDataRobotMng(params,obj))
         },
-        createDataRobotMng: (params) => {
-            dispatch(createDataRobotMng(params))
+        createDataRobotMng: (params,obj) => {
+            dispatch(createDataRobotMng(params,obj))
         },
         getOtherRobotMng: (params) => {
             dispatch(getOtherRobotMng(params))

@@ -16,18 +16,22 @@ import pagesStyle from "assets/jss/material-dashboard-pro-react/layouts/pagesSty
 
 import bgImage from "../assets/img/login.jpg";
 
-
+let timer1
 class LoginPages extends Component {
     
     componentWillMount(){
-        const timer1=window.setTimeout(() => {
-            if(document.getElementById("layui-layer2")===null){
-      
+
+         timer1=window.setInterval(() => {
+            if(document.getElementById("layui-layer2")==null){
             }else{
-              document.getElementById("layui-layer2").style.display='none'
-              window.clearTimeout(timer1);
+                setTimeout(function () {
+                    document.getElementById("layui-layer2").style.visibility='hidden'
+                    // document.getElementById("layui-layer2").classList.add('visible')
+                    document.getElementById("layui-layer2").style.display='none'
+                },300)
+              window.clearInterval(timer1);
             }
-          },500);
+          },100);
     }
     checkMessage = (message) =>{
         console.log(message)

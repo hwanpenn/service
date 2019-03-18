@@ -10,7 +10,6 @@ class VCode extends Component {
             refresh: false
         }
     }
-
     initState(){
         return {
             data: this.getRandom(109,48,4),
@@ -32,7 +31,7 @@ class VCode extends Component {
         }
         if(max === 109 && min === 48){
             for(let v = 0; v < arr.length; v++){
-                check+=(String.fromCharCode(arr[v] > 57 && arr[v] < 84 ? arr[v] + 7 : ( arr[v] < 57 ? arr[v] : arr[v] + 13 ))).toLowerCase()
+                check+=(String.fromCharCode(arr[v] > 57 && arr[v] < 84 ? arr[v] + 7 : ( arr[v] < 57 ? arr[v] : arr[v] + 13 )))
             }
             window.sessionStorage.setItem('check',check)
         }
@@ -54,7 +53,14 @@ class VCode extends Component {
     }
     componentDidMount() {
         this.canvas()
+        this.props.zsx(this)
     }
+    renovate = () =>{
+        this.setState({...this.initState(),refresh: false})
+        this.canvas()
+    }
+    myName = () => alert('xiaohesong')
+
 
     render() {
         const { rotate, fz, color } = this.state
@@ -80,8 +86,7 @@ class VCode extends Component {
                         ? <div
                             className='mask'
                             onClick={() => {
-                                this.setState({...this.initState(),refresh: false})
-                                this.canvas()
+                                this.renovate()
                             }}
                         >
                         </div>

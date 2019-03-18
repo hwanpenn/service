@@ -1,5 +1,6 @@
 import { message } from 'antd';
 import {getDataArticleMng } from "actions/tablesArticleMng";
+import {GET_FAIL_ArticleMng, GET_REQUEST_ArticleMng, GET_SUCCESS_ArticleMng, last, total} from "./tablesArticleMng";
 message.config({
     duration: 1,
 });
@@ -49,11 +50,24 @@ export function getOtherKnowladgeMng(params) {
     }
 }
 
+// export function getDataArticleMng(params) {
+//     // console.log('getDataArticleMng')
+//     return {
+//         types: [GET_REQUEST_ArticleMng, GET_SUCCESS_ArticleMng, GET_FAIL_ArticleMng],
+//         promise: client => client.get('/cs/api/knowledgeBase/queryArticleByToken',{params: params}),
+//         afterSuccess:(dispatch,getState,response)=>{
+//
+//             /*请求成功后执行的函数*/
+//         },
+//         // otherData:otherData
+//     }
+// }
 export function getDataKnowladgeMng(params,obj) {
     return {
         types: [GET_REQUEST_KnowladgeMng, GET_SUCCESS_KnowladgeMng, GET_FAIL_KnowladgeMng],
         promise: client => client.get('/cs/api/knowledgeBase/queryArticleCategory',{params: params}),
         afterSuccess:(dispatch,getState,response)=>{
+            // console.log(response.data.rows[0]," console.log(response.data.rows[0])")
             if(response.data.code===0){
                 if(response.data.rows.length===0){
                     // message.info('机器人列表为空');
@@ -82,7 +96,7 @@ export function getDataKnowladgeMng(params,obj) {
                                 })
                                 const params = {
                                     categoryId:response.data.rows[0].children[0].categoryId,
-                                    pageNo:1,
+                                    pageNo:obj.state.current,
                                     pageSize:10,
                                 };
                                 dispatch(getDataArticleMng(params));
@@ -100,7 +114,7 @@ export function getDataKnowladgeMng(params,obj) {
         // otherData:otherData
     }
 }
-export function createDataKnowladgeMng(params) {
+export function createDataKnowladgeMng(params,obj) {
     return {
         types: [CREATE_REQUEST_KnowladgeMng, CREATE_SUCCESS_KnowladgeMng, CREATE_FAIL_KnowladgeMng],
         promise: client => client.post('/cs/api/knowledgeBase/addArticleCategory',params),
@@ -108,8 +122,8 @@ export function createDataKnowladgeMng(params) {
             if(response.data.code===0){
                 message.info(response.data.msg);
                 const params = {
-                    pageNo:1,
-                    pageSize:10,
+                    pageNo:obj.state.current,
+                    pageSize:obj.state.pageSize,
                 };
                 dispatch(getDataKnowladgeMng(params));
             }else {
@@ -118,7 +132,7 @@ export function createDataKnowladgeMng(params) {
         },
     }
 }
-export function updateDataKnowladgeMng(params) {
+export function updateDataKnowladgeMng(params,obj) {
     return {
         types: [UPDATE_REQUEST_KnowladgeMng, UPDATE_SUCCESS_KnowladgeMng, UPDATE_FAIL_KnowladgeMng],
         promise: client => client.post('/cs/api/knowledgeBase/updateArticleCategory',params),
@@ -126,8 +140,8 @@ export function updateDataKnowladgeMng(params) {
             if(response.data.code===0){
                 message.info(response.data.msg);
                 const params = {
-                    pageNo:1,
-                    pageSize:10,
+                    pageNo:obj.state.current,
+                    pageSize:obj.state.pageSize,
                 };
                 dispatch(getDataKnowladgeMng(params));
             }else {
@@ -136,16 +150,18 @@ export function updateDataKnowladgeMng(params) {
         },
     }
 }
-export function deleteDataKnowladgeMng(params) {
+export function deleteDataKnowladgeMng(params,obj) {
     return {
         types: [DELETE_REQUEST_KnowladgeMng, DELETE_SUCCESS_KnowladgeMng, DELETE_FAIL_KnowladgeMng],
         promise: client => client.post('/cs/api/knowledgeBase/deleteArticleCategory',params),
         afterSuccess:(dispatch,getState,response)=>{
+            // console.log(response.data.code)
+            // console.log(response.data.msg)
             if(response.data.code===0){
                 message.info(response.data.msg);
                 const params = {
-                    pageNo:1,
-                    pageSize:10,
+                    pageNo:obj.state.current,
+                    pageSize:obj.state.pageSize,
                 };
                 dispatch(getDataKnowladgeMng(params));
             }else {

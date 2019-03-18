@@ -11,9 +11,10 @@ import CardHeader from "components/Card/CardHeader.jsx";
 import extendedTablesStyle from "assets/jss/material-dashboard-pro-react/views/extendedTablesStyle.jsx";
 import {getOtherCategory,getDataCategory,updateDataCategory,deleteDataCategory,createDataCategory } from "actions/tablesCategory";
 import {connect} from "react-redux";
-import {Table, Divider,Button } from 'antd';
+import {Table, Divider, Button, LocaleProvider} from 'antd';
 import {Input,Modal } from 'antd';
 import {Form,Pagination,Popconfirm } from 'antd';
+import zh_CN from "antd/lib/locale-provider/zh_CN";
 
 const FormItem = Form.Item;
 const Search = Input.Search;
@@ -29,6 +30,8 @@ class tablesCategory extends React.Component {
             recordAction:{},
             recordSelect:{},
             defaultSelectValue:'',
+            current:1,
+            pageSize:10
         };
     }
     componentWillMount(){
@@ -38,6 +41,10 @@ class tablesCategory extends React.Component {
     componentDidMount(){
     }
     getTableData = (categoryName,start,size) => {
+        this.setState({
+            current:start,
+            pageSize:size
+        })
         const params = {
             categoryName:categoryName,
             pageNo:start,
@@ -76,7 +83,7 @@ class tablesCategory extends React.Component {
                 return;
             }
             values.id=this.state.recordAction.id
-            this.props.updateDataCategory(values);
+            this.props.updateDataCategory(values,this);
             form.resetFields();
             this.setState({ visibleModify: false });
         });
@@ -87,7 +94,7 @@ class tablesCategory extends React.Component {
             if (err) {
                 return;
             }
-            this.props.createDataCategory(values)
+            this.props.createDataCategory(values,this)
             form.resetFields();
             this.setState({ visible: false });
         });
@@ -102,7 +109,7 @@ class tablesCategory extends React.Component {
         const params = {
             id:record.id,
         }
-        this.props.deleteDataCategory(params)
+        this.props.deleteDataCategory(params,this)
     }
     render() {
         let thisTemp = this
@@ -220,8 +227,11 @@ class tablesCategory extends React.Component {
                                     // onMouseEnter: () => {},  
                                     };
                                 }} key={"tablesCategory"} pagination={false} columns={columns} dataSource={this.props.tablesCategory.tableDataCategory} scroll={{x: 200, y: 360}} />
-                            <Pagination defaultCurrent={1} defaultPageSize={10} total={this.props.tablesCategory.tableCountCategory} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10)}/>
-                            </CardBody>
+                            {/*<Pagination current={this.state.current} defaultPageSize={10} total={this.props.tablesCategory.tableCountCategory} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10)}/>*/}
+                            <LocaleProvider locale={zh_CN}>
+                                <Pagination  current={this.state.current} showTotal={total => `总共 ${total} 条`} showSizeChanger showQuickJumper defaultPageSize={10} total={this.props.tablesCategory.tableCountCategory} style={{textAlign:'right',marginTop:25}}  onShowSizeChange={(current, pageSize)=>this.getTableData('',current, pageSize)} onChange={(page, pageSize)=>this.getTableData('',page,pageSize)}/>
+                            </LocaleProvider>
+                        </CardBody>
                     </Card>
                 </GridItem>
                 <CollectionCreateForm
@@ -250,14 +260,14 @@ const mapDispatchToProps = (dispatch) => {
         getDataCategory: (params) => {
             dispatch(getDataCategory(params))
         },
-        updateDataCategory: (params) => {
-            dispatch(updateDataCategory(params))
+        updateDataCategory: (params,obj) => {
+            dispatch(updateDataCategory(params,obj))
         },
-        deleteDataCategory: (params) => {
-            dispatch(deleteDataCategory(params))
+        deleteDataCategory: (params,obj) => {
+            dispatch(deleteDataCategory(params,obj))
         },
-        createDataCategory: (params) => {
-            dispatch(createDataCategory(params))
+        createDataCategory: (params,obj) => {
+            dispatch(createDataCategory(params,obj))
         },
         getOtherCategory: (params) => {
             dispatch(getOtherCategory(params))

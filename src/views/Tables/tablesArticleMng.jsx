@@ -72,13 +72,16 @@ class tablesArticleMng extends React.Component {
     //     alert('刷新')
     // }
     getTableData = (articleTitle,start,size,categoryId) => {
+        this.setState({
+            current:start
+        })
         const params = {
             articleTitle:articleTitle,
             pageNo:start,
             pageSize:size,
             categoryId:categoryId
         };
-        this.props.getDataArticleMng(params);
+        this.props.getDataArticleMng(params,this);
     }
     getOtherData = (username,start,size) => {
         const params = {

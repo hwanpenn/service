@@ -1,4 +1,6 @@
 import { message } from 'antd';
+import {last} from "./tablesArticleMng";
+import {getDataCompany} from "./tablesCompany";
 message.config({
     duration: 1,
 });
@@ -31,6 +33,9 @@ export const GET_FAIL_KillGroup_OTHER = "GET_FAIL_KillGroup_OTHER";
 export const GET_REQUEST_Robot_OTHER = "GET_REQUEST_Robot_OTHER";
 export const GET_SUCCESS_Robot_OTHER = "GET_SUCCESS_Robot_OTHER";
 export const GET_FAIL_Robot_OTHER = "GET_FAIL_Robot_OTHER";
+
+let dataTotal = ''
+let lastPage = ''
 
 export function getOtherKillGroupChatMng(params) {
     return {
@@ -68,21 +73,26 @@ export function getDataChatMng(params) {
         types: [GET_REQUEST_ChatMng, GET_SUCCESS_ChatMng, GET_FAIL_ChatMng],
         promise: client => client.get('/cs/api/robot/queryPageToChatWindow',{params: params}),
         afterSuccess:(dispatch,getState,response)=>{
+            lastPage = parseInt(response.data.total/params.pageSize)+1
+            dataTotal = response.data.total
             /*请求成功后执行的函数*/
         },
         // otherData:otherData
     }
 }
-export function createDataChatMng(params) {
+export function createDataChatMng(params,obj) {
     return {
         types: [CREATE_REQUEST_ChatMng, CREATE_SUCCESS_ChatMng, CREATE_FAIL_ChatMng],
         promise: client => client.post('/cs/api/robot/addChatWindow',params),
         afterSuccess:(dispatch,getState,response)=>{
             if(response.data.code===0){
                 message.info(response.data.msg);
+                obj.setState({
+                    current:1
+                })
                 const params = {
                     pageNo:1,
-                    pageSize:10,
+                    pageSize:obj.state.pageSize,
                 };
                 dispatch(getDataChatMng(params));
             }else {
@@ -91,7 +101,7 @@ export function createDataChatMng(params) {
         },
     }
 }
-export function updateDataChatMng(params) {
+export function updateDataChatMng(params,obj) {
     return {
         types: [UPDATE_REQUEST_ChatMng, UPDATE_SUCCESS_ChatMng, UPDATE_FAIL_ChatMng],
         promise: client => client.post('/cs/api/robot/updateChatWindow',params),
@@ -99,8 +109,8 @@ export function updateDataChatMng(params) {
             if(response.data.code===0){
                 message.info(response.data.msg);
                 const params = {
-                    pageNo:1,
-                    pageSize:10,
+                    pageNo:obj.state.current,
+                    pageSize:obj.state.pageSize,
                 };
                 dispatch(getDataChatMng(params));
             }else {
@@ -109,25 +119,38 @@ export function updateDataChatMng(params) {
         },
     }
 }
-export function deleteDataChatMng(params) {
+export function deleteDataChatMng(params,obj) {
     return {
         types: [DELETE_REQUEST_ChatMng, DELETE_SUCCESS_ChatMng, DELETE_FAIL_ChatMng],
         promise: client => client.post('/cs/api/robot/deleteChatWindow',params),
         afterSuccess:(dispatch,getState,response)=>{
             if(response.data.code===0){
                 message.info(response.data.msg);
-                const params = {
-                    pageNo:1,
-                    pageSize:10,
-                };
-                dispatch(getDataChatMng(params));
+                if(dataTotal % obj.state.pageSize === 1){
+                    lastPage -= 1
+                    obj.setState({
+                        current:lastPage
+                    })
+                    const params = {
+                        pageNo:lastPage,
+                        pageSize:obj.state.pageSize,
+                    };
+                    dispatch(getDataChatMng(params));
+                }else{
+                    const params = {
+                        pageNo:obj.state.current,
+                        pageSize:obj.state.pageSize,
+                    };
+                    dispatch(getDataChatMng(params));
+                }
+
             }else {
                 message.info(response.data.msg);
             }
         },
     }
 }
-export function activeDataChatMng(params) {
+export function activeDataChatMng(params,obj) {
     return {
         types: [ACTIVE_REQUEST_ChatMng, ACTIVE_SUCCESS_ChatMng, ACTIVE_FAIL_ChatMng],
         promise: client => client.post('/cs/api/robot/operationChatWindow',params),
@@ -135,8 +158,8 @@ export function activeDataChatMng(params) {
             if(response.data.code===0){
                 message.info(response.data.msg);
                 const params = {
-                    pageNo:1,
-                    pageSize:10,
+                    pageNo:obj.state.current,
+                    pageSize:obj.state.pageSize,
                 };
                 dispatch(getDataChatMng(params));
             }else {

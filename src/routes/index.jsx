@@ -1,7 +1,16 @@
+import OfficialHomePage from "layouts/OfficialHomePage.jsx";
 import LoginPages from "layouts/LoginPages.jsx";
 import HomePages from "layouts/HomePages.jsx";
 
+
 const indexRoutes = [
+    {
+        path: "/cms/official",
+        name: "officialHome ",
+        short: "officialHome",
+        mini: "OP",
+        component: OfficialHomePage
+    },
     {
         path: "/cms/login",
         name: "Login ",
@@ -25,7 +34,8 @@ const indexRoutes = [
     {
       path: "*",
       redirect: true,
-      pathTo: "/cms/login",
+      // pathTo: "/cms/login",
+      pathTo:"/cms/official",
       name: "Register"
     },
 ];

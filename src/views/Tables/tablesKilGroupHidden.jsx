@@ -11,9 +11,10 @@ import CardHeader from "components/Card/CardHeader.jsx";
 import extendedTablesStyle from "assets/jss/material-dashboard-pro-react/views/extendedTablesStyle.jsx";
 import {getOtherKillGroupHidden,getDataKillGroupHidden,updateDataKillGroupHidden,deleteDataKillGroupHidden,createDataKillGroupHidden } from "actions/tablesKillGroupHidden";
 import {connect} from "react-redux";
-import {Table, Divider,Button } from 'antd';
+import {Table, Divider, Button, LocaleProvider} from 'antd';
 import {Input,Modal } from 'antd';
 import {Form,Pagination,Popconfirm } from 'antd';
+import zh_CN from "antd/lib/locale-provider/zh_CN";
 
 const FormItem = Form.Item;
 const Search = Input.Search;
@@ -31,7 +32,9 @@ class tablesKillGroupHidden extends React.Component {
             recordDetail:{},
             recordSelect:{},
             defaultSelectValue:'',
-            cuSkGroupId:''
+            cuSkGroupId:'',
+            current:1,
+            pageSize:10
         };
     }
     parseQueryString = (url)=> {
@@ -61,6 +64,7 @@ class tablesKillGroupHidden extends React.Component {
         // this.setState({ page:obj.page });
         // console.log('componentWillMount')
         this.getTableData('',1,10,obj.cuSkGroupId);
+        // console.log(obj.cuSkGroupId,"组名")
         // this.getOtherData('',1,10);
     }
     componentDidMount(){
@@ -69,13 +73,17 @@ class tablesKillGroupHidden extends React.Component {
     //     alert('刷新')
     // }
     getTableData = (articleTitle,start,size,cuSkGroupId) => {
+        this.setState({
+            current:start,
+            pageSize:size
+        })
         const params = {
             // articleTitle:articleTitle,
             pageNo:start,
             pageSize:size,
             cuSkGroupId:cuSkGroupId
         };
-        console.log('getDataKillGroupHidden')
+        console.log(cuSkGroupId,"组名")
         this.props.getDataKillGroupHidden(params);
     }
     getOtherData = (username,start,size) => {
@@ -145,7 +153,7 @@ class tablesKillGroupHidden extends React.Component {
             userId:record.user.id,
             cuSkGroupId:this.state.cuSkGroupId,
         }
-        this.props.deleteDataKillGroupHidden(params)
+        this.props.deleteDataKillGroupHidden(params,this)
     }
     activeConfirm = (record) => {
         const params = {
@@ -161,21 +169,20 @@ class tablesKillGroupHidden extends React.Component {
             title: '账号',
             dataIndex: 'user',
             key: 'user',
-            fixed: 'left',
-            width: '35%',
+            width: '40%',
             render: text => <a >{text.username}</a>,
         }, {
             title: '企业名称',
             dataIndex: 'user',
             key: 'user',
             // align: 'center'
-            width: '35%',
+            width: '40%',
             render: text => {return JSON.stringify(text.tenantName)==='null'?'空':text.tenantName},
         }, {
             title: '操作',
             key: 'action',
-            width: 400,
-            fixed: 'right',
+            width: 300,
+            // fixed: 'right',
             render: (text, record) => (
                 <span>
                     <Popconfirm cancelText="取消" okText="确定" title="确定删除?" onConfirm={() => this.deleteConfirm(record)}>
@@ -285,7 +292,10 @@ class tablesKillGroupHidden extends React.Component {
                                     // onMouseEnter: () => {},  
                                     };
                                 }} key={"tablesKillGroupHidden"} pagination={false} columns={columns} dataSource={this.props.tablesKillGroupHidden.tableDataKillGroupHidden} scroll={{  y: 360}} />
-                            <Pagination defaultCurrent={1} defaultPageSize={10} total={this.props.tablesKillGroupHidden.tableCountKillGroupHidden} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10)}/>
+                            {/*<Pagination current={this.state.current} defaultPageSize={10} total={this.props.tablesKillGroupHidden.tableCountKillGroupHidden} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10,this.state.cuSkGroupId)}/>*/}
+                            <LocaleProvider locale={zh_CN}>
+                                <Pagination  current={this.state.current} showTotal={total => `总共 ${total} 条`} showSizeChanger showQuickJumper defaultPageSize={10} total={this.props.tablesKillGroupHidden.tableCountKillGroupHidden} style={{textAlign:'right',marginTop:25}}  onShowSizeChange={(current, pageSize)=>this.getTableData('',current, pageSize,this.state.cuSkGroupId)} onChange={(page, pageSize)=>this.getTableData('',page,pageSize,this.state.cuSkGroupId)}/>
+                            </LocaleProvider>
                         </CardBody>
                     </Card>
                 </GridItem>
@@ -324,8 +334,8 @@ const mapDispatchToProps = (dispatch) => {
         updateDataKillGroupHidden: (params,obj) => {
             dispatch(updateDataKillGroupHidden(params,obj))
         },
-        deleteDataKillGroupHidden: (params) => {
-            dispatch(deleteDataKillGroupHidden(params))
+        deleteDataKillGroupHidden: (params,obj) => {
+            dispatch(deleteDataKillGroupHidden(params,obj))
         },
         createDataKillGroupHidden: (params) => {
             dispatch(createDataKillGroupHidden(params))

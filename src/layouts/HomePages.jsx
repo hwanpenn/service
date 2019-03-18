@@ -69,8 +69,13 @@ var ps;
 
 class HomePages extends React.Component {
   componentWillMount() {
+      // if(document.getElementById("script1")===null){
+      //
+      // }else{
+      //     document.getElementById("script1").setAttribute("src","/service-chat/chat/chat.js")
+      // }
       // document.removeEventListener("keydown",this.handleEenterKey);
-      timer2=window.setTimeout(this.refresh,500);
+      timer2=window.setInterval(this.refresh,500);
       const userSession = window.sessionStorage.getItem('token');
       console.log(userSession)
       if(userSession===null||userSession===undefined||userSession===''){
@@ -109,13 +114,14 @@ class HomePages extends React.Component {
       if(window.sessionStorage.getItem('customerFlag')===true||window.sessionStorage.getItem('customerFlag')==='true'){
         // console.log('客服显示layui-layer2')
         document.getElementById("layui-layer2").style.display='block'
+          document.getElementById("layui-layer2").style.visibility='visible'
         // document.getElementById("layui-layer1").style.display='block'
-        clearInterval(this.timerID);
+        clearInterval(timer2);
       }else{
         // console.log('不是客服不显示layui-layer2')
         document.getElementById("layui-layer2").style.display='none'
         // document.getElementById("layui-layer1").style.display='none'
-        clearInterval(this.timerID);
+        clearInterval(timer2);
       } 
   } 
   }
@@ -127,10 +133,10 @@ class HomePages extends React.Component {
   }
   componentDidMount() {
     // console.log('主页添加定时器')
-    this.timerID = setInterval(
-      () => this.refresh(),
-      500
-    );
+    // this.timerID = setInterval(
+    //   () => this.refresh(),
+    //   500
+    // );
      
     if (navigator.platform.indexOf("Win") > -1) {
       ps = new PerfectScrollbar(this.refs.mainPanel, {

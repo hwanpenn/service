@@ -11,9 +11,10 @@ import CardHeader from "components/Card/CardHeader.jsx";
 import extendedTablesStyle from "assets/jss/material-dashboard-pro-react/views/extendedTablesStyle.jsx";
 import {getOtherComplaintMng,getDataComplaintMng,updateDataComplaintMng,deleteDataComplaintMng,createDataComplaintMng } from "actions/tablesComplaintMng";
 import {connect} from "react-redux";
-import {Table, Divider,Button } from 'antd';
+import {Table, Divider, Button, LocaleProvider} from 'antd';
 import {Input,Modal } from 'antd';
 import {Form,Pagination,Popconfirm,Select,TreeSelect,Popover } from 'antd';
+import zh_CN from "antd/lib/locale-provider/zh_CN";
 
 const FormItem = Form.Item;
 const Search = Input.Search;
@@ -31,6 +32,8 @@ class tablesComplaintMng extends React.Component {
             recordAction:{},
             recordSelect:{},
             defaultSelectValue:'',
+            current:1,
+            pageSize:10
         };
     }
     componentWillMount(){
@@ -40,6 +43,10 @@ class tablesComplaintMng extends React.Component {
     componentDidMount(){
     }
     getTableData = (content,start,size) => {
+        this.setState({
+            current:start,
+            pageSize:size
+        })
         const params = {
             content:content,
             pageNo:start,
@@ -80,7 +87,7 @@ class tablesComplaintMng extends React.Component {
             values.answerUserId=window.sessionStorage.getItem('userId')
             values.answerUserName=window.sessionStorage.getItem('caption')
             values.id=this.state.recordAction.id
-            this.props.updateDataComplaintMng(values);
+            this.props.updateDataComplaintMng(values,this);
             form.resetFields();
             this.setState({ visibleModify: false });
         });
@@ -225,7 +232,7 @@ class tablesComplaintMng extends React.Component {
                                         <Input />
                                     )}
                                 </FormItem>
-                                <FormItem label="投书还是建议">
+                                <FormItem label="投诉还是建议">
                                     {getFieldDecorator('type', {
                                         rules: [{ required: true, message: '请输入类别!' }],
                                     })(
@@ -246,13 +253,6 @@ class tablesComplaintMng extends React.Component {
                                         <Input />
                                     )}
                                 </FormItem>
-                                {/* <FormItem label="回答">
-                                    {getFieldDecorator('answer', {
-                                        rules: [{ required: true, message: '请输入新增回答!' }],
-                                    })(
-                                        <TextArea rows={4} />
-                                    )}
-                                </FormItem> */}
                                 <FormItem label="分类">
                                     {getFieldDecorator('category', {
                                         rules: [{ required: true, message: '请输入新增回答!' }],
@@ -315,25 +315,6 @@ class tablesComplaintMng extends React.Component {
                                         <TextArea rows={4} />
                                     )}
                                 </FormItem>
-                                {/* <FormItem label="分类">
-                                    {getFieldDecorator('category', {
-                                        initialValue:  thisTemp.state.recordAction.category ,
-                                        rules: [{ required: true, message: '请输入回答!' }],
-                                    })(
-                                        <TreeSelect
-                                            // showSearch
-                                            style={{ width: '100%' }}
-                                            value={this.state.value}
-                                            dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                                            placeholder="请选择"
-                                            allowClear
-                                            treeDefaultExpandAll
-                                            onChange={this.onChange}
-                                        >
-                                             {treeNodes}
-                                        </TreeSelect>
-                                    )}
-                                </FormItem> */}
                             </Form>
                         </Modal>
                     );
@@ -359,7 +340,7 @@ class tablesComplaintMng extends React.Component {
                                         style={{ width: 200,borderStyle:'solid',
                                             borderWidth:0,paddingRight:10 }}
                                     />
-                                    <Button onClick={this.showModalCreate} style={{ height: 30,marginRight:10 }} size={'small'}>增加</Button>
+                                    {/*<Button onClick={this.showModalCreate} style={{ height: 30,marginRight:10 }} size={'small'}>增加</Button>*/}
                                 </Grid>
                             </Grid>
                         </CardHeader>
@@ -370,7 +351,10 @@ class tablesComplaintMng extends React.Component {
                                     // onMouseEnter: () => {},  
                                     };
                                 }} key={"tablesComplaintMng"} pagination={false} columns={columns} dataSource={this.props.tablesComplaintMng.tableDataComplaintMng} scroll={{ x: 1400 , y: 360}} />
-                            <Pagination defaultCurrent={1} defaultPageSize={10} total={this.props.tablesComplaintMng.tableCountComplaintMng} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10)}/>
+                            {/*<Pagination current={this.state.current} defaultPageSize={10} total={this.props.tablesComplaintMng.tableCountComplaintMng} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10)}/>*/}
+                            <LocaleProvider locale={zh_CN}>
+                                <Pagination  current={this.state.current} showTotal={total => `总共 ${total} 条`} showSizeChanger showQuickJumper defaultPageSize={10} total={this.props.tablesComplaintMng.tableCountComplaintMng} style={{textAlign:'right',marginTop:25}}  onShowSizeChange={(current, pageSize)=>this.getTableData('',current, pageSize)} onChange={(page, pageSize)=>this.getTableData('',page,pageSize)}/>
+                            </LocaleProvider>
                         </CardBody>
                     </Card>
                 </GridItem>
@@ -400,8 +384,8 @@ const mapDispatchToProps = (dispatch) => {
         getDataComplaintMng: (params) => {
             dispatch(getDataComplaintMng(params))
         },
-        updateDataComplaintMng: (params) => {
-            dispatch(updateDataComplaintMng(params))
+        updateDataComplaintMng: (params,obj) => {
+            dispatch(updateDataComplaintMng(params,obj))
         },
         deleteDataComplaintMng: (params) => {
             dispatch(deleteDataComplaintMng(params))

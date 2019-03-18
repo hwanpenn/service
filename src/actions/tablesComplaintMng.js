@@ -59,7 +59,7 @@ export function createDataComplaintMng(params) {
         },
     }
 }
-export function updateDataComplaintMng(params) {
+export function updateDataComplaintMng(params,obj) {
     return {
         types: [UPDATE_REQUEST_ComplaintMng, UPDATE_SUCCESS_ComplaintMng, UPDATE_FAIL_ComplaintMng],
         promise: client => client.post('/cs/api/adviceOrComplaint/answer',params),
@@ -67,7 +67,7 @@ export function updateDataComplaintMng(params) {
             if(response.data.code===0){
                 message.info(response.data.msg);
                 const params = {
-                    pageNo:1,
+                    pageNo:obj.state.current,
                     pageSize:10,
                 };
                 dispatch(getDataComplaintMng(params));

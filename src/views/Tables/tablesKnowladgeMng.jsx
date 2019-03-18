@@ -9,15 +9,16 @@ import CardBody from "components/Card/CardBody.jsx";
 import CardIcon from "components/Card/CardIcon.jsx";
 import CardHeader from "components/Card/CardHeader.jsx";
 import extendedTablesStyle from "assets/jss/material-dashboard-pro-react/views/extendedTablesStyle.jsx";
-import {getOtherArticleMng,getDataArticleMng,updateDataArticleMng,deleteDataArticleMng,createDataArticleMng } from "actions/tablesArticleMng";
+import {getOtherArticleMng,getDataArticleMng,updateDataArticleMng,deleteDataArticleMng,createDataArticleMng,last } from "actions/tablesArticleMng";
 import {getOtherKnowladgeMng,getDataKnowladgeMng,updateDataKnowladgeMng,deleteDataKnowladgeMng,createDataKnowladgeMng } from "actions/tablesKnowladgeMng";
 import {connect} from "react-redux";
-import {Table, Divider,Button } from 'antd';
+import {Table, Divider, Button, LocaleProvider} from 'antd';
 import {Input,Modal } from 'antd';
 import {Form,Pagination,Popconfirm,Select } from 'antd';
 import { Menu,Icon } from 'antd';
 import tablesArticleMng from "views/Tables/tablesArticleMng.jsx";
 import { Tree ,Upload, message,Popover} from 'antd';
+import zh_CN from "antd/lib/locale-provider/zh_CN";
 const SubMenu = Menu.SubMenu;
 message.config({
     duration: 1,
@@ -50,7 +51,9 @@ class tablesKnowladgeMng extends React.Component {
             categoryId:'',
             page:1,
             selectedKeys:['layer1-0-layer2-0'],
-            category: 'bigCategory'
+            category: 'bigCategory',
+            current:1,
+            pageSize:10
         };
     }
     rootSubmenuKeys = ['sub1', 'sub2', 'sub4'];
@@ -90,14 +93,17 @@ class tablesKnowladgeMng extends React.Component {
         this.props.getDataKnowladgeMng(params,this);
     }
     getTableDataArticleMng = (articleTitle,start,size,categoryId) => {
-        // console.log('查询categoryId'+categoryId)
+            this.setState({
+                current:start,
+                pageSize:size
+            })
         const params = {
             categoryId:categoryId,
             articleTitle:articleTitle,
             pageNo:start,
             pageSize:size,
         };
-        this.props.getDataArticleMng(params);
+        this.props.getDataArticleMng(params,this);
     }
     getOtherData = (username,start,size) => {
         const params = {
@@ -177,7 +183,7 @@ class tablesKnowladgeMng extends React.Component {
             id:record.articleId,
             categoryId:record.categoryId,
         }
-        this.props.deleteDataArticleMng(params)
+        this.props.deleteDataArticleMng(params,this)
     }
     activeConfirmArticleData = (record) => {
         const params = {
@@ -221,7 +227,7 @@ class tablesKnowladgeMng extends React.Component {
             //     values.categoryParentId=this.state.categoryIdModify
             // }
             values.categoryId=this.state.recordSelect.categoryId
-            this.props.updateDataKnowladgeMng(values);
+            this.props.updateDataKnowladgeMng(values,this);
             form.resetFields();
             this.setState({ visibleModify: false });
         });
@@ -238,7 +244,7 @@ class tablesKnowladgeMng extends React.Component {
             if(this.state.layerStatus==='layer2-add2'){
                 values.categoryParentId=this.state.recordSelect.categoryParentId
             }
-            this.props.createDataKnowladgeMng(values)
+            this.props.createDataKnowladgeMng(values,this)
             form.resetFields();
             this.setState({ visible: false });
         });
@@ -258,17 +264,27 @@ class tablesKnowladgeMng extends React.Component {
         });
     }
     handleCreateArticleData = () => {
+
         const form = this.formRefDataCreateArticleData.props.form;
         form.validateFields((err, values) => {
+            console.log(values)
             if (err) {
                 return;
             }
+            const uPattern = /^[\u4e00-\u9fa5\S]{1,4}$/;
+            if(uPattern.test(values.articleLabel)===false){
+                message.info('请输入小于4个汉字长度的标签');
+            }else{
+                values.categoryId=this.state.recordSelect.categoryId
+                console.log('开始调用getDataArticleMng')
+                this.props.createDataArticleMng(values,this)
+                //清空表单的值
+                form.resetFields();
+                this.setState({ visibleArticleData: false });
+            }
+            // console.log(uPattern.test(values.articleLabel),"正则匹配标签")
             // values.categoryId=this.state.categoryId
-            values.categoryId=this.state.recordSelect.categoryId
-            // console.log('开始调用getDataArticleMng')
-            this.props.createDataArticleMng(values)
-            form.resetFields();
-            this.setState({ visibleArticleData: false });
+
         });
     }
     saveFormRefModify = (formRef) => {
@@ -287,7 +303,7 @@ class tablesKnowladgeMng extends React.Component {
         const params = {
             id:record.categoryId,
         }
-        this.props.deleteDataKnowladgeMng(params)
+        this.props.deleteDataKnowladgeMng(params,this)
     }
     onOpenChange = (openKeys) => {
         // console.log(openKeys)
@@ -319,7 +335,7 @@ class tablesKnowladgeMng extends React.Component {
             recordSelectValue: info.node.props.content,
             selectedKeys:selectedKeys
         });
-        this.getTableDataArticleMng('',1,10,categoryId)
+        this.getTableDataArticleMng('',1,this.state.pageSize,categoryId)
       }
       handleMenuClick = (item) => { 
           const record = this.state.recordSelect
@@ -524,69 +540,69 @@ class tablesKnowladgeMng extends React.Component {
                 }
             }
         );
-        const CollectionModifyFormArticleMng = Form.create()(
-            class extends React.Component {
-                render() {
-                    const { visible, onCancel, onCreate, form } = this.props;
-                    const { getFieldDecorator } = form;
-                    return (
-                       <Modal maskClosable={false}
-                            visible={visible}
-                            title="修改聊天窗"
-                            cancelText="取消" okText="确定"
-                            onCancel={onCancel}
-                            onOk={onCreate}
-                        >
-                            <Form layout="vertical">
-                                <FormItem label="类别名称">
-                                    {getFieldDecorator('categoryName', {
-                                        initialValue:  thisTemp.state.recordAction.categoryName ,
-                                        rules: [{ required: true, message: '请输入修改类别名称!' }],
-                                    })(
-                                        <Input />
-                                    )}
-                                </FormItem>
-                                <FormItem label="描述">
-                                    {getFieldDecorator('categoryDesc', {
-                                        initialValue:  thisTemp.state.recordAction.categoryDesc ,
-                                        rules: [{ required: true, message: '请输入修改类别描述!' }],
-                                    })(
-                                        <Input type="textarea" />
-                                    )}
-                                </FormItem>
-                            </Form>
-                        </Modal>
-                    );
-                }
-            }
-        );
-        const CollectionCreateFormArticleMngDetail = Form.create()(
-            class extends React.Component {
-                render() {
-                    const { visible, onCancel, onCreate, form } = this.props;
-                    const { getFieldDecorator } = form;
-                    return (
-                       <Modal maskClosable={false}
-                            visible={visible}
-                            title="分类详情"
-                            footer={null}
-                            width={900}
-                            // cancelText="取消" okText="确定"
-                            // onCancel={onCancel}
-                            // onOk={onCreate}
-                        >
-                              <Table style={{marginTop:50}} onRow={(record,index, ) => {
-                                return {
-                                onClick: (e) => {this.onRowSelect(record,index, e)},       
-                                // onMouseEnter: () => {},  
-                                };
-                            }} key={"tablesArticleMng"} pagination={false} columns={columnsArticleMng} dataSource={thisTemp.props.tablesArticleMng.tableDataArticleMng} scroll={{  y: 360}} />
-                            <Pagination defaultCurrent={1} defaultPageSize={10} total={thisTemp.props.tablesArticleMng.tableCountArticleMng} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableDataArticleMng('',page,10)}/>
-                        </Modal>
-                    );
-                }
-            }
-        );
+        // const CollectionModifyFormArticleMng = Form.create()(
+        //     class extends React.Component {
+        //         render() {
+        //             const { visible, onCancel, onCreate, form } = this.props;
+        //             const { getFieldDecorator } = form;
+        //             return (
+        //                <Modal maskClosable={false}
+        //                     visible={visible}
+        //                     title="修改聊天窗"
+        //                     cancelText="取消" okText="确定"
+        //                     onCancel={onCancel}
+        //                     onOk={onCreate}
+        //                 >
+        //                     <Form layout="vertical">
+        //                         <FormItem label="类别名称">
+        //                             {getFieldDecorator('categoryName', {
+        //                                 initialValue:  thisTemp.state.recordAction.categoryName ,
+        //                                 rules: [{ required: true, message: '请输入修改类别名称!' }],
+        //                             })(
+        //                                 <Input />
+        //                             )}
+        //                         </FormItem>
+        //                         <FormItem label="描述">
+        //                             {getFieldDecorator('categoryDesc', {
+        //                                 initialValue:  thisTemp.state.recordAction.categoryDesc ,
+        //                                 rules: [{ required: true, message: '请输入修改类别描述!' }],
+        //                             })(
+        //                                 <Input type="textarea" />
+        //                             )}
+        //                         </FormItem>
+        //                     </Form>
+        //                 </Modal>
+        //             );
+        //         }
+        //     }
+        // );
+        // const CollectionCreateFormArticleMngDetail = Form.create()(
+        //     class extends React.Component {
+        //         render() {
+        //             const { visible, onCancel, onCreate, form } = this.props;
+        //             const { getFieldDecorator } = form;
+        //             return (
+        //                <Modal maskClosable={false}
+        //                     visible={visible}
+        //                     title="分类详情"
+        //                     footer={null}
+        //                     width={900}
+        //                     // cancelText="取消" okText="确定"
+        //                     // onCancel={onCancel}
+        //                     // onOk={onCreate}
+        //                 >
+        //                       <Table style={{marginTop:50}} onRow={(record,index, ) => {
+        //                         return {
+        //                         onClick: (e) => {this.onRowSelect(record,index, e)},
+        //                         // onMouseEnter: () => {},
+        //                         };
+        //                     }} key={"tablesArticleMng"} pagination={false} columns={columnsArticleMng} dataSource={thisTemp.props.tablesArticleMng.tableDataArticleMng} scroll={{  y: 360}} />
+        //                     <Pagination defaultCurrent={1} defaultPageSize={10} total={thisTemp.props.tablesArticleMng.tableCountArticleMng} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableDataArticleMng('',page,10)}/>
+        //                 </Modal>
+        //             );
+        //         }
+        //     }
+        // );
         const CollectionCreateFormArticleData = Form.create()(
             class extends React.Component {
                 render() {
@@ -606,6 +622,13 @@ class tablesKnowladgeMng extends React.Component {
                                         rules: [{ required: true, message: '请输入新增名称!' }],
                                     })(
                                         <Input />
+                                    )}
+                                </FormItem>
+                                <FormItem label="标签">
+                                    {getFieldDecorator('articleLabel', {
+                                        rules: [{ required: true, message: '请输入新增标签!' }],
+                                    })(
+                                        <Input placeholder="请输入小于4个汉字长度的标签"/>
                                     )}
                                 </FormItem>
                                 <FormItem label="内容">
@@ -635,10 +658,18 @@ class tablesKnowladgeMng extends React.Component {
                             onOk={onCreate}
                         >
                             <Form layout="vertical">
-                                <FormItem label="名称">
+                                <FormItem label="标题">
                                     {getFieldDecorator('articleTitle', {
                                         initialValue:  thisTemp.state.recordActionArticleData.articleTitle ,
                                         rules: [{ required: true, message: '请输入修改名称!' }],
+                                    })(
+                                        <Input />
+                                    )}
+                                </FormItem>
+                                <FormItem label="标签">
+                                    {getFieldDecorator('articleLabel', {
+                                        initialValue:  thisTemp.state.recordActionArticleData.articleLabel ,
+                                        rules: [{ required: true, message: '请输入修改标签!' }],
                                     })(
                                         <Input />
                                     )}
@@ -662,7 +693,7 @@ class tablesKnowladgeMng extends React.Component {
             dataIndex: 'categoryName',
             key: 'categoryName',
             width: 350,
-            fixed: 'left',
+            // fixed: 'left',
           }, {
             title: '描述',
             dataIndex: 'categoryDesc',
@@ -680,7 +711,7 @@ class tablesKnowladgeMng extends React.Component {
             title: '操作',
             key: 'action',
             width: 200,
-            fixed: 'right',
+            // fixed: 'right',
             render: (text, record) => (
                 <span>
                     <a onClick={() => this.showModifyModalArticleData(record)} >编辑</a>
@@ -743,8 +774,8 @@ class tablesKnowladgeMng extends React.Component {
             title: '文章标题',
             dataIndex: 'articleTitle',
             key: 'articleTitle',
-            fixed: 'left',
-            width: '35%',
+            // fixed: 'left',
+            width: '30%',
             render: text =><Popover content={(
                 <div style={{width:270}}>
                     <p>{text}</p>
@@ -758,11 +789,12 @@ class tablesKnowladgeMng extends React.Component {
              }}>{text}</span>
             </Popover>,
         }, {
-            title: '文章内容',
-            dataIndex: 'articleContent',
-            key: 'articleContent',
+            title: '文章标签',
+            dataIndex: 'articleLabel',
+            key: 'articleLabel',
+            // fixed: 'left',
             // align: 'center'
-            width: '35%',
+            width: '25%',
             render: text => <Popover content={(
                 <div style={{width:270}}>
                   <p>{text}</p>
@@ -772,9 +804,28 @@ class tablesKnowladgeMng extends React.Component {
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
                     display: 'inline-block',
-                    width: 270
+                    width: 150
                 }}>{text}</span>
           </Popover>
+        },{
+            title: '文章内容',
+            dataIndex: 'articleContent',
+            key: 'articleContent',
+            // fixed: 'left',
+            // align: 'center'
+            width: '30%',
+            render: text => <Popover content={(
+                <div style={{width:270}}>
+                    <p>{text}</p>
+                </div>
+            )}>
+             <span style={{overflow: 'hidden',
+                 textOverflow: 'ellipsis',
+                 whiteSpace: 'nowrap',
+                 display: 'inline-block',
+                 width: 150
+             }}>{text}</span>
+            </Popover>
         },
         // {
         //     title: '启用状态',
@@ -783,12 +834,12 @@ class tablesKnowladgeMng extends React.Component {
         //     // align: 'center'
         //     width: 170,
         //     render: text => <span >{'已激活'}</span>,
-        // }, 
+        // },
         {
             title: '操作',
             key: 'action',
-            width: 270,
-            fixed: 'right',
+            width: '15%',
+            // fixed: 'right',
             render: (text, record) => (
                 <span>
                     <a onClick={() => this.showModifyModalArticleData(record)} >编辑</a>
@@ -817,21 +868,21 @@ class tablesKnowladgeMng extends React.Component {
               console.log(selected, selectedRows, changeRows);
             },
           };
-        const showTable = this.state.showTable;
-        let table;
-        let pagination;
-        if (showTable) {
-        table = <Table style={{marginTop:50}} onRow={(record,index, ) => {
-            return {
-            onClick: (e) => {this.onRowSelect(record,index, e)},       
-            // onMouseEnter: () => {},  
-            };
-        }} key={"tablesArticleMng"} pagination={false} columns={columnsArticleMng} dataSource={thisTemp.props.tablesArticleMng.tableDataArticleMng} scroll={{  y: 360}} />
-        pagination = <Pagination defaultCurrent={1} defaultPageSize={10} total={thisTemp.props.tablesArticleMng.tableCountArticleMng} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableDataArticleMng('',page,10)}/>
-        } else {
-        table = ''
-        pagination = ''
-        }
+        // const showTable = this.state.showTable;
+        // let table;
+        // let pagination;
+        // if (showTable) {
+        // table = <Table style={{marginTop:50}} onRow={(record,index, ) => {
+        //     return {
+        //     onClick: (e) => {this.onRowSelect(record,index, e)},
+        //     // onMouseEnter: () => {},
+        //     };
+        // }} key={"tablesArticleMng"} pagination={false} columns={columnsArticleMng} dataSource={thisTemp.props.tablesArticleMng.tableDataArticleMng} scroll={{  y: 360}} />
+        // pagination = <Pagination defaultCurrent={1} defaultPageSize={10} total={thisTemp.props.tablesArticleMng.tableCountArticleMng} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableDataArticleMng('',page,10)}/>
+        // } else {
+        // table = ''
+        // pagination = ''
+        // }
         let treeList = ''
         if(thisTemp.props.tablesKnowladgeMng.tableDataKnowladgeMng!==undefined&&thisTemp.props.tablesKnowladgeMng.tableDataKnowladgeMng!==''){
             treeList = thisTemp.props.tablesKnowladgeMng.tableDataKnowladgeMng.map((item,i) => {
@@ -861,7 +912,7 @@ class tablesKnowladgeMng extends React.Component {
                     // if(obj.page===''||obj.page===undefined){
                     //     thisTemp.setState({ page:obj.page });
                     // }
-                    thisTemp.getTableDataArticleMng('',1,10,thisTemp.state.categoryId);
+                    thisTemp.getTableDataArticleMng('',1,this.state.pageSize,thisTemp.state.categoryId);
                 }
 
             //   if (info.file.status !== 'uploading') {
@@ -940,7 +991,7 @@ class tablesKnowladgeMng extends React.Component {
                                 <Grid style={{textAlign:'right',marginTop:10}} item xs={9}>
                                     <Search
                                         placeholder="名称搜索"
-                                        onSearch={value => this.getTableDataArticleMng(value,1,10,this.state.categoryId)}
+                                        onSearch={value => this.getTableDataArticleMng(value,1,this.state.pageSize,this.state.categoryId)}
                                         style={{ width: 200,borderStyle:'solid',
                                             borderWidth:0,paddingRight:10 }}
                                     />
@@ -960,7 +1011,10 @@ class tablesKnowladgeMng extends React.Component {
                                     // onMouseEnter: () => {},  
                                     };
                                 }} key={"tablesArticleMng"} pagination={false} columns={columns} dataSource={this.props.tablesArticleMng.tableDataArticleMng} scroll={{  y: 360}} />
-                            <Pagination defaultCurrent={1} defaultPageSize={10} total={this.props.tablesArticleMng.tableCountArticleMng} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableDataArticleMng('',page,10,this.state.categoryId)}/>
+                            {/*<Pagination current={this.state.current} defaultPageSize={10} total={this.props.tablesArticleMng.tableCountArticleMng} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableDataArticleMng('',page,10,this.state.categoryId)}/>*/}
+                            <LocaleProvider locale={zh_CN}>
+                                <Pagination  current={this.state.current} showTotal={total => `总共 ${total} 条`} showSizeChanger showQuickJumper  total={this.props.tablesArticleMng.tableCountArticleMng} style={{textAlign:'right',marginTop:25}}  onShowSizeChange={(current, pageSize)=>this.getTableDataArticleMng('',current, pageSize,this.state.categoryId)} onChange={(page, pageSize)=>this.getTableDataArticleMng('',page,pageSize,this.state.categoryId)}/>
+                            </LocaleProvider>
                         </CardBody>
                     </Card>
                 </GridItem>
@@ -994,18 +1048,18 @@ class tablesKnowladgeMng extends React.Component {
                     onCancel={this.handleCancelCreateArticleMng}
                     onCreate={this.handleCreateArticleMng}
                 />
-                <CollectionModifyFormArticleMng
-                    wrappedComponentRef={this.saveFormRefModifyArticleMng}
-                    visible={this.state.visibleModifyArticleMng}
-                    onCancel={this.handleCancelModifyArticleMng}
-                    onCreate={this.handleModifyArticleMng}
-                />
-                <CollectionCreateFormArticleMngDetail
-                    wrappedComponentRef={this.saveFormRefModifyArticleMng}
-                    visible={this.state.visibleModifyArticleMngDetail}
-                    onCancel={this.handleCancelModifyArticleMng}
-                    onCreate={this.handleModifyArticleMng}
-                />
+                {/*<CollectionModifyFormArticleMng*/}
+                    {/*wrappedComponentRef={this.saveFormRefModifyArticleMng}*/}
+                    {/*visible={this.state.visibleModifyArticleMng}*/}
+                    {/*onCancel={this.handleCancelModifyArticleMng}*/}
+                    {/*onCreate={this.handleModifyArticleMng}*/}
+                {/*/>*/}
+                {/*<CollectionCreateFormArticleMngDetail*/}
+                    {/*wrappedComponentRef={this.saveFormRefModifyArticleMng}*/}
+                    {/*visible={this.state.visibleModifyArticleMngDetail}*/}
+                    {/*onCancel={this.handleCancelModifyArticleMng}*/}
+                    {/*onCreate={this.handleModifyArticleMng}*/}
+                {/*/>*/}
                 {this.getNodeTreeRightClickMenu()}
             </GridContainer>
         );
@@ -1025,11 +1079,11 @@ const mapDispatchToProps = (dispatch) => {
         updateDataKnowladgeMng: (params) => {
             dispatch(updateDataKnowladgeMng(params))
         },
-        deleteDataKnowladgeMng: (params) => {
-            dispatch(deleteDataKnowladgeMng(params))
+        deleteDataKnowladgeMng: (params,obj) => {
+            dispatch(deleteDataKnowladgeMng(params,obj))
         },
-        createDataKnowladgeMng: (params) => {
-            dispatch(createDataKnowladgeMng(params))
+        createDataKnowladgeMng: (params,obj) => {
+            dispatch(createDataKnowladgeMng(params,obj))
         },
         getOtherKnowladgeMng: (params) => {
             dispatch(getOtherKnowladgeMng(params))
@@ -1037,17 +1091,14 @@ const mapDispatchToProps = (dispatch) => {
         getDataArticleMng: (params) => {
             dispatch(getDataArticleMng(params))
         },
-        updateDataArticleMng: (params) => {
-            dispatch(updateDataArticleMng(params))
+        updateDataArticleMng: (params,obj) => {
+            dispatch(updateDataArticleMng(params,obj))
         },
-        deleteDataArticleMng: (params) => {
-            dispatch(deleteDataArticleMng(params))
+        deleteDataArticleMng: (params,obj) => {
+            dispatch(deleteDataArticleMng(params,obj))
         },
-        // activeDataArticleMng: (params) => {
-        //     dispatch(activeDataArticleMng(params))
-        // },
-        createDataArticleMng: (params) => {
-            dispatch(createDataArticleMng(params))
+        createDataArticleMng: (params,obj) => {
+            dispatch(createDataArticleMng(params,obj))
         },
         getOtherArticleMng: (params) => {
             dispatch(getOtherArticleMng(params))

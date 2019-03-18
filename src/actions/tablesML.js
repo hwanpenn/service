@@ -23,6 +23,9 @@ export const GET_REQUEST_ML_OTHER = "GET_REQUEST_ML_OTHER";
 export const GET_SUCCESS_ML_OTHER = "GET_SUCCESS_ML_OTHER";
 export const GET_FAIL_ML_OTHER = "GET_FAIL_ML_OTHER";
 
+export  let lastPage
+export  let dataTotal
+
 export function getOtherML(params,obj) {
     // let defaultRobotId
     return {
@@ -39,7 +42,7 @@ export function getOtherML(params,obj) {
                     const params = {
                         robotId:response.data.rows[0].robotId,
                         pageNo:1,
-                        pageSize:20,
+                        pageSize:obj.state.pageSize,
                     };
                     dispatch(getDataML(params));
                 }
@@ -53,11 +56,14 @@ export function getOtherML(params,obj) {
     }
 }
 
-export function getDataML(params,obj) {
+export function getDataML(params) {
     return {
         types: [GET_REQUEST_ML, GET_SUCCESS_ML, GET_FAIL_ML],
         promise: client => client.get('/cs/api/robot/queryPageToRobotLearn',{params: params}),
         afterSuccess:(dispatch,getState,response)=>{
+            lastPage = parseInt(response.data.total/params.pageSize)+1
+            dataTotal = response.data.total
+            // console.log("lastPage",lastPage)
             /*请求成功后执行的函数*/
         },
         // otherData:otherData
@@ -70,10 +76,13 @@ export function importDataML(params,obj) {
         afterSuccess:(dispatch,getState,response)=>{
             if(response.data.code===0){
                 message.info(response.data.msg);
+                obj.setState({
+                    current:1
+                })
                 const params = {
                     robotId:obj.state.robotId,
                     pageNo:1,
-                    pageSize:999,
+                    pageSize:obj.state.pageSize,
                 };
                 dispatch(getDataML(params));
             }else {
@@ -126,13 +135,27 @@ export function deleteDataML(params,obj) {
         promise: client => client.post('/cs/api/robot/deleteRobotLearn',params),
         afterSuccess:(dispatch,getState,response)=>{
             if(response.data.code===0){
+                console.log("obj.state.pageSize",obj.state.pageSize)
                 message.info(response.data.msg);
-                const params = {
-                    robotId:obj.state.robotId,
-                    pageNo:1,
-                    pageSize:10,
-                };
-                dispatch(getDataML(params));
+                if(dataTotal % obj.state.pageSize ===1) {
+                    lastPage -= 1
+                    obj.setState({
+                        current:lastPage
+                    })
+                    const params = {
+                        robotId:obj.state.robotId,
+                        pageNo:lastPage,
+                        pageSize:obj.state.pageSize,
+                    };
+                    dispatch(getDataML(params));
+                }else{
+                    const params = {
+                        robotId:obj.state.robotId,
+                        pageNo:obj.state.current,
+                        pageSize:obj.state.pageSize,
+                    };
+                    dispatch(getDataML(params));
+                }
             }else {
                 message.info(response.data.msg);
             }

@@ -20,6 +20,9 @@ export const GET_REQUEST_KillGroupHidden_OTHER = "GET_REQUEST_KillGroupHidden_OT
 export const GET_SUCCESS_KillGroupHidden_OTHER = "GET_SUCCESS_KillGroupHidden_OTHER";
 export const GET_FAIL_KillGroupHidden_OTHER = "GET_FAIL_KillGroupHidden_OTHER";
 
+export let dataTotal
+export let lastPage
+
 export function getOtherKillGroupHidden(params) {
     return {
         types: [GET_REQUEST_KillGroupHidden_OTHER, GET_SUCCESS_KillGroupHidden_OTHER, GET_FAIL_KillGroupHidden_OTHER],
@@ -37,6 +40,8 @@ export function getDataKillGroupHidden(params) {
         types: [GET_REQUEST_KillGroupHidden, GET_SUCCESS_KillGroupHidden, GET_FAIL_KillGroupHidden],
         promise: client => client.get('/cs/api/customer/achieveUser',{params: params}),
         afterSuccess:(dispatch,getState,response)=>{
+            lastPage = parseInt(response.data.total/10)+1
+            dataTotal = response.data.total
             /*请求成功后执行的函数*/
         },
         // otherData:otherData
@@ -78,7 +83,7 @@ export function updateDataKillGroupHidden(params) {
         },
     }
 }
-export function deleteDataKillGroupHidden(params) {
+export function deleteDataKillGroupHidden(params,obj) {
     // console.log('params')
     // console.log(params)
     const paramsTemp = params
@@ -88,12 +93,26 @@ export function deleteDataKillGroupHidden(params) {
         afterSuccess:(dispatch,getState,response)=>{
             if(response.data.code===0){
                 message.info(response.data.msg);
-                const params = {
-                    pageNo:1,
-                    pageSize:10,
-                    cuSkGroupId: paramsTemp.cuSkGroupId,
-                };
-                dispatch(getDataKillGroupHidden(params));
+                if(dataTotal % 10 === 1){
+                    lastPage -= 1;
+                    obj.setState({
+                        current:lastPage
+                    })
+                    const params = {
+                        pageNo:lastPage,
+                        pageSize:10,
+                        cuSkGroupId: paramsTemp.cuSkGroupId,
+                    };
+                    dispatch(getDataKillGroupHidden(params));
+                }else{
+                    const params = {
+                        pageNo:obj.state.current,
+                        pageSize:10,
+                        cuSkGroupId: paramsTemp.cuSkGroupId,
+                    };
+                    dispatch(getDataKillGroupHidden(params));
+                }
+
             }else {
                 message.info(response.data.msg);
             }

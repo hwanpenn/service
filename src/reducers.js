@@ -24,7 +24,6 @@ export default combineReducers({
     tablesML,
     tablesArticleMng,
     tablesKnowladgeMng,
-    tablesArticleMng,
     tablesSecretKey,
     tablesKillGroupMng,
     tablesKillGroupHidden,

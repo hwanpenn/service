@@ -11,9 +11,10 @@ import CardHeader from "components/Card/CardHeader.jsx";
 import extendedTablesStyle from "assets/jss/material-dashboard-pro-react/views/extendedTablesStyle.jsx";
 import {getOtherKillGroupMng,getDataKillGroupMng,updateDataKillGroupMng,deleteDataKillGroupMng,createDataKillGroupMng,activeDataKillGroupMng } from "actions/tablesKillGroupMng";
 import {connect} from "react-redux";
-import {Table, Divider,Button } from 'antd';
+import {Table, Divider, Button, LocaleProvider} from 'antd';
 import {Input,Modal } from 'antd';
 import {Form,Pagination,Popconfirm } from 'antd';
+import zh_CN from "antd/lib/locale-provider/zh_CN";
 
 const FormItem = Form.Item;
 const Search = Input.Search;
@@ -31,7 +32,8 @@ class tablesKillGroupMng extends React.Component {
             recordDetail:{},
             recordSelect:{},
             defaultSelectValue:'',
-            page:1
+            page:1,
+            pageSize:10
         };
     }
     componentWillMount(){
@@ -40,7 +42,7 @@ class tablesKillGroupMng extends React.Component {
         if(obj.page===''||obj.page===undefined){
             this.setState({ page:obj.page });
         }
-        this.getTableData('',this.state.page,10);
+        this.getTableData('',this.state.page,this.state.pageSize);
         // this.getOtherData('',1,10);
     }
     componentDidMount(){
@@ -63,13 +65,16 @@ class tablesKillGroupMng extends React.Component {
         return obj;
     }
     getTableData = (groupName,start,size) => {
-        this.setState({ page:start });
+        this.setState({
+            page:start,
+            pageSize:size
+        });
         const params = {
             groupName:groupName,
             pageNo:start,
             pageSize:size,
         };
-        this.props.getDataKillGroupMng(params);
+        this.props.getDataKillGroupMng(params,this);
     }
     getOtherData = (username,start,size) => {
         const params = {
@@ -120,7 +125,7 @@ class tablesKillGroupMng extends React.Component {
             if (err) {
                 return;
             }
-            this.props.createDataKillGroupMng(values)
+            this.props.createDataKillGroupMng(values,this)
             form.resetFields();
             this.setState({ visible: false });
         });
@@ -135,7 +140,7 @@ class tablesKillGroupMng extends React.Component {
         const params = {
             cuSkGroupId:record.cuSkGroupId,
         }
-        this.props.deleteDataKillGroupMng(params)
+        this.props.deleteDataKillGroupMng(params,this)
     }
     activeConfirm = (record) => {
         const params = {
@@ -151,21 +156,21 @@ class tablesKillGroupMng extends React.Component {
             title: '组名称',
             dataIndex: 'groupName',
             key: 'groupName',
-            fixed: 'left',
-            width: window.screen.width*0.20,
+            // fixed: 'left',
+            width: window.screen.width*0.15,
             render: text => <a >{text}</a>,
         }, {
             title: '组展示名称',
             dataIndex: 'groupShowName',
             key: 'groupShowName',
             // align: 'center'
-            width: window.screen.width*0.20,
+            width: window.screen.width*0.15,
         }, {
             title: '启用状态',
             dataIndex: 'status',
             key: 'status',
             // align: 'center'
-            width: window.screen.width*0.15,
+            width: window.screen.width*0.20,
             render: text => <span >{text===1?'已启用':'未启用'}</span>,
         }, {
             title: '操作',
@@ -288,7 +293,10 @@ class tablesKillGroupMng extends React.Component {
                                     // onMouseEnter: () => {},  
                                     };
                                 }} key={"tablesKillGroupMng"} pagination={false} columns={columns} dataSource={this.props.tablesKillGroupMng.tableDataKillGroupMng} scroll={{ x: 500 , y: 360}} />
-                            <Pagination defaultCurrent={this.state.page} defaultPageSize={10} total={this.props.tablesKillGroupMng.tableCountKillGroupMng} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10)}/>
+                            {/*<Pagination current={this.state.page} defaultPageSize={10} total={this.props.tablesKillGroupMng.tableCountKillGroupMng} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10)}/>*/}
+                            <LocaleProvider locale={zh_CN}>
+                                <Pagination  current={this.state.page} showTotal={total => `总共 ${total} 条`} showSizeChanger showQuickJumper defaultPageSize={10} total={this.props.tablesKillGroupMng.tableCountKillGroupMng} style={{textAlign:'right',marginTop:25}}  onShowSizeChange={(current, pageSize)=>this.getTableData('',current, pageSize)} onChange={(page, pageSize)=>this.getTableData('',page,pageSize)}/>
+                            </LocaleProvider>
                         </CardBody>
                     </Card>
                 </GridItem>
@@ -321,17 +329,17 @@ const mapStateToProps = (state) => {
 }
 const mapDispatchToProps = (dispatch) => {
     return{
-        getDataKillGroupMng: (params) => {
-            dispatch(getDataKillGroupMng(params))
+        getDataKillGroupMng: (params,obj) => {
+            dispatch(getDataKillGroupMng(params,obj))
         },
         updateDataKillGroupMng: (params,obj) => {
             dispatch(updateDataKillGroupMng(params,obj))
         },
-        deleteDataKillGroupMng: (params) => {
-            dispatch(deleteDataKillGroupMng(params))
+        deleteDataKillGroupMng: (params,obj) => {
+            dispatch(deleteDataKillGroupMng(params,obj))
         },
-        createDataKillGroupMng: (params) => {
-            dispatch(createDataKillGroupMng(params))
+        createDataKillGroupMng: (params,obj) => {
+            dispatch(createDataKillGroupMng(params,obj))
         },
         getOtherKillGroupMng: (params) => {
             dispatch(getOtherKillGroupMng(params))

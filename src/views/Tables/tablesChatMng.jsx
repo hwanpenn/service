@@ -11,12 +11,13 @@ import CardHeader from "components/Card/CardHeader.jsx";
 import extendedTablesStyle from "assets/jss/material-dashboard-pro-react/views/extendedTablesStyle.jsx";
 import {getOtherChatMng,getOtherRobotChatMng,getOtherKillGroupChatMng,getDataChatMng,updateDataChatMng,deleteDataChatMng,activeDataChatMng,createDataChatMng } from "actions/tablesChatMng";
 import {connect} from "react-redux";
-import {Table, Divider,Button } from 'antd';
+import {Table, Divider, Button, LocaleProvider} from 'antd';
 import {Input,Modal,Select } from 'antd';
 import {Form,Pagination,Popconfirm } from 'antd';
 import { message ,Row,Col,Popover} from 'antd';
 import { TimePicker } from 'antd';
 import moment from 'moment';
+import zh_CN from "antd/lib/locale-provider/zh_CN";
 message.config({
     duration: 1,
 });
@@ -44,6 +45,8 @@ class tablesChatMng extends React.Component {
             timeValueEnd: '',
             timeValueStartModify: '',
             timeValueEndModify: '',
+            current:1,
+            pageSize:10
         };
     }
     componentWillMount(){
@@ -55,6 +58,10 @@ class tablesChatMng extends React.Component {
     componentDidMount(){
     }
     getTableData = (windowName,start,size) => {
+        this.setState({
+            current:start,
+            pageSize:size
+        })
         const params = {
             windowName:windowName,
             pageNo:start,
@@ -121,7 +128,7 @@ class tablesChatMng extends React.Component {
             values.windowId=this.state.recordAction.windowId
             values.startTime=this.formRefModifyData.state.timeValueStartModify
             values.endTime=this.formRefModifyData.state.timeValueEndModify
-            this.props.updateDataChatMng(values);
+            this.props.updateDataChatMng(values,this);
             form.resetFields();
             this.setState({ visibleModify: false });
         });
@@ -142,7 +149,7 @@ class tablesChatMng extends React.Component {
                 }
                 values.startTime=this.formRefDataCreate.state.timeValueStart
                 values.endTime=this.formRefDataCreate.state.timeValueEnd
-                this.props.createDataChatMng(values)
+                this.props.createDataChatMng(values,this)
                 form.resetFields();
                 this.setState({ visible: false });
             });
@@ -161,13 +168,13 @@ class tablesChatMng extends React.Component {
             status:record.status,
             windowId:record.windowId,
         }
-        this.props.activeDataChatMng(params)
+        this.props.activeDataChatMng(params,this)
     }
     deleteConfirm = (record) => {
         const params = {
             windowId:record.windowId,
         }
-        this.props.deleteDataChatMng(params)
+        this.props.deleteDataChatMng(params,this)
     }
     handleChangeRobotId = (value) => {
         this.setState({ robotId: value });
@@ -619,7 +626,7 @@ class tablesChatMng extends React.Component {
                                 <FormItem style={{marginTop:-15}} label="开始时间">
                                     {getFieldDecorator('startTime',{
                                         // initialValue:  thisTemp.state.recordAction.startTime ,
-                                    })(<TimePicker style={{width:'50%'}} placeholder={'请选择时间'} onChange={this.onChangeStartModify} value={this.state.timeValueStartModify} defaultValue={moment('12:08:23', 'HH:mm:ss')}  />)}
+                                    })(<TimePicker style={{width:'50%'}} placeholder={'请选择时间'} onChange={this.onChangeStartModify} value={this.state.timeValueStartModify} initialValue={moment('12:08:23', 'HH:mm:ss')}  />)}
                                 </FormItem>
                                 <FormItem style={{marginTop:-15}} label="结束时间">
                                     {getFieldDecorator('endTime',{
@@ -667,7 +674,7 @@ class tablesChatMng extends React.Component {
                                 <Grid style={{textAlign:'right',marginTop:10}} item xs={6}>
                                     <Search
                                         placeholder="名称搜索"
-                                        onSearch={value => this.getTableData(value,1,10)}
+                                        onSearch={value => this.getTableData(value,1,this.state.pageSize)}
                                         style={{ width: 200,borderStyle:'solid',
                                             borderWidth:0,paddingRight:10 }}
                                     />
@@ -682,7 +689,10 @@ class tablesChatMng extends React.Component {
                                     // onMouseEnter: () => {},  
                                     };
                                 }} key={"tablesChatMng"} pagination={false} columns={columns} dataSource={this.props.tablesChatMng.tableDataChatMng} scroll={{ x: 2250 , y: 360}} />
-                            <Pagination defaultCurrent={1} defaultPageSize={10} total={this.props.tablesChatMng.tableCountChatMng} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10)}/>
+                            {/*<Pagination current={this.state.current} defaultPageSize={10} total={this.props.tablesChatMng.tableCountChatMng} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10)}/>*/}
+                            <LocaleProvider locale={zh_CN}>
+                                <Pagination  current={this.state.current} showTotal={total => `总共 ${total} 条`} showSizeChanger showQuickJumper defaultPageSize={10} total={this.props.tablesChatMng.tableCountChatMng} style={{textAlign:'right',marginTop:25}}  onShowSizeChange={(current, pageSize)=>this.getTableData('',current, pageSize)} onChange={(page, pageSize)=>this.getTableData('',page,pageSize)}/>
+                            </LocaleProvider>
                         </CardBody>
                     </Card>
                 </GridItem>
@@ -712,17 +722,17 @@ const mapDispatchToProps = (dispatch) => {
         getDataChatMng: (params) => {
             dispatch(getDataChatMng(params))
         },
-        updateDataChatMng: (params) => {
-            dispatch(updateDataChatMng(params))
+        updateDataChatMng: (params,obj) => {
+            dispatch(updateDataChatMng(params,obj))
         },
-        deleteDataChatMng: (params) => {
-            dispatch(deleteDataChatMng(params))
+        deleteDataChatMng: (params,obj) => {
+            dispatch(deleteDataChatMng(params,obj))
         },
-        activeDataChatMng: (params) => {
-            dispatch(activeDataChatMng(params))
+        activeDataChatMng: (params,obj) => {
+            dispatch(activeDataChatMng(params,obj))
         },
-        createDataChatMng: (params) => {
-            dispatch(createDataChatMng(params))
+        createDataChatMng: (params,obj) => {
+            dispatch(createDataChatMng(params,obj))
         },
         getOtherChatMng: (params) => {
             dispatch(getOtherChatMng(params))

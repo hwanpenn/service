@@ -11,9 +11,10 @@ import CardHeader from "components/Card/CardHeader.jsx";
 import extendedTablesStyle from "assets/jss/material-dashboard-pro-react/views/extendedTablesStyle.jsx";
 import {updatePasswordDataAdmin,getOtherAdmin,getDataAdmin,updateDataAdmin,deleteDataAdmin,createDataAdmin } from "actions/tablesAdmin";
 import {connect} from "react-redux";
-import {Table, Divider,Button } from 'antd';
+import {Table, Divider, Button, LocaleProvider} from 'antd';
 import {Input,Modal } from 'antd';
 import {Form,Pagination,Popconfirm,Select } from 'antd';
+import zh_CN from "antd/lib/locale-provider/zh_CN";
 
 const FormItem = Form.Item;
 const Search = Input.Search;
@@ -31,15 +32,21 @@ class tablesAdmin extends React.Component {
             recordAction:{},
             recordSelect:{},
             defaultSelectValue:'',
+            current:1,
+            pageSize:10
         };
     }
     componentWillMount(){
-        this.getTableData('',1,10);
-        this.getOtherData('',1,10);
+        this.getTableData('',1,this.state.pageSize);
+        this.getOtherData('',1,this.state.pageSize);
     }
     componentDidMount(){
     }
     getTableData = (caption,start,size) => {
+        this.setState({
+            current:start,
+            pageSize:size
+        })
         const params = {
             caption:caption,
             pageNo:start,
@@ -47,6 +54,14 @@ class tablesAdmin extends React.Component {
         };
         this.props.getDataAdmin(params);
     }
+    // UsernamegetTableData = (username,start,size) => {
+    //     const params = {
+    //         username:username,
+    //         pageNo:start,
+    //         pageSize:size,
+    //     };
+    //     this.props.getDataAdmin(params);
+    // }
     getOtherData = (username,start,size) => {
         const params = {
             pageNo:'1',
@@ -83,7 +98,7 @@ class tablesAdmin extends React.Component {
                 return;
             }
             values.id=this.state.recordAction.id
-            this.props.updateDataAdmin(values);
+            this.props.updateDataAdmin(values,this);
             form.resetFields();
             this.setState({ visibleModify: false });
         });
@@ -94,7 +109,7 @@ class tablesAdmin extends React.Component {
             if (err) {
                 return;
             }
-            this.props.createDataAdmin(values)
+            this.props.createDataAdmin(values,this)
             form.resetFields();
             this.setState({ visible: false });
         });
@@ -109,7 +124,7 @@ class tablesAdmin extends React.Component {
         const params = {
             id:record.id,
         }
-        this.props.deleteDataAdmin(params)
+        this.props.deleteDataAdmin(params,this)
     }
     resetConfirm = (record) => {
         const params = {
@@ -302,11 +317,17 @@ class tablesAdmin extends React.Component {
                                 </Grid>
                                 <Grid style={{textAlign:'right',marginTop:10}} item xs={6}>
                                     <Search
-                                        placeholder="名称搜索"
-                                        onSearch={value => this.getTableData(value,1,10)}
+                                        placeholder="用户别名搜索"
+                                        onSearch={value => this.getTableData(value,1,this.state.pageSize)}
                                         style={{ width: 200,borderStyle:'solid',
                                             borderWidth:0,paddingRight:10 }}
                                     />
+                                    {/*<Search*/}
+                                        {/*placeholder="用户名搜索"*/}
+                                        {/*onSearch={value => this.UsernamegetTableData(value,1,10)}*/}
+                                        {/*style={{ width: 200,borderStyle:'solid',*/}
+                                            {/*borderWidth:0,paddingRight:10 }}*/}
+                                    {/*/>*/}
                                     <Button onClick={this.showModalCreate} style={{ height: 30,marginRight:10 }} size={'small'}>增加</Button>
                                 </Grid>
                             </Grid>
@@ -318,7 +339,10 @@ class tablesAdmin extends React.Component {
                                     // onMouseEnter: () => {},  
                                     };
                                 }} key={"tablesAdmin"} pagination={false} columns={columns} dataSource={this.props.tablesAdmin.tableDataAdmin} scroll={{x: 600, y: 360}} />
-                            <Pagination defaultCurrent={1} defaultPageSize={10} total={this.props.tablesAdmin.tableCountAdmin} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10)}/>
+                            {/*<Pagination current={this.state.current} defaultPageSize={10} total={this.props.tablesAdmin.tableCountAdmin} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10)}/>*/}
+                            <LocaleProvider locale={zh_CN}>
+                                <Pagination  current={this.state.current} showTotal={total => `总共 ${total} 条`} showSizeChanger showQuickJumper defaultPageSize={10} total={this.props.tablesAdmin.tableCountAdmin} style={{textAlign:'right',marginTop:25}}  onShowSizeChange={(current, pageSize)=>this.getTableData('',current, pageSize)} onChange={(page, pageSize)=>this.getTableData('',page,pageSize)}/>
+                            </LocaleProvider>
                         </CardBody>
                     </Card>
                 </GridItem>
@@ -348,14 +372,14 @@ const mapDispatchToProps = (dispatch) => {
         getDataAdmin: (params) => {
             dispatch(getDataAdmin(params))
         },
-        updateDataAdmin: (params) => {
-            dispatch(updateDataAdmin(params))
+        updateDataAdmin: (params,obj) => {
+            dispatch(updateDataAdmin(params,obj))
         },
-        deleteDataAdmin: (params) => {
-            dispatch(deleteDataAdmin(params))
+        deleteDataAdmin: (params,obj) => {
+            dispatch(deleteDataAdmin(params,obj))
         },
-        createDataAdmin: (params) => {
-            dispatch(createDataAdmin(params))
+        createDataAdmin: (params,obj) => {
+            dispatch(createDataAdmin(params,obj))
         },
         getOtherAdmin: (params) => {
             dispatch(getOtherAdmin(params))

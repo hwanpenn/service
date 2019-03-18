@@ -12,13 +12,13 @@ import extendedTablesStyle from "assets/jss/material-dashboard-pro-react/views/e
 import {getOtherML,getDataML,updateDataML,deleteDataML,createDataML,importDataML } from "actions/tablesML";
 import {getDataKnowladgeMng} from "actions/tablesKnowladgeMng";
 import {connect} from "react-redux";
-import {Table, Divider,Button } from 'antd';
+import {Table, Divider, Button, LocaleProvider} from 'antd';
 import {Input,Modal } from 'antd';
 import {Form,Pagination,Popconfirm } from 'antd';
 import {Upload, message, Icon,Select,Popover } from 'antd';
 import { TreeSelect } from 'antd';
 import { chatTestUrl } from '../../cfg/cfg.js';
-
+import zh_CN from "antd/lib/locale-provider/zh_CN";
 const FormItem = Form.Item;
 const Search = Input.Search;
 const Option = Select.Option;
@@ -40,7 +40,9 @@ class tablesML extends React.Component {
             selectedRows:'',
             learnIds:[],
             defaultRobotId:'',
-            value: undefined
+            value: undefined,
+            current:1,
+            pageSize:20
         };
     }
     componentWillMount(){
@@ -57,6 +59,7 @@ class tablesML extends React.Component {
     this.setState({ value });
     }
     getTableDataKnowladgeMng = (categoryName,start,size) => {
+
         const params = {
             categoryName:categoryName,
             pageNo:start,
@@ -64,13 +67,39 @@ class tablesML extends React.Component {
         };
         this.props.getDataKnowladgeMng(params,this);
     }
-    getTableData = (standardQuesiton,start,size,robotId) => {
+     getTableData = (standardQuesiton,start,size,robotId) => {
+        // this.setState({
+        //     current:start,
+        //     pageSize:size
+        //  })
+             this.setState(
+                 { current:start,
+                     pageSize:size },
+                 () => {
+                     //这里打印的是最新的state值
+                     const params = {
+                         // robotId:robotId,
+                         pageNo:start,
+                         pageSize:size,
+                         robotId:robotId,
+                         standardQuesiton:standardQuesiton,
+                     };
+                     // console.log("111111")
+                     // console.log(size,"传进来的值")
+                     // console.log(this.state.pageSize,"设置之后的值")
+                     this.props.getDataML(params);
+                 }
+             );
+
+
+    }
+    answerGetTableData = (answer,start,size,robotId) => {
         const params = {
             // robotId:robotId,
             pageNo:start,
             pageSize:size,
             robotId:robotId,
-            standardQuesiton:standardQuesiton,
+            answer:answer,
         };
         this.props.getDataML(params,this);
     }
@@ -93,7 +122,7 @@ class tablesML extends React.Component {
         // console.log('value')
         // console.log(value)
         this.setState({ robotId: value });
-        this.getTableData('',1,20,value);
+        this.getTableData('',1,this.state.pageSize,value);
     }
     handleML = () => {
         if(this.state.selectedRows.length!==0){
@@ -113,7 +142,7 @@ class tablesML extends React.Component {
             urlValue = chatTestUrl.release
         }else if(urlTemp.indexOf("12329.pub") != -1){
             urlValue = chatTestUrl.beta
-        }else if(urlTemp.indexOf("192.168.21") != -1){
+        }else if(urlTemp.indexOf("192.168.2") != -1){
             urlValue = chatTestUrl.local
         }
         window.open(urlValue+"/client?type=robotChatTest&tenantId="+window.sessionStorage.getItem('tenantId')+"&userId=12345&userName=uer01")
@@ -123,6 +152,7 @@ class tablesML extends React.Component {
 
         }else{
             if(this.state.value.length!==0){
+                console.log(this.state.robotId)
                 const params = {
                     robotId:this.state.robotId,
                     categoryIds:this.state.value
@@ -220,6 +250,18 @@ class tablesML extends React.Component {
             dataIndex: 'label',
             key: 'label',
             width: window.screen.width*0.15,
+            render: text => <Popover content={(
+                <div style={{width:270}}>
+                    <p>{text}</p>
+                </div>
+            )}>
+             <span style={{overflow: 'hidden',
+                 textOverflow: 'ellipsis',
+                 whiteSpace: 'nowrap',
+                 display: 'inline-block',
+                 width: 100
+             }}>{text}</span>
+            </Popover>
         }, {
             title: '回答内容',
             key: 'answer',
@@ -415,7 +457,7 @@ class tablesML extends React.Component {
                 // if(obj.page===''||obj.page===undefined){
                 //     this.setState({ page:obj.page });
                 // }
-                thisTemp.getTableData('',1,20,thisTemp.state.robotId);
+                thisTemp.getTableData('',1,this.state.pageSize,thisTemp.state.robotId);
             } else if (info.file.status === 'error') {
                 // message.error(`${info.file.name} 导入失败.`);
               }
@@ -479,8 +521,8 @@ class tablesML extends React.Component {
                                     <h4 className={classes.cardIconTitle}> </h4>
                                 </Grid>
                                 <Grid style={{textAlign:'right',marginTop:10}} item xs={11}>
-                                <Select style={{ width: 200,borderStyle:'solid',
-                                            borderWidth:0,paddingRight:10 }}
+                                    <Select style={{ width: 150,borderStyle:'solid',
+                                        borderWidth:0,paddingRight:10 }}
                                             showSearch
                                             placeholder="请选择机器人"
                                             value={this.state.robotId}
@@ -489,19 +531,26 @@ class tablesML extends React.Component {
                                             onFocus={this.handleFocus}
                                             onBlur={this.handleBlur}
                                             filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                                        >
-                                            {optionsRobot}
-                                        </Select>
+                                    >
+                                        {optionsRobot}
+                                    </Select>
                                     <Search
-                                        placeholder="名称搜索"
-                                        onSearch={value => this.getTableData(value,1,20,this.state.robotId)}
-                                        style={{ width: 200,borderStyle:'solid',
+                                        placeholder="标准问题搜索"
+                                        onSearch={value => this.getTableData(value,1,this.state.pageSize,this.state.robotId)}
+                                        style={{ width: 150,borderStyle:'solid',
                                             borderWidth:0,paddingRight:10 }}
                                     />
+                                    {/*<Search*/}
+                                        {/*placeholder="回答内容搜索"*/}
+                                        {/*onSearch={value => this.answerGetTableData(value,1,this.state.pageSize,this.state.robotId)}*/}
+                                        {/*style={{ width: 150,borderStyle:'solid',*/}
+                                            {/*borderWidth:0,paddingRight:10 }}*/}
+                                    {/*/>*/}
+
                                     {/* <Button onClick={this.showModalCreate} style={{ height: 30,marginRight:10 }} size={'small'}>增加</Button> */}
                                     <TreeSelect
                                         showSearch
-                                        style={{ width: 200 }}
+                                        style={{ width: 150 }}
                                         value={this.state.value}
                                         dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
                                         placeholder="选择知识库"
@@ -527,8 +576,10 @@ class tablesML extends React.Component {
                                     // onMouseEnter: () => {},  
                                     };
                                 }}  key={"tablesML"} pagination={false} columns={columns} dataSource={this.props.tablesML.tableDataML} scroll={{ y: 360}} />
-                            {/* <Pagination showSizeChanger onShowSizeChange={onShowSizeChange} defaultCurrent={1} defaultPageSize={this.state.defaultPageSize} total={this.props.tablesML.tableCountML} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,10,this.state.robotId)}/> */}
-                            <Pagination defaultCurrent={1} defaultPageSize={this.state.defaultPageSize} total={this.props.tablesML.tableCountML} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,20,this.state.robotId)}/>
+                            {/*<Pagination current ={this.state.current} defaultPageSize={this.state.defaultPageSize} total={this.props.tablesML.tableCountML} style={{textAlign:'right',marginTop:25}}  onChange={(page, pageSize)=>this.getTableData('',page,this.state.pageSize,this.state.robotId)}/>*/}
+                            <LocaleProvider locale={zh_CN}>
+                                <Pagination  current={this.state.current} showTotal={total => `总共 ${total} 条`} showSizeChanger showQuickJumper defaultPageSize={this.state.defaultPageSize} total={this.props.tablesML.tableCountML} style={{textAlign:'right',marginTop:25}}  onShowSizeChange={(current, pageSize)=>this.getTableData('',current, pageSize,this.state.robotId)} onChange={(page, pageSize)=>this.getTableData('',page,pageSize,this.state.robotId)}/>
+                            </LocaleProvider>
                         </CardBody>
                     </Card>
                 </GridItem>
@@ -569,8 +620,8 @@ const mapDispatchToProps = (dispatch) => {
         getDataKnowladgeMng: (params,obj) => {
             dispatch(getDataKnowladgeMng(params,obj))
         },
-        getDataML: (params,obj) => {
-            dispatch(getDataML(params,obj))
+        getDataML: (params) => {
+            dispatch(getDataML(params))
         },
         updateDataML: (params,obj) => {
             dispatch(updateDataML(params,obj))
